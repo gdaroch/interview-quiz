@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interview Quiz</title>
+</head>
+<body>
+
+  <!-- Wireframe only: not part of the final app -->
+  <nav class="wf-bar" aria-label="Wireframe screens">
+    <strong>Wireframe:</strong>
+    <button data-go="start">Start</button>
+    <button data-go="question">Question</button>
+    <button data-go="ok">Feedback (correct)</button>
+    <button data-go="bad">Feedback (incorrect)</button>
+    <button data-go="results">Results</button>
+    <button data-go="error">Error</button>
+  </nav>
+
+  <main>
+
+    <!-- Start -->
+    <section id="screen-start" class="card center">
+      <h1>Interview Quiz</h1>
+      <p class="muted">Test your programming concepts. Answer each question, then see the explanation.</p>
+      <p><strong id="start-count">3</strong> questions per round.</p>
+      <button class="primary" id="btn-start">Start</button>
+    </section>
+
+    <!-- Question + feedback share one screen, as in the flow -->
+    <section id="screen-question" class="card" hidden>
+      <div class="progress">
+        <span id="q-progress">Question 1 of 3</span>
+        <span id="q-score">Score: 0</span>
+      </div>
+      <div class="bar"><span id="q-bar"></span></div>
+      <span class="topic" id="q-topic">javascript</span>
+      <h2 id="q-text"></h2>
+      <pre class="code" id="q-code" hidden><code id="q-code-body"></code></pre>
+      <div class="options" id="q-options" role="radiogroup" aria-labelledby="q-text"></div>
+
+      <div id="q-feedback" hidden aria-live="polite">
+        <div class="verdict" id="q-verdict"></div>
+        <div class="explanation" id="q-explanation"></div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="btn-submit" disabled>Submit</button>
+        <button class="primary" id="btn-next" hidden>Next</button>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="screen-results" class="card center" hidden>
+      <h1>Round complete</h1>
+      <p class="muted">Your score</p>
+      <div class="score"><span id="r-score">0</span> / <span id="r-total">0</span></div>
+      <p class="muted" id="r-note"></p>
+      <button class="primary" id="btn-again">Play again</button>
+    </section>
+
+    <!-- Validation error -->
+    <section id="screen-error" class="card error-card" hidden>
+      <h1>Question bank has errors</h1>
+      <p>The game cannot start until the question data is fixed. Correct these problems in the questions file and reload:</p>
+      <ul class="errors">
+        <li><code>js-closures-02</code> &middot; field <code>answer</code>: must be an index between 0 and 3, got 7</li>
+        <li><code>question #5</code> &middot; field <code>explanation</code>: is required</li>
+        <li><code>js-hoisting-01</code> &middot; field <code>options</code>: needs at least 2 options</li>
+        <li><code>js-closures-02</code> &middot; field <code>id</code>: duplicated in questions #2 and #7</li>
+      </ul>
+      <p class="muted">All problems are listed at once.</p>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
