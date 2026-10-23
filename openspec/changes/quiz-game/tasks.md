@@ -13,6 +13,7 @@
 - [x] 2.1 Scaffold a Vite vanilla JavaScript project in the project root, keeping the approved wireframe's markup and CSS (the CSS moves to `src/style.css`, the markup becomes `index.html`), and verify `npm run dev` serves the same screens without errors
 - [x] 2.2 Add Vitest and a `test` script and verify `npm test` runs (a trivial placeholder test passes, to be replaced in group 3)
 - [x] 2.3 Add `src/config.js` exporting `QUESTIONS_PER_ROUND = 15` and verify it can be imported from a test
+- [x] 2.4 Add Playwright (`@playwright/test`, Chromium only) with `playwright.config.js` starting the Vite dev server, an `e2e/` folder, a `test:e2e` script, and Vitest configured to ignore `e2e/`; verify `npm run test:e2e` runs a placeholder smoke test and `npm test` still passes
 
 ## 3. Question bank validation
 
@@ -38,6 +39,7 @@
 - [ ] 5.5 Implement the feedback state after Submit: correct/incorrect message, correct option highlighted, explanation shown, options locked; verify manually that the answer cannot be changed or submitted twice
 - [ ] 5.6 Implement Next (and "See results" on the last question), then the results screen showing score out of the round size with a Play again control that starts a fresh round with a zero score; verify manually by playing a full round and replaying
 - [ ] 5.7 Verify with a bank smaller than `QUESTIONS_PER_ROUND` that the round uses all questions and the score is out of that count
+- [ ] 5.8 Replace the e2e smoke test with a happy-path e2e test in `e2e/` (start a round, pick an option, submit, see the feedback, go through to the results screen, and play again) and verify `npm run test:e2e` passes
 
 ## 6. Startup validation in the app
 
@@ -47,5 +49,5 @@
 ## 7. Final checks
 
 - [ ] 7.1 Confirm all user-facing text is in English by walking through every screen
-- [ ] 7.2 Add a short README with the commands to install, run, and test, and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
+- [ ] 7.2 Add a short README with the commands to install, run, and test (unit and e2e), and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
 - [ ] 7.3 Run `openspec validate quiz-game` and verify it passes
