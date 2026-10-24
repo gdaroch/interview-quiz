@@ -1,0 +1,41 @@
+[
+  {
+    "id": "js-settimeout-var",
+    "topic": "javascript",
+    "question": "What does this code log?",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "for (var i = 0; i < 3; i++) {",
+        "  setTimeout(() => console.log(i), 0);",
+        "}",
+        "",
+        "// edge: if (a < b && c > d) { ... }"
+      ]
+    },
+    "options": ["0 1 2", "3 3 3", "undefined undefined undefined", "It throws a ReferenceError"],
+    "answer": 1,
+    "explanation": "var is function-scoped, so all three callbacks share the same i. By the time they run, the loop has finished and i is 3."
+  },
+  {
+    "id": "arch-circuit-breaker",
+    "topic": "architecture",
+    "question": "A service must keep working when one of its downstream dependencies becomes slow or unavailable, without letting the failure cascade to every caller and exhaust its own thread pool or connection limits while waiting. Which pattern is designed for exactly this situation?",
+    "options": [
+      "Circuit breaker, which stops calling a failing dependency for a period and fails fast instead of waiting on timeouts that pile up",
+      "Singleton",
+      "Observer",
+      "Adapter, which converts the interface of a dependency into the one the clients expect to use in their own code"
+    ],
+    "answer": 0,
+    "explanation": "A circuit breaker tracks failures and, once a threshold is crossed, short-circuits calls so callers fail fast. Combined with timeouts it prevents a slow dependency from consuming all resources."
+  },
+  {
+    "id": "algo-hash-lookup",
+    "topic": "algorithms",
+    "question": "What is the average time complexity of looking up a key in a hash table?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+    "answer": 0,
+    "explanation": "With a good hash function and a bounded load factor, lookups take constant time on average. Worst case with many collisions degrades to O(n)."
+  }
+]

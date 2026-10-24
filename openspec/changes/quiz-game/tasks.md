@@ -17,11 +17,11 @@
 
 ## 3. Question bank validation
 
-- [ ] 3.1 Create `src/questions.json` with a small sample set (at least 3 questions, one with a `code` snippet) and verify it is imported by the app entry point
-- [ ] 3.2 Implement `validateBank(data)` in `src/validate.js` returning a list of `{ questionRef, field, message }` errors, covering required fields and types, answer index range, minimum two non-empty options, unique ids, empty bank, and non-list data
-- [ ] 3.3 Add validation of the optional `code` object (`language` non-empty string, `lines` non-empty array of strings)
-- [ ] 3.4 Write Vitest tests for every validation rule above, including multiple errors reported in one pass and questions identified by position when the id is missing, and verify `npm test` passes
-- [ ] 3.5 Verify the bundled sample `questions.json` passes `validateBank` with no errors (test)
+- [x] 3.1 Create `src/questions.json` with a small sample set (at least 3 questions, one with a `code` snippet) and verify it is imported by the app entry point
+- [x] 3.2 Implement `validateBank(data)` in `src/validate.js` returning a list of `{ questionRef, field, message }` errors, covering required fields and types, answer index range, minimum two non-empty options, unique ids, empty bank, and non-list data
+- [x] 3.3 Add validation of the optional `code` object (`language` non-empty string, `lines` non-empty array of strings)
+- [x] 3.4 Write Vitest tests for every validation rule above, including multiple errors reported in one pass and questions identified by position when the id is missing, and verify `npm test` passes
+- [x] 3.5 Verify the bundled sample `questions.json` passes `validateBank` with no errors (test)
 
 ## 4. Round logic
 

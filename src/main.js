@@ -1,4 +1,5 @@
 import './style.css';
+import questions from './questions.json';
 
 // Dummy data. Real questions will come from questions.json.
 const QUESTIONS = [
