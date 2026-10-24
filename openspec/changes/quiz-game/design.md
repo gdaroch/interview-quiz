@@ -55,7 +55,7 @@ The interface ships a single dark theme, with no light variant and no `prefers-c
 Alternative: support light and dark following the system setting. Rejected because this is a personal study tool and one theme halves the styling and visual checking.
 
 ### Testing
-Vitest (a natural fit for Vite) covers `validate.js` and `round.js`: each validation rule, short banks, uniqueness of selected questions, answer tracking after shuffling, and scoring. DOM flow is verified manually by playing a round.
+Vitest (a natural fit for Vite) covers `validate.js` and `round.js`: each validation rule, short banks, uniqueness of selected questions, answer tracking after shuffling, and scoring. Playwright (Chromium only) runs end-to-end tests from `e2e/` against the Vite dev server and covers only the happy path of a round; Vitest ignores `e2e/`. Remaining DOM details are verified manually.
 
 ## Project Structure
 
@@ -75,6 +75,9 @@ src/
   round.test.js     tests for round.js
   ui.js             state and render() per screen
   style.css         styles
+e2e/                Playwright happy-path tests
+playwright.config.js  Playwright config (starts the dev server)
+vitest.config.js    Vitest config (ignores e2e/)
 openspec/           OpenSpec config, specs and changes (unchanged)
 ```
 
