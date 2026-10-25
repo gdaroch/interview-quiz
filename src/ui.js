@@ -2,6 +2,11 @@ import { QUESTIONS_PER_ROUND } from "./config.js";
 import { createRound, isCorrect, countCorrect } from "./round.js";
 import { highlightCode } from "./highlight.js";
 
+/**
+ * Finds an element by its id.
+ * @param {string} id - The id of the element.
+ * @returns {HTMLElement} The element.
+ */
 const $ = (id) => document.getElementById(id);
 
 /** The whole game state. The screen is drawn from this object. */
@@ -234,7 +239,7 @@ function buildError(err) {
 
 /**
  * Shows only the error screen with one row per validation error.
- * @param {Array<{questionRef: string, field: string, message: string}>} errors - The errors to list.
+ * @param {Array<object>} errors - The validation errors to list.
  * @returns {void}
  */
 export function showErrors(errors) {
