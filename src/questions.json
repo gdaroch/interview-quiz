@@ -1,41 +1,1710 @@
 [
   {
-    "id": "js-settimeout-var",
+    "id": "js-scope-shadow",
     "topic": "javascript",
-    "question": "What does this code log?",
+    "question": "¿Qué imprime este código?",
+    "options": [
+      "110 y 0.19",
+      "119 y 0.10",
+      "110 y 0.10",
+      "ReferenceError"
+    ],
+    "answer": 0,
+    "explanation": "El tax local oculta al global solo dentro de calculatePrice. Fuera de la función se mantiene 0.19.",
     "code": {
       "language": "javascript",
       "lines": [
-        "for (var i = 0; i < 3; i++) {",
-        "  setTimeout(() => console.log(i), 0);",
+        "const tax = 0.19;",
+        "function calculatePrice(price) {",
+        "  const tax = 0.10;",
+        "  return price + price * tax;",
         "}",
-        "",
-        "// edge: if (a < b && c > d) { ... }"
+        "console.log(calculatePrice(100), tax);"
       ]
-    },
-    "options": ["0 1 2", "3 3 3", "undefined undefined undefined", "It throws a ReferenceError"],
-    "answer": 1,
-    "explanation": "var is function-scoped, so all three callbacks share the same i. By the time they run, the loop has finished and i is 3."
+    }
   },
   {
-    "id": "arch-circuit-breaker",
-    "topic": "architecture",
-    "question": "A service must keep working when one of its downstream dependencies becomes slow or unavailable, without letting the failure cascade to every caller and exhaust its own thread pool or connection limits while waiting. Which pattern is designed for exactly this situation?",
+    "id": "js-tdz-shadow",
+    "topic": "javascript",
+    "question": "¿Qué sucede cuando se llama a calculate?",
     "options": [
-      "Circuit breaker, which stops calling a failing dependency for a period and fails fast instead of waiting on timeouts that pile up",
-      "Singleton",
-      "Observer",
-      "Adapter, which converts the interface of a dependency into the one the clients expect to use in their own code"
+      "Imprime undefined",
+      "Lanza ReferenceError",
+      "Imprime 50",
+      "Imprime 100"
+    ],
+    "answer": 1,
+    "explanation": "La declaración local de price existe en todo su scope, pero está en la temporal dead zone hasta su inicialización; no se consulta la variable exterior.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const price = 100;",
+        "function calculate() {",
+        "  console.log(price);",
+        "  const price = 50;",
+        "}",
+        "calculate();"
+      ]
+    }
+  },
+  {
+    "id": "js-closure-independent",
+    "topic": "javascript",
+    "question": "¿Qué valores se imprimen?",
+    "options": [
+      "3 y 1",
+      "2 y 2",
+      "2 y 1",
+      "1 y 1"
+    ],
+    "answer": 2,
+    "explanation": "Cada llamada a makeCounter crea un closure con su propia variable count. a se incrementa dos veces y b una.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "function makeCounter() {",
+        "  let count = 0;",
+        "  return () => ++count;",
+        "}",
+        "const a = makeCounter();",
+        "const b = makeCounter();",
+        "a();",
+        "console.log(a(), b());"
+      ]
+    }
+  },
+  {
+    "id": "js-arrow-this",
+    "topic": "javascript",
+    "question": "En un método heal de un objeto player, ¿qué callback de setTimeout mantiene el this del método que lo contiene?",
+    "options": [
+      "function () { return this.health; }",
+      "function heal() { this.health += 10; }",
+      "function () { this.health += 10; }",
+      "() => { this.health += 10; }"
+    ],
+    "answer": 3,
+    "explanation": "Las arrow functions capturan this léxicamente; un callback declarado con function recibe su this según cómo sea invocado."
+  },
+  {
+    "id": "js-bind-method",
+    "topic": "javascript",
+    "question": "¿Qué ocurre al ejecutar el último console.log?",
+    "options": [
+      "Imprime 8",
+      "Imprime undefined",
+      "Imprime 5",
+      "Lanza TypeError"
     ],
     "answer": 0,
-    "explanation": "A circuit breaker tracks failures and, once a threshold is crossed, short-circuits calls so callers fail fast. Combined with timeouts it prevents a slow dependency from consuming all resources."
+    "explanation": "bind fija this en player. Aunque la función resultante se asigne a otra variable, usa player.health.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const player = {",
+        "  health: 5,",
+        "  heal(n) { return this.health + n; }",
+        "};",
+        "const fn = player.heal.bind(player);",
+        "console.log(fn(3));"
+      ]
+    }
   },
   {
-    "id": "algo-hash-lookup",
-    "topic": "algorithms",
-    "question": "What is the average time complexity of looking up a key in a hash table?",
-    "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+    "id": "js-callback-sync",
+    "topic": "javascript",
+    "question": "¿Cuál afirmación describe correctamente los callbacks?",
+    "options": [
+      "Todos los callbacks son asíncronos",
+      "Un callback puede ser síncrono, como el de Array.filter",
+      "Los callbacks siempre reciben (error, data)",
+      "Todo callback se ejecuta en una microtask"
+    ],
+    "answer": 1,
+    "explanation": "Un callback es una función que se pasa como argumento. filter lo ejecuta sincrónicamente; readFile usa un callback asíncrono error-first."
+  },
+  {
+    "id": "js-promise-all",
+    "topic": "javascript",
+    "question": "Dos consultas independientes a servicios tardan 200 ms y 300 ms. ¿Qué estrategia normalmente reduce la espera total?",
+    "options": [
+      "Usar await dentro de forEach",
+      "Esperarlas una tras otra",
+      "Lanzarlas juntas con Promise.all",
+      "Encadenar la segunda en un .then de la primera"
+    ],
+    "answer": 2,
+    "explanation": "Promise.all permite ejecutar ambas operaciones independientes concurrentemente. La duración será aproximadamente la más lenta, no la suma."
+  },
+  {
+    "id": "js-promise-allsettled",
+    "topic": "javascript",
+    "question": "Necesitas mostrar tanto los resultados exitosos como los errores de tres operaciones independientes. ¿Qué método usarías?",
+    "options": [
+      "Promise.race",
+      "Promise.any",
+      "Promise.all",
+      "Promise.allSettled"
+    ],
+    "answer": 3,
+    "explanation": "allSettled espera a todas y entrega estados fulfilled o rejected, incluso si algunas fallan. all rechaza al primer rechazo."
+  },
+  {
+    "id": "js-event-loop",
+    "topic": "javascript",
+    "question": "¿Cuál es el comienzo garantizado de la salida en Node.js para este script principal?",
+    "options": [
+      "A, D, N, C",
+      "A, N, C, D",
+      "A, D, B, E",
+      "A, C, N, D"
+    ],
     "answer": 0,
-    "explanation": "With a good hash function and a bounded load factor, lookups take constant time on average. Worst case with many collisions degrades to O(n)."
+    "explanation": "Primero corre el código síncrono (A, D), luego nextTick (N) y luego la microtask de Promise (C). El orden posterior entre timer y setImmediate no está garantizado aquí.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "console.log('A');",
+        "setTimeout(() => console.log('B'), 0);",
+        "setImmediate(() => console.log('E'));",
+        "process.nextTick(() => console.log('N'));",
+        "Promise.resolve().then(() => console.log('C'));",
+        "console.log('D');"
+      ]
+    }
+  },
+  {
+    "id": "js-async-foreach",
+    "topic": "javascript",
+    "question": "¿Por qué el mensaje \"listo\" puede aparecer antes de terminar los guardados?",
+    "options": [
+      "save se ejecuta solo una vez",
+      "forEach ignora las promesas retornadas por sus callbacks",
+      "await se comporta como setTimeout",
+      "console.log tiene prioridad sobre I/O"
+    ],
+    "answer": 1,
+    "explanation": "forEach no espera callbacks async. Para esperar operaciones independientes usa await Promise.all(items.map(save)); para secuencia usa for...of.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "items.forEach(async item => {",
+        "  await save(item);",
+        "});",
+        "console.log('listo');"
+      ]
+    }
+  },
+  {
+    "id": "js-concurrency-limit",
+    "topic": "javascript",
+    "question": "Debes enviar 10.000 correos mediante una API con rate limit. ¿Qué implementación es más adecuada?",
+    "options": [
+      "Un Promise.all con las 10.000 peticiones",
+      "Un forEach async sin await",
+      "Concurrencia limitada o procesamiento por lotes",
+      "Un bucle síncrono que bloquee el event loop"
+    ],
+    "answer": 2,
+    "explanation": "Limitar operaciones simultáneas evita saturar el pool de conexiones y superar el rate limit sin renunciar a toda concurrencia."
+  },
+  {
+    "id": "js-react-immutability",
+    "topic": "javascript",
+    "question": "¿Cuál actualización de estado React evita mutar el objeto original?",
+    "options": [
+      "Object.assign(user, { age: 31 }); setUser(user)",
+      "user.age++; setUser(prev => prev)",
+      "user.age = 31; setUser(user)",
+      "setUser(prev => ({ ...prev, age: 31 }))"
+    ],
+    "answer": 3,
+    "explanation": "Se crea un objeto nuevo mediante spread y se actualiza con el setter. Mutar directamente y reutilizar la referencia puede impedir que React detecte el cambio."
+  },
+  {
+    "id": "js-equality",
+    "topic": "javascript",
+    "question": "¿Qué imprime este código?",
+    "options": [
+      "true y false",
+      "false y true",
+      "true y true",
+      "false y false"
+    ],
+    "answer": 0,
+    "explanation": "== convierte tipos implícitamente, mientras === compara sin coerción. El string \"15\" no es estrictamente igual al número 15.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const id = '15';",
+        "console.log(15 == id, 15 === id);"
+      ]
+    }
+  },
+  {
+    "id": "js-purity",
+    "topic": "javascript",
+    "question": "¿Cuál función es pura en el contexto del ejemplo?",
+    "options": [
+      "f1, porque no modifica discount",
+      "f2, porque depende solo de sus argumentos",
+      "Ambas, porque devuelven un número",
+      "Ninguna, porque multiplican valores"
+    ],
+    "answer": 1,
+    "explanation": "f2 depende exclusivamente de sus argumentos y no produce efectos secundarios. f1 depende de la variable externa discount, que puede cambiar.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "let discount = 0.1;",
+        "const f1 = price => price * (1 - discount);",
+        "const f2 = (price, discount) => price * (1 - discount);"
+      ]
+    }
+  },
+  {
+    "id": "ts-runtime-types",
+    "topic": "typescript",
+    "question": "¿Qué sucede con las interfaces TypeScript cuando la aplicación recibe JSON en ejecución?",
+    "options": [
+      "Validan automáticamente el body",
+      "Se convierten en reglas JavaScript",
+      "Se eliminan al compilar; necesitas validar datos externos en runtime",
+      "Solo validan si el archivo usa strict"
+    ],
+    "answer": 2,
+    "explanation": "Las interfaces sirven para el chequeo estático; no inspeccionan datos recibidos de una red. Zod o class-validator pueden validar en runtime."
+  },
+  {
+    "id": "ts-interface-extra",
+    "topic": "typescript",
+    "question": "Una variable existente tiene los campos id, name y role. ¿Puede asignarse a una interfaz que solo exige id y name?",
+    "options": [
+      "No, las interfaces prohíben campos adicionales en todos los casos",
+      "Sí, pero TypeScript elimina role del objeto",
+      "No, porque siempre hay que usar type y no interface",
+      "Sí, si los campos exigidos tienen los tipos correctos"
+    ],
+    "answer": 3,
+    "explanation": "El tipado estructural permite asignar objetos con propiedades extra. Los excess property checks pueden rechazar un literal fresco con campos desconocidos; los tipos no eliminan campos en runtime.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "interface User { id: string; name: string }",
+        "const fromApi = { id: '1', name: 'Ana', role: 'admin' };",
+        "const user: User = fromApi;"
+      ]
+    }
+  },
+  {
+    "id": "ts-optional-nullish",
+    "topic": "typescript",
+    "question": "¿Qué devuelve displayName cuando nickname es la cadena vacía?",
+    "options": [
+      "\"\" (cadena vacía)",
+      "\"Ana\"",
+      "null",
+      "undefined"
+    ],
+    "answer": 0,
+    "explanation": "?? solo recurre al segundo operando cuando el primero es null o undefined; una cadena vacía sigue siendo válida.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "const user = { name: 'Ana', nickname: '' };",
+        "const displayName = user.nickname ?? user.name;",
+        "console.log(displayName);"
+      ]
+    }
+  },
+  {
+    "id": "ts-exhaustive-never",
+    "topic": "typescript",
+    "question": "¿Para qué sirve asignar event a never en el default de un switch de una unión discriminada?",
+    "options": [
+      "Para ignorar errores en runtime",
+      "Para comprobar en compilación que se manejaron todas las variantes",
+      "Para hacer más rápida la ejecución",
+      "Para convertir automáticamente la unión en string"
+    ],
+    "answer": 1,
+    "explanation": "Si se agrega una nueva variante y no se maneja, event ya no es never y TypeScript marca un error. Esto permite detectar casos omitidos."
+  },
+  {
+    "id": "ts-generic-first",
+    "topic": "typescript",
+    "question": "¿Qué ventaja tiene first<T>(items: T[]): T | undefined frente a first(items: any[]): any?",
+    "options": [
+      "Convierte los valores al tipo T en runtime",
+      "Evita que el array esté vacío",
+      "Conserva el tipo concreto de entrada en la salida",
+      "Garantiza que siempre retorna un elemento"
+    ],
+    "answer": 2,
+    "explanation": "El parámetro genérico vincula el tipo del array con el retorno. undefined modela la posibilidad de un array vacío."
+  },
+  {
+    "id": "ts-unknown-guard",
+    "topic": "typescript",
+    "question": "Una respuesta HTTP se guarda como unknown. ¿Qué debes hacer antes de usar payload.name?",
+    "options": [
+      "Asignarla inmediatamente a any",
+      "Usar as User, que valida el JSON",
+      "Desactivar strict",
+      "Usar un type guard o validar el esquema"
+    ],
+    "answer": 3,
+    "explanation": "unknown requiere narrowing seguro. Una assertion as User solo convence al compilador; no valida propiedades en runtime.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "const payload: unknown = await response.json();",
+        "// ¿Qué debes comprobar antes de leer payload.name?"
+      ]
+    }
+  },
+  {
+    "id": "ts-zod-safeparse",
+    "topic": "typescript",
+    "question": "¿Qué ventaja principal ofrece safeParse de Zod en un endpoint?",
+    "options": [
+      "Valida en runtime y devuelve un resultado de éxito o error",
+      "Hace que los tipos TypeScript funcionen en producción",
+      "Reemplaza la autorización de usuarios",
+      "Transforma cualquier payload en uno válido"
+    ],
+    "answer": 0,
+    "explanation": "safeParse evalúa los datos reales según el esquema y entrega éxito con data o error con detalles. El tipo puede inferirse del esquema."
+  },
+  {
+    "id": "ts-omit-runtime",
+    "topic": "typescript",
+    "question": "¿Es suficiente Omit<User, \"passwordHash\"> para asegurarte de no enviar passwordHash en la respuesta HTTP?",
+    "options": [
+      "Sí, solo con strict=true",
+      "No, hay que construir o mapear el DTO de salida con los campos permitidos",
+      "No, hay que usar Partial en su lugar",
+      "Sí, Omit borra la propiedad en runtime"
+    ],
+    "answer": 1,
+    "explanation": "Omit afecta al chequeo de tipos, no a los objetos JavaScript. Un mapper de respuesta debe omitir realmente los campos sensibles."
+  },
+  {
+    "id": "ts-keyof",
+    "topic": "typescript",
+    "question": "¿Qué representa keyof User?",
+    "options": [
+      "Un array con los valores de User",
+      "Un enum generado en JavaScript",
+      "Una unión de nombres de las propiedades de User",
+      "Una instancia de User"
+    ],
+    "answer": 2,
+    "explanation": "keyof produce un tipo unión con las claves de un objeto. No genera datos en tiempo de ejecución."
+  },
+  {
+    "id": "ts-as-const",
+    "topic": "typescript",
+    "question": "¿Qué tipo se obtiene al usar typeof ROLES[number]?",
+    "options": [
+      "string[]",
+      "number",
+      "Record<string, string>",
+      "\"admin\" | \"member\""
+    ],
+    "answer": 3,
+    "explanation": "as const conserva los literales del array y typeof ROLES[number] extrae la unión de sus elementos.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "const ROLES = ['admin', 'member'] as const;",
+        "type Role = typeof ROLES[number];"
+      ]
+    }
+  },
+  {
+    "id": "ts-readonly",
+    "topic": "typescript",
+    "question": "¿Qué garantiza la palabra readonly en una propiedad TypeScript?",
+    "options": [
+      "Que el compilador impide asignaciones a través de ese tipo, pero no congela el objeto en runtime",
+      "Que la propiedad se elimina al serializar JSON",
+      "Que toda estructura anidada queda inmutable",
+      "Que Object.freeze se ejecuta automáticamente"
+    ],
+    "answer": 0,
+    "explanation": "readonly es una restricción estática de escritura. No ejecuta Object.freeze ni vuelve profundamente inmutables los objetos."
+  },
+  {
+    "id": "node-io-cpu",
+    "topic": "nodejs-http",
+    "question": "Un endpoint ejecuta un cálculo síncrono que tarda 5 segundos. ¿Qué efecto tiene en una instancia normal de Node?",
+    "options": [
+      "Solo retrasa al cliente actual",
+      "Bloquea el hilo principal y demora otras requests de esa instancia",
+      "Node crea automáticamente un hilo para ese cálculo",
+      "El event loop ejecuta otros callbacks en paralelo mientras calcula"
+    ],
+    "answer": 1,
+    "explanation": "El código JavaScript síncrono ocupa la Call Stack del hilo principal; para trabajo pesado de CPU puede usarse un Worker Thread o un proceso separado."
+  },
+  {
+    "id": "node-request-layer",
+    "topic": "nodejs-http",
+    "question": "En una API con controller, service y repository, ¿dónde debería estar la regla \"no crear tareas en proyectos archivados\"?",
+    "options": [
+      "En el middleware CORS",
+      "En el repository, junto al SQL",
+      "En el service o caso de uso",
+      "En el controller HTTP"
+    ],
+    "answer": 2,
+    "explanation": "Es una regla de negocio que debe aplicarse independientemente de cómo se invoque el caso de uso: HTTP, worker o CLI."
+  },
+  {
+    "id": "http-methods-idempotent",
+    "topic": "nodejs-http",
+    "question": "¿Cuál método HTTP se espera que sea idempotente cuando está correctamente implementado?",
+    "options": [
+      "PATCH siempre, sin importar el cambio",
+      "POST para procesar un nuevo pago sin clave de idempotencia",
+      "POST para crear un recurso nuevo cada vez",
+      "PUT para reemplazar un recurso en una URL conocida"
+    ],
+    "answer": 3,
+    "explanation": "Repetir un PUT que reemplaza el recurso por el mismo estado deja el mismo efecto. PATCH puede o no ser idempotente; POST normalmente no lo es."
+  },
+  {
+    "id": "http-401-403",
+    "topic": "nodejs-http",
+    "question": "Una request tiene un usuario autenticado, pero no tiene permiso para eliminar el recurso. ¿Qué código suele corresponder?",
+    "options": [
+      "403",
+      "201",
+      "429",
+      "401"
+    ],
+    "answer": 0,
+    "explanation": "403 indica que la identidad es conocida pero la acción no está permitida. 401 se usa cuando falta autenticación válida."
+  },
+  {
+    "id": "http-created-conflict",
+    "topic": "nodejs-http",
+    "question": "¿Qué respuesta corresponde normalmente al crear correctamente un recurso con POST?",
+    "options": [
+      "204 con body del objeto",
+      "201, idealmente con datos o localización del recurso",
+      "409",
+      "200 con body vacío siempre"
+    ],
+    "answer": 1,
+    "explanation": "201 Created informa que se creó un recurso. 409 expresa conflicto y 204 no admite body."
+  },
+  {
+    "id": "http-cursor-pagination",
+    "topic": "nodejs-http",
+    "question": "Una lista enorme cambia constantemente y quieres evitar que registros se repitan entre páginas. ¿Qué diseño ayuda más?",
+    "options": [
+      "Un offset aleatorio en cada request",
+      "Offset grande sin ordenar",
+      "Cursor basado en un orden estable, por ejemplo created_at e id",
+      "Sin paginación, descargando todo"
+    ],
+    "answer": 2,
+    "explanation": "La paginación por cursor con orden determinista e índice apropiado reduce problemas de desplazamiento que aparecen con offset cuando cambian los registros."
+  },
+  {
+    "id": "http-idempotency-payment",
+    "topic": "nodejs-http",
+    "question": "Se procesó un POST /payments, pero la respuesta al cliente se perdió. ¿Cómo evitas un segundo cobro cuando el cliente reintenta?",
+    "options": [
+      "Aumentar el timeout sin más protecciones",
+      "Deshabilitar todos los reintentos para siempre",
+      "Enviar otro POST con identificador aleatorio diferente",
+      "Usar una idempotency key persistida con unicidad y resultado reutilizable"
+    ],
+    "answer": 3,
+    "explanation": "Una clave de idempotencia identifica la misma operación incluso si la respuesta se perdió; su persistencia y manejo concurrente impiden duplicados."
+  },
+  {
+    "id": "http-cors-security",
+    "topic": "nodejs-http",
+    "question": "¿Cuál afirmación sobre CORS es correcta?",
+    "options": [
+      "Es una política aplicada por navegadores y no sustituye autenticación ni autorización",
+      "Impide que curl envíe cualquier solicitud a la API",
+      "Demuestra que un usuario tiene permiso sobre un recurso",
+      "Reemplaza los tokens y cookies de sesión"
+    ],
+    "answer": 0,
+    "explanation": "CORS regula qué respuestas entre orígenes puede leer JavaScript en un navegador. Clientes como curl no dependen de esa política."
+  },
+  {
+    "id": "node-stream-backpressure",
+    "topic": "nodejs-http",
+    "question": "Debes entregar un CSV de 2 GB por HTTP a un cliente lento. ¿Qué enfoque es más apropiado?",
+    "options": [
+      "Leerlo completo en memoria antes de responder",
+      "Usar un stream con pipeline y backpressure",
+      "Convertirlo a JSON en una sola cadena",
+      "Hacer JSON.stringify de todo el archivo"
+    ],
+    "answer": 1,
+    "explanation": "Los streams procesan por partes; pipeline gestiona backpressure y propaga errores, evitando llenar memoria si el cliente recibe lentamente."
+  },
+  {
+    "id": "node-connection-pool",
+    "topic": "nodejs-http",
+    "question": "Tienes 10 instancias de una API; cada una abre un pool de 20 conexiones a PostgreSQL. ¿Cuál es el máximo teórico total de conexiones de esos pools?",
+    "options": [
+      "30",
+      "100",
+      "200",
+      "20"
+    ],
+    "answer": 2,
+    "explanation": "Cada instancia tiene su propio pool. 10 × 20 = 200; al escalar hay que considerar el límite de conexiones de la base."
+  },
+  {
+    "id": "http-etag",
+    "topic": "nodejs-http",
+    "question": "El navegador envía If-None-Match con el ETag recibido antes y el recurso no cambió. ¿Qué respuesta puede ahorrar el body?",
+    "options": [
+      "201 Created",
+      "409 Conflict",
+      "422 Unprocessable Content",
+      "304 Not Modified"
+    ],
+    "answer": 3,
+    "explanation": "304 permite reutilizar una copia cacheada sin transferir el contenido completo. Se combina con políticas de caché correctas."
+  },
+  {
+    "id": "sec-authn-authz",
+    "topic": "security",
+    "question": "Un token es válido, pero la persona no pertenece al proyecto solicitado. ¿Qué comprobación está faltando?",
+    "options": [
+      "Autorización sobre el recurso",
+      "Hash de contraseña",
+      "Validación de sintaxis del JWT",
+      "Autenticación"
+    ],
+    "answer": 0,
+    "explanation": "Autenticarse verifica la identidad; autorizar comprueba si esa identidad puede acceder a ese proyecto concreto."
+  },
+  {
+    "id": "sec-bola",
+    "topic": "security",
+    "question": "En GET /invoices/:id, ¿qué cambio reduce una vulnerabilidad BOLA/IDOR?",
+    "options": [
+      "Validar solo que exista req.user",
+      "Buscar la factura por id y comprobar ownerId o permiso del usuario",
+      "Ocultar el campo id en el frontend",
+      "Añadir un índice a la tabla"
+    ],
+    "answer": 1,
+    "explanation": "BOLA aparece cuando una request autenticada puede acceder a objetos ajenos cambiando el identificador. Hay que filtrar o comprobar la autorización por recurso."
+  },
+  {
+    "id": "sec-rbac-abac",
+    "topic": "security",
+    "question": "Un member puede modificar tareas solo si pertenece al proyecto. ¿Qué política expresa mejor esa regla?",
+    "options": [
+      "Solo rol member, sin revisar proyecto",
+      "Solo ocultar el botón de editar",
+      "Combinar rol con verificación de pertenencia al recurso",
+      "Aceptar cualquier JWT firmado"
+    ],
+    "answer": 2,
+    "explanation": "El rol da una autorización general; la pertenencia o los atributos del recurso agregan la comprobación específica necesaria."
+  },
+  {
+    "id": "sec-jwt-payload",
+    "topic": "security",
+    "question": "¿Cuál afirmación sobre un JWT firmado común es correcta?",
+    "options": [
+      "Todo JWT se puede revocar sin estado adicional",
+      "Un JWT válido concede acceso a todos los recursos",
+      "La firma cifra y oculta el payload",
+      "Se puede leer el payload, pero no modificarlo sin invalidar la firma"
+    ],
+    "answer": 3,
+    "explanation": "La firma verifica integridad y emisor, no confidencialidad. Se deben comprobar claims, expiración y permisos por recurso."
+  },
+  {
+    "id": "sec-jwt-claims",
+    "topic": "security",
+    "question": "Además de verificar la firma de un JWT, ¿qué validaciones relevantes debe realizar el backend?",
+    "options": [
+      "Expiración, emisor, audiencia y algoritmo admitido según el contrato",
+      "Que el payload contenga la contraseña del usuario",
+      "Solo longitud del token",
+      "Solo que exista un sub"
+    ],
+    "answer": 0,
+    "explanation": "La firma por sí sola no asegura que el token esté vigente ni destinado al servicio actual; hay que validar los claims pertinentes."
+  },
+  {
+    "id": "sec-session-refresh",
+    "topic": "security",
+    "question": "¿Cuál es una ventaja frecuente de una sesión de servidor con ID opaco respecto de un JWT stateless?",
+    "options": [
+      "No necesita autenticación",
+      "Es más sencillo revocar la sesión desde el backend",
+      "Las cookies nunca tienen riesgo de CSRF",
+      "No requiere almacenamiento de estado"
+    ],
+    "answer": 1,
+    "explanation": "El servidor mantiene el estado de sesión y puede invalidar el identificador. JWT stateless necesita otra estrategia si se busca revocación inmediata."
+  },
+  {
+    "id": "sec-oauth-oidc",
+    "topic": "security",
+    "question": "¿Qué agrega OpenID Connect sobre OAuth2 para habilitar un login federado?",
+    "options": [
+      "Un acceso permanente sin expiración",
+      "Un reemplazo para TLS",
+      "Un ID token y un protocolo de identidad",
+      "Una base SQL obligatoria"
+    ],
+    "answer": 2,
+    "explanation": "OAuth2 trata autorización delegada; OIDC agrega identidad y un ID token, habitualmente con Authorization Code y PKCE."
+  },
+  {
+    "id": "sec-xss-cookie",
+    "topic": "security",
+    "question": "¿Qué protege una cookie HttpOnly y qué NO garantiza?",
+    "options": [
+      "Cifra el contenido para el servidor",
+      "Evita que el navegador adjunte cookies en requests",
+      "Impide todos los ataques XSS y CSRF",
+      "Evita que JavaScript lea el valor de la cookie, pero un XSS aún puede hacer requests autenticadas"
+    ],
+    "answer": 3,
+    "explanation": "HttpOnly dificulta robar la cookie mediante JavaScript, pero no impide que código malicioso ejecutado en la página invoque endpoints con esa cookie."
+  },
+  {
+    "id": "sec-password-hashing",
+    "topic": "security",
+    "question": "¿Qué algoritmo es apropiado para almacenar contraseñas?",
+    "options": [
+      "Argon2id con parámetros adecuados",
+      "Base64 reversible",
+      "SHA-256 directo sin sal",
+      "MD5 simple"
+    ],
+    "answer": 0,
+    "explanation": "Argon2id es un algoritmo lento diseñado para contraseñas. Un hash rápido o codificación reversible no proporciona la protección requerida."
+  },
+  {
+    "id": "sec-sql-injection",
+    "topic": "security",
+    "question": "¿Cuál alternativa evita interpolar directamente una entrada externa en el SQL?",
+    "options": [
+      "`SELECT ... WHERE email = ${input}`",
+      "`db.query(\"SELECT ... WHERE email = $1\", [input])`",
+      "Eliminar las comillas del input y concatenarlo",
+      "Confiar en los tipos TypeScript de req.body"
+    ],
+    "answer": 1,
+    "explanation": "Las consultas parametrizadas separan la estructura SQL de los valores aportados por el usuario, mitigando la inyección."
+  },
+  {
+    "id": "arch-soc",
+    "topic": "architecture",
+    "question": "Si cambia una regla de negocio usada desde HTTP y desde un worker, ¿dónde conviene implementarla?",
+    "options": [
+      "Dentro de un middleware exclusivo de HTTP",
+      "Duplicarla en ambos controllers",
+      "En el caso de uso compartido",
+      "Solo en el DTO de respuesta"
+    ],
+    "answer": 2,
+    "explanation": "Separar responsabilidades permite reutilizar una misma regla de negocio desde transportes distintos y probarla de forma aislada."
+  },
+  {
+    "id": "arch-thin-controller",
+    "topic": "architecture",
+    "question": "¿Cuál es la responsabilidad preferida de un controller delgado?",
+    "options": [
+      "Mantener transacciones y reglas del dominio mezcladas",
+      "Implementar las entidades de base de datos",
+      "Escribir directamente consultas complejas y validar todas las invariantes",
+      "Traducir HTTP, invocar el caso de uso y construir la respuesta"
+    ],
+    "answer": 3,
+    "explanation": "El controller adapta request/response. Las reglas y orquestación del negocio deben vivir en el service o caso de uso."
+  },
+  {
+    "id": "arch-dto-mapper",
+    "topic": "architecture",
+    "question": "¿Por qué construir un ResponseDTO explícito en lugar de serializar directamente una entidad de persistencia?",
+    "options": [
+      "Para controlar los campos públicos y evitar filtrar atributos internos",
+      "Para ejecutar validaciones SQL",
+      "Porque siempre mejora el rendimiento de la base de datos",
+      "Porque TypeScript borra campos extra en ejecución"
+    ],
+    "answer": 0,
+    "explanation": "Un mapper crea el objeto público con solo los atributos permitidos. Omit o una interfaz no borran propiedades al serializar en runtime."
+  },
+  {
+    "id": "arch-validate-business",
+    "topic": "architecture",
+    "question": "¿Cuál de estas reglas pertenece al dominio y no solo a la validación del formato del body?",
+    "options": [
+      "assigneeId es opcional",
+      "Un proyecto archivado no acepta tareas nuevas",
+      "title debe ser string",
+      "title tiene máximo 100 caracteres"
+    ],
+    "answer": 1,
+    "explanation": "La regla depende del estado y del significado del proyecto, no solo de la forma de los datos recibidos."
+  },
+  {
+    "id": "arch-service-usecase",
+    "topic": "architecture",
+    "question": "El flujo CreateIssue debe comprobar permisos y guardar una tarea. ¿Qué componente debería orquestarlo?",
+    "options": [
+      "Un middleware de registro de requests",
+      "El serializador de respuestas",
+      "Un use case o service",
+      "El DTO de entrada"
+    ],
+    "answer": 2,
+    "explanation": "El caso de uso concentra decisiones y coordinación de dependencias sin acoplarse al protocolo HTTP ni a una base específica."
+  },
+  {
+    "id": "arch-repository-purpose",
+    "topic": "architecture",
+    "question": "¿Qué describe mejor el propósito de un Repository Pattern?",
+    "options": [
+      "Reemplazar siempre al ORM incluso en CRUD trivial",
+      "Definir las rutas HTTP del sistema",
+      "Convertir cualquier SQL en MongoDB sin cambios",
+      "Esconder el acceso a datos detrás de un contrato útil para el negocio"
+    ],
+    "answer": 3,
+    "explanation": "El repositorio abstrae operaciones relevantes de persistencia. No garantiza migraciones de motor sin costo y no siempre justifica otra capa."
+  },
+  {
+    "id": "arch-di-dip",
+    "topic": "architecture",
+    "question": "¿Cuál es la diferencia entre Dependency Injection (DI) y Dependency Inversion Principle (DIP)?",
+    "options": [
+      "DIP dice depender de abstracciones; DI entrega las dependencias desde afuera",
+      "DI obliga a usar NestJS",
+      "DI es un principio; DIP es una librería",
+      "Son sinónimos de singleton"
+    ],
+    "answer": 0,
+    "explanation": "DIP define la dirección de dependencias; DI es una técnica para proporcionar implementaciones concretas sin construirlas dentro del consumidor.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "class IssueService {",
+        "  constructor(private repo: IssueRepository) {}",
+        "}",
+        "const svc = new IssueService(postgresRepo);"
+      ]
+    }
+  },
+  {
+    "id": "arch-error-mapping",
+    "topic": "architecture",
+    "question": "closeProject lanza ProjectArchivedError. ¿Cómo debería transformarse a HTTP 409?",
+    "options": [
+      "El dominio ejecuta res.status(409)",
+      "Un mapper/filtro de errores en la frontera HTTP traduce el error",
+      "El repository retorna siempre un string \"409\"",
+      "Se convierte todo error en 200 con un mensaje"
+    ],
+    "answer": 1,
+    "explanation": "El dominio comunica un fallo de negocio; el adaptador HTTP decide su código y estructura sin introducir conceptos HTTP en el core."
+  },
+  {
+    "id": "arch-observability",
+    "topic": "architecture",
+    "question": "La latencia p95 subió a 2 s. ¿Qué dato ayuda a saber si el cuello de botella está en PostgreSQL?",
+    "options": [
+      "El color del dashboard",
+      "Solo el nombre del endpoint",
+      "Trazas distribuidas correlacionadas con logs y métricas",
+      "La cantidad de líneas de código del controller"
+    ],
+    "answer": 2,
+    "explanation": "Las trazas revelan cuánto dura cada etapa; las métricas muestran el síntoma y los logs contextualizan requests sin exponer secretos."
+  },
+  {
+    "id": "arch-hexagonal",
+    "topic": "architecture",
+    "question": "En arquitectura hexagonal, ¿qué rol suele tener PaymentGateway?",
+    "options": [
+      "Un endpoint HTTP que expone el proveedor",
+      "Una implementación concreta del SDK de Stripe",
+      "Una entidad de la base de datos de pedidos",
+      "Un puerto (contrato) implementado por adaptadores externos"
+    ],
+    "answer": 3,
+    "explanation": "El núcleo depende de un port que define lo que necesita; un adapter implementa el contrato contra un proveedor concreto."
+  },
+  {
+    "id": "db-sql-nosql",
+    "topic": "databases",
+    "question": "Diseñas pedidos con pagos, inventario y restricciones de consistencia entre varias entidades. ¿Cuál es un punto de partida razonable?",
+    "options": [
+      "PostgreSQL por relaciones y transacciones",
+      "MongoDB porque ningún dato tiene relaciones",
+      "Redis como única base para todas las operaciones críticas",
+      "Un archivo JSON sin restricciones"
+    ],
+    "answer": 0,
+    "explanation": "La guía propone PostgreSQL como punto de partida para relaciones y consistencia. La decisión final depende también del acceso y las necesidades del sistema."
+  },
+  {
+    "id": "db-left-join",
+    "topic": "databases",
+    "question": "Quieres listar usuarios aunque no tengan pedidos y mostrar un contador en cero. ¿Qué consulta encaja mejor?",
+    "options": [
+      "INNER JOIN + COUNT(o.id)",
+      "LEFT JOIN + COUNT(o.id)",
+      "LEFT JOIN + HAVING COUNT(o.id) > 0",
+      "INNER JOIN + WHERE o.id IS NOT NULL"
+    ],
+    "answer": 1,
+    "explanation": "LEFT JOIN conserva usuarios sin coincidencias y COUNT(o.id) cuenta cero para ellos. Los otros enfoques excluyen a quienes no tienen pedidos."
+  },
+  {
+    "id": "db-where-having",
+    "topic": "databases",
+    "question": "¿Cuál es la diferencia principal entre WHERE y HAVING en SQL?",
+    "options": [
+      "Ambos hacen exactamente lo mismo en cualquier consulta",
+      "HAVING sirve solo para ordenar",
+      "WHERE filtra filas antes de agrupar; HAVING filtra los grupos agregados",
+      "HAVING filtra filas antes de agrupar; WHERE filtra grupos"
+    ],
+    "answer": 2,
+    "explanation": "WHERE limita las filas que se agregan; HAVING aplica condiciones sobre resultados de agrupación como COUNT o SUM."
+  },
+  {
+    "id": "db-composite-index",
+    "topic": "databases",
+    "question": "Con un índice compuesto (user_id, created_at), ¿qué consulta aprovecha mejor su orden de columnas?",
+    "options": [
+      "WHERE total > 100 sin otras condiciones",
+      "WHERE status = \"paid\" sin otras condiciones",
+      "WHERE created_at > fecha sin filtrar user_id",
+      "WHERE user_id = 42 ORDER BY created_at DESC"
+    ],
+    "answer": 3,
+    "explanation": "La primera columna user_id es el prefijo del índice y created_at permite ordenar dentro de ese usuario. Para confirmar se revisa EXPLAIN ANALYZE.",
+    "code": {
+      "language": "sql",
+      "lines": [
+        "CREATE INDEX idx_orders_user_created ON orders(user_id, created_at);"
+      ]
+    }
+  },
+  {
+    "id": "db-index-cost",
+    "topic": "databases",
+    "question": "¿Cuál es un trade-off de agregar índices a una tabla?",
+    "options": [
+      "Puede acelerar lecturas, pero añade costo a escrituras y almacenamiento",
+      "Hace innecesario revisar el plan de ejecución",
+      "Siempre reduce el tiempo de INSERT",
+      "No ocupa espacio en disco"
+    ],
+    "answer": 0,
+    "explanation": "Mantener índices requiere almacenamiento y actualización en INSERT/UPDATE/DELETE; solo conviene crearlos de acuerdo con consultas reales."
+  },
+  {
+    "id": "db-transaction-outbox",
+    "topic": "databases",
+    "question": "Necesitas guardar una orden y publicar un evento en un broker. ¿Qué patrón ayuda a no perder el evento si la transacción de BD confirma y el broker falla?",
+    "options": [
+      "Singleton",
+      "Outbox transaccional",
+      "Observer solo en memoria",
+      "Una segunda transacción SQL en el broker"
+    ],
+    "answer": 1,
+    "explanation": "Outbox guarda la orden y el evento pendiente en la misma transacción local. Otro proceso publica el evento posteriormente con reintentos idempotentes."
+  },
+  {
+    "id": "db-atomic-stock",
+    "topic": "databases",
+    "question": "Dos compradores compiten por el último producto. ¿Cuál query evita descontar stock cuando ya es cero?",
+    "options": [
+      "DELETE FROM products WHERE stock = 0",
+      "SELECT stock y luego UPDATE sin condiciones",
+      "UPDATE products SET stock = stock - 1 WHERE id = $1 AND stock > 0",
+      "UPDATE products SET stock = stock - 1 WHERE id = $1"
+    ],
+    "answer": 2,
+    "explanation": "La condición se evalúa atómicamente con el UPDATE: solo un comprador afectará la fila cuando el stock parte en 1; el otro obtendrá 0 filas afectadas."
+  },
+  {
+    "id": "db-optimistic-lock",
+    "topic": "databases",
+    "question": "Para evitar sobrescribir cambios concurrentes de una tarea con version = 4, ¿qué condición representa locking optimista?",
+    "options": [
+      "SELECT * sin filtros",
+      "UPDATE sin revisar filas afectadas",
+      "WHERE id = $1",
+      "WHERE id = $1 AND version = 4, incrementando version al actualizar"
+    ],
+    "answer": 3,
+    "explanation": "Se modifica solo la versión esperada; si alguien escribió antes, el UPDATE afecta cero filas y se puede responder un conflicto."
+  },
+  {
+    "id": "db-n-plus-one",
+    "topic": "databases",
+    "question": "Una pantalla carga 100 usuarios y luego hace una consulta por cada uno para traer pedidos. ¿Qué problema tienes?",
+    "options": [
+      "N+1 queries; conviene cargar relaciones en lote",
+      "Un fallo de DNS",
+      "Un deadlock inevitable",
+      "Una transacción serializable"
+    ],
+    "answer": 0,
+    "explanation": "La carga ejecuta 1 + 100 consultas. JOIN, IN o eager loading permiten recuperar los datos en una o pocas consultas, según el volumen."
+  },
+  {
+    "id": "db-redis-cache-aside",
+    "topic": "databases",
+    "question": "Usas cache-aside para productos en Redis. ¿Qué haces tras modificar el precio en PostgreSQL?",
+    "options": [
+      "Mantener la clave antigua indefinidamente",
+      "Invalidar o actualizar la entrada correspondiente",
+      "Eliminar permanentemente el TTL de todos los productos",
+      "Borrar todas las tablas SQL"
+    ],
+    "answer": 1,
+    "explanation": "Cache-aside necesita una estrategia de invalidación para reducir respuestas obsoletas. En checkout se debe comprobar el precio real."
+  },
+  {
+    "id": "db-cache-stampede",
+    "topic": "databases",
+    "question": "Una clave popular expira y cientos de requests recalculan el mismo dato simultáneamente. ¿Cómo se llama y cómo mitigarlo?",
+    "options": [
+      "SQL injection; usar un JWT",
+      "N+1; usar LEFT JOIN",
+      "Cache stampede; un lock de recálculo o TTL escalonados",
+      "Deadlock; aumentar el pool sin límite"
+    ],
+    "answer": 2,
+    "explanation": "El cache stampede provoca un pico de cargas en la fuente cuando expira una clave caliente. Bloquear un único recálculo o escalonar expiraciones reduce ese pico."
+  },
+  {
+    "id": "test-unit-integration-e2e",
+    "topic": "testing",
+    "question": "¿Cuál ejemplo es una prueba de integración (en lugar de unit o E2E)?",
+    "options": [
+      "Abrir un navegador, iniciar sesión y pulsar un botón",
+      "Verificar un spy sin ejecutar servicios reales",
+      "Llamar una función pura con dos números",
+      "Probar HTTP + persistencia real en una base de prueba"
+    ],
+    "answer": 3,
+    "explanation": "La integración verifica la interacción entre componentes reales, como una ruta API y la DB. E2E atraviesa el flujo completo de usuario."
+  },
+  {
+    "id": "test-aaa",
+    "topic": "testing",
+    "question": "En Arrange, Act, Assert, ¿qué representa Assert?",
+    "options": [
+      "Verificar el resultado esperado",
+      "Eliminar el código de producción",
+      "Preparar datos y dependencias",
+      "Ejecutar la función bajo prueba"
+    ],
+    "answer": 0,
+    "explanation": "Arrange prepara el contexto; Act ejecuta la acción; Assert comprueba que el resultado o efecto cumple el requisito."
+  },
+  {
+    "id": "test-double-fake",
+    "topic": "testing",
+    "question": "Una clase de repositorio en memoria implementa el contrato sin conectar a PostgreSQL. ¿Qué tipo de doble de prueba es?",
+    "options": [
+      "Mock exclusivamente",
+      "Fake",
+      "Spy",
+      "Stub únicamente"
+    ],
+    "answer": 1,
+    "explanation": "Un fake es una implementación funcional simplificada, como un repositorio en memoria. Los stubs devuelven datos prefijados y los mocks o spies verifican interacciones."
+  },
+  {
+    "id": "test-avoid-overmocking",
+    "topic": "testing",
+    "question": "¿Cuál es el riesgo de mockear cada método interno de un service?",
+    "options": [
+      "Los tests dejarán de ser deterministas por definición",
+      "La suite siempre será más lenta",
+      "Los tests se acoplan a la implementación y fallan ante refactors válidos",
+      "Nunca podrás validar los argumentos de una llamada"
+    ],
+    "answer": 2,
+    "explanation": "Si el test comprueba llamadas internas en lugar de comportamiento, cambios de estructura pueden romperlo aunque la funcionalidad sea correcta."
+  },
+  {
+    "id": "test-create-issue-negative",
+    "topic": "testing",
+    "question": "¿Qué prueba negativa es especialmente importante para CreateIssue?",
+    "options": [
+      "Que el código tenga 100 % de cobertura por líneas",
+      "Que el nombre del service sea corto",
+      "Que el framework compile con cualquier DTO",
+      "Que un usuario sin permisos no cree la tarea ni provoque escrituras"
+    ],
+    "answer": 3,
+    "explanation": "Las pruebas negativas deben cubrir invariantes y permisos; además de esperar un error, conviene asegurar que no se persistió nada."
+  },
+  {
+    "id": "test-async-rejects",
+    "topic": "testing",
+    "question": "Quieres comprobar que una Promise de createIssue rechaza al fallar la DB. ¿Qué enfoque de test es apropiado?",
+    "options": [
+      "Usar await expect(createIssue()).rejects...",
+      "Encerrar createIssue() sin await en try/catch síncrono",
+      "Usar solo setTimeout de 5 segundos",
+      "No esperar la promesa y terminar el test"
+    ],
+    "answer": 0,
+    "explanation": "El test necesita esperar el rechazo para poder comprobarlo. Los matchers rejects o un try/catch con await capturan correctamente el resultado asíncrono."
+  },
+  {
+    "id": "test-tdd-cycle",
+    "topic": "testing",
+    "question": "¿Qué orden representa TDD?",
+    "options": [
+      "Implementar, refactorizar y finalmente añadir cobertura",
+      "Escribir un test que falla, implementar lo mínimo, refactorizar",
+      "Diseñar el esquema, generar mocks y desplegar sin tests",
+      "Implementar todos los casos antes de ejecutar la primera prueba"
+    ],
+    "answer": 1,
+    "explanation": "El ciclo red-green-refactor empieza con una prueba que falla, sigue con código mínimo para pasarla y después mejora la implementación."
+  },
+  {
+    "id": "test-ai-assertions",
+    "topic": "testing",
+    "question": "Una IA genera tests que pasan para un endpoint nuevo. ¿Qué sigue siendo responsabilidad del desarrollador?",
+    "options": [
+      "Eliminar todos los tests manuales",
+      "Aceptar los tests sin leerlos",
+      "Revisar que las aserciones reflejen los requisitos y cubran casos negativos",
+      "Confiar en cobertura alta como prueba de corrección"
+    ],
+    "answer": 2,
+    "explanation": "Una IA puede crear tests que confirman el comportamiento incorrecto de la implementación. Hay que contrastarlos con requisitos y riesgos reales."
+  },
+  {
+    "id": "interview-star",
+    "topic": "interviews",
+    "question": "En una respuesta conductual usando STAR, ¿qué describe mejor la A?",
+    "options": [
+      "Un análisis de todas las tecnologías existentes",
+      "Una aspiración salarial",
+      "Antecedentes de la empresa en general",
+      "La acción concreta que tú realizaste y por qué"
+    ],
+    "answer": 3,
+    "explanation": "STAR se estructura en Situación, Tarea, Acción y Resultado. La acción distingue tu contribución de lo realizado por el equipo."
+  },
+  {
+    "id": "interview-results",
+    "topic": "interviews",
+    "question": "Cuentas una migración a la nube en una entrevista. ¿Cuál resultado es más responsable comunicar?",
+    "options": [
+      "Un efecto comprobable de la migración, delimitando tu contribución",
+      "Una lista de decisiones del equipo atribuidas solo a tu iniciativa",
+      "Una estimación de impacto formulada como resultado confirmado",
+      "Una descripción de herramientas sin explicar consecuencias"
+    ],
+    "answer": 0,
+    "explanation": "Conviene mencionar el resultado real y verificable, sin inventar métricas ni adjudicarse el trabajo ajeno."
+  },
+  {
+    "id": "interview-seniority",
+    "topic": "interviews",
+    "question": "¿Cuál señal comunica mejor seniority técnico?",
+    "options": [
+      "Memorizar definiciones sin ejemplos",
+      "Mostrar decisiones, trade-offs, ownership y colaboración respaldados por casos",
+      "Usar la mayor cantidad posible de patrones en todo proyecto",
+      "Evitar mencionar dificultades"
+    ],
+    "answer": 1,
+    "explanation": "La seniority se refleja en el criterio para decidir, asumir responsabilidad, colaborar y gestionar riesgos, no solo en conocimientos aislados."
+  },
+  {
+    "id": "interview-unknown-tech",
+    "topic": "interviews",
+    "question": "Te preguntan por una herramienta que no usaste en producción. ¿Qué respuesta es mejor?",
+    "options": [
+      "Presentar como experiencia laboral cualquier ejemplo que hayas leído",
+      "Responder únicamente con una definición de Wikipedia",
+      "Decir qué conoces, diferenciar práctica de producción y explicar cómo la abordarías",
+      "Evitar nombrar tecnologías que aún estés aprendiendo"
+    ],
+    "answer": 2,
+    "explanation": "La credibilidad aumenta si distingues conocimiento conceptual, práctica personal y experiencia productiva, sin atribuirte trabajo inexistente."
+  },
+  {
+    "id": "interview-compensation",
+    "topic": "interviews",
+    "question": "Al hablar de pretensiones de renta en Chile, ¿qué detalle conviene aclarar?",
+    "options": [
+      "Si los servicios están desplegados en contenedores",
+      "Si utilizan entrevistas de live coding",
+      "Si la empresa utiliza un calendario de sprints",
+      "Si el rango es líquido o bruto y el tipo de contrato"
+    ],
+    "answer": 3,
+    "explanation": "Líquido versus bruto, contrato, moneda y beneficios cambian el significado de una oferta. Es mejor dar un rango fundamentado."
+  },
+  {
+    "id": "interview-ask-company",
+    "topic": "interviews",
+    "question": "¿Qué pregunta aclara más directamente las expectativas de resultados de un puesto senior backend?",
+    "options": [
+      "¿Qué esperan que logre durante los primeros 3 a 6 meses?",
+      "¿Con qué librería se escriben los tests?",
+      "¿Cuáles son los horarios habituales del equipo?",
+      "¿Qué versión de Node utiliza el equipo?"
+    ],
+    "answer": 0,
+    "explanation": "Preguntar por expectativas y resultados facilita entender el alcance real del rol. También son útiles preguntas de decisiones técnicas, despliegues y retos del equipo."
+  },
+  {
+    "id": "oop-encapsulation",
+    "topic": "solid-patterns",
+    "question": "En una clase Wallet, ¿qué diseño ilustra encapsulación?",
+    "options": [
+      "Permitir wallet.balance = -100 desde cualquier módulo",
+      "Ofrecer withdraw(amount) que verifica las reglas antes de cambiar el saldo",
+      "Guardar una variable global pública balance",
+      "Hacer que Wallet extienda de todas las clases"
+    ],
+    "answer": 1,
+    "explanation": "Encapsular significa proteger el estado interno y exponer operaciones controladas que mantengan las invariantes del objeto."
+  },
+  {
+    "id": "oop-composition",
+    "topic": "solid-patterns",
+    "question": "Para usuarios que pueden ganar o perder permisos dinámicamente, ¿por qué suele preferirse composición sobre herencia?",
+    "options": [
+      "Porque la composición convierte métodos en funciones puras",
+      "Porque la composición garantiza cero dependencias entre módulos",
+      "Porque un objeto con permisos evita crear muchas subclases rígidas",
+      "Porque los objetos compuestos no necesitan validación de permisos"
+    ],
+    "answer": 2,
+    "explanation": "La composición permite combinar capacidades sin una jerarquía creciente de clases, reduciendo acoplamiento."
+  },
+  {
+    "id": "solid-srp",
+    "topic": "solid-patterns",
+    "question": "Un UserService valida usuarios, envía correos y construye consultas SQL. ¿Qué principio SOLID sugiere separar esas responsabilidades?",
+    "options": [
+      "Liskov Substitution",
+      "Interface Segregation",
+      "Open/Closed",
+      "Single Responsibility"
+    ],
+    "answer": 3,
+    "explanation": "SRP busca una responsabilidad coherente o razón para cambiar por módulo. Las reglas de usuario, email y persistencia cambian por motivos distintos."
+  },
+  {
+    "id": "solid-ocp-strategy",
+    "topic": "solid-patterns",
+    "question": "checkout acepta PaymentMethod.pay(). Para agregar un proveedor nuevo, implementas PaymentMethod sin alterar checkout. ¿Qué principio se ejemplifica?",
+    "options": [
+      "Open/Closed",
+      "Interface Segregation únicamente",
+      "Single Responsibility únicamente",
+      "Liskov únicamente"
+    ],
+    "answer": 0,
+    "explanation": "Open/Closed favorece extender el comportamiento mediante nuevas implementaciones de un contrato, sin modificar el código consumidor estable."
+  },
+  {
+    "id": "solid-liskov",
+    "topic": "solid-patterns",
+    "question": "Una implementación ReadOnlyStorage de Storage.save() siempre lanza error, aunque los clientes del contrato esperan poder guardar. ¿Qué principio se viola?",
+    "options": [
+      "Single Responsibility",
+      "Liskov Substitution",
+      "Open/Closed",
+      "Dependency Injection"
+    ],
+    "answer": 1,
+    "explanation": "Una implementación sustituible debe respetar el comportamiento esperado del contrato; aquí el contrato está mal segregado para una variante de solo lectura."
+  },
+  {
+    "id": "patterns-adapter",
+    "topic": "solid-patterns",
+    "question": "Debes convertir el JSON de un proveedor externo al contrato que consume tu dominio. ¿Qué patrón es especialmente adecuado?",
+    "options": [
+      "Observer",
+      "Singleton",
+      "Adapter",
+      "Factory"
+    ],
+    "answer": 2,
+    "explanation": "Adapter traduce una interfaz o representación externa a la que espera el código propio, aislando cambios del proveedor."
+  },
+  {
+    "id": "algo-complexity-nested",
+    "topic": "algorithms",
+    "question": "Un algoritmo compara cada elemento de un array con todos los elementos de otro array de igual tamaño n mediante dos bucles anidados. ¿Cuál es su costo temporal?",
+    "options": [
+      "O(1)",
+      "O(log n)",
+      "O(n)",
+      "O(n²)"
+    ],
+    "answer": 3,
+    "explanation": "Cada uno de los n elementos realiza n comparaciones; en total crece como n × n."
+  },
+  {
+    "id": "algo-map-tradeoff",
+    "topic": "algorithms",
+    "question": "Tienes n IDs y m usuarios. Construyes un Map de usuarios por ID y luego buscas cada ID. ¿Cuál costo promedio obtienes?",
+    "options": [
+      "O(n + m) y memoria extra O(m)",
+      "O(log n) y memoria O(1)",
+      "O(n²) y memoria O(n²)",
+      "O(n × m) sin memoria extra"
+    ],
+    "answer": 0,
+    "explanation": "Crear el Map cuesta O(m) y buscar n claves O(n) en promedio. Cambia recorridos repetidos por almacenamiento adicional."
+  },
+  {
+    "id": "algo-stack-queue",
+    "topic": "algorithms",
+    "question": "¿Qué estructura sigue el orden FIFO, útil para BFS?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Heap máximo",
+      "Árbol binario balanceado"
+    ],
+    "answer": 1,
+    "explanation": "Una queue retira primero lo que entró primero; BFS procesa nodos por niveles. Stack es LIFO."
+  },
+  {
+    "id": "algo-binary-search",
+    "topic": "algorithms",
+    "question": "¿Qué requisito es esencial para aplicar búsqueda binaria con costo O(log n)?",
+    "options": [
+      "Que tenga un número par de elementos",
+      "Que el array tenga duplicados",
+      "Que esté ordenado respecto al criterio de búsqueda",
+      "Que sea un Set"
+    ],
+    "answer": 2,
+    "explanation": "La búsqueda binaria descarta la mitad del rango usando el orden. En un array desordenado no puede justificar qué mitad descartar."
+  },
+  {
+    "id": "algo-default-sort",
+    "topic": "algorithms",
+    "question": "¿Qué salida produce sort() sin comparador sobre números en JavaScript?",
+    "options": [
+      "TypeError",
+      "[1, 9, 10]",
+      "[10, 9, 1]",
+      "[1, 10, 9]"
+    ],
+    "answer": 3,
+    "explanation": "El sort por defecto compara representaciones como strings, de modo que \"10\" se ordena antes que \"9\".",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const nums = [10, 9, 1];",
+        "console.log(nums.sort());"
+      ]
+    }
+  },
+  {
+    "id": "algo-two-pointers",
+    "topic": "algorithms",
+    "question": "Con un array ascendente y un target, buscas si dos valores suman target. ¿Qué enfoque consigue O(n) sin memoria auxiliar significativa?",
+    "options": [
+      "Dos punteros desde ambos extremos",
+      "Ordenar cada vez que se mueve un puntero",
+      "Crear una matriz n × n de sumas",
+      "Probar todos los pares"
+    ],
+    "answer": 0,
+    "explanation": "Con dos punteros, la suma determina qué extremo mover. Cada puntero avanza como máximo n posiciones."
+  },
+  {
+    "id": "algo-live-coding",
+    "topic": "algorithms",
+    "question": "Al recibir un problema de live coding ambiguo, ¿qué es más útil hacer primero?",
+    "options": [
+      "Programar de inmediato sin hablar",
+      "Aclarar restricciones y probar un ejemplo pequeño",
+      "Buscar siempre una solución óptima sin explicarla",
+      "Descartar la fuerza bruta sin analizarla"
+    ],
+    "answer": 1,
+    "explanation": "Aclarar entradas, casos borde y condiciones evita resolver el problema equivocado; luego se puede presentar fuerza bruta y optimizar."
+  },
+  {
+    "id": "react-state-updater",
+    "topic": "react",
+    "question": "Quieres incrementar count dos veces seguidas en un handler. ¿Qué estrategia respeta mejor el batching?",
+    "options": [
+      "setCount(count) dos veces",
+      "setCount(count + 1) dos veces",
+      "setCount(c => c + 1) dos veces",
+      "count += 2 sin setCount"
+    ],
+    "answer": 2,
+    "explanation": "La forma funcional recibe el último estado pendiente, de modo que ambos incrementos se acumulan incluso cuando React agrupa actualizaciones.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const [count, setCount] = useState(0);",
+        "// En un mismo handler quieres sumar 2 de manera segura."
+      ]
+    }
+  },
+  {
+    "id": "react-effect-cleanup",
+    "topic": "react",
+    "question": "Un componente instala setInterval en useEffect. ¿Qué debe devolver el efecto para evitar un timer huérfano?",
+    "options": [
+      "Un booleano true",
+      "El propio resultado de setInterval",
+      "Una cadena con el ID",
+      "Una función que llame a clearInterval(id)"
+    ],
+    "answer": 3,
+    "explanation": "El cleanup se ejecuta antes de volver a sincronizar el efecto y al desmontar, permitiendo limpiar recursos externos."
+  },
+  {
+    "id": "react-effect-derived",
+    "topic": "react",
+    "question": "Recibes tasks y solo quieres mostrar las completadas. ¿Qué opción evita estado derivado innecesario?",
+    "options": [
+      "Calcular tasks.filter(t => t.done) durante el render",
+      "Modificar tasks directamente",
+      "Guardar una copia global cada segundo",
+      "useEffect que llama setDone cada render"
+    ],
+    "answer": 0,
+    "explanation": "Si un valor puede derivarse de props o state, normalmente basta calcularlo al renderizar; crear otro state puede desincronizarlo."
+  },
+  {
+    "id": "react-key-reorder",
+    "topic": "react",
+    "question": "Una lista de tareas tiene filas con estado local y se reordena. ¿Qué key ayuda a preservar correctamente cada fila?",
+    "options": [
+      "Math.random() en cada render",
+      "Un ID estable de la tarea",
+      "La posición visual actual",
+      "El índice del array"
+    ],
+    "answer": 1,
+    "explanation": "React usa key para identificar elementos entre renders. Los IDs estables evitan mezclar el estado de filas que cambiaron de orden."
+  },
+  {
+    "id": "react-context",
+    "topic": "react",
+    "question": "Varias pantallas necesitan conocer el tema de UI sin pasar props por muchos niveles. ¿Qué solución simple puede servir?",
+    "options": [
+      "Un efecto que modifica el DOM global manualmente",
+      "Un nuevo backend obligatorio",
+      "Context",
+      "Un cambio de índice en cada lista"
+    ],
+    "answer": 2,
+    "explanation": "Context distribuye datos comunes entre componentes consumidores y reduce prop drilling. No exige adoptar Redux para casos simples."
+  },
+  {
+    "id": "react-usememo",
+    "topic": "react",
+    "question": "¿Cuándo justifica mejor usar useMemo para filtrar una lista?",
+    "options": [
+      "Cuando la función tenga un efecto secundario que debe repetirse",
+      "Cuando necesites sincronizar un timer con el navegador",
+      "En cada render que tenga cualquier operación sobre arrays",
+      "Cuando una operación medidamente costosa se recalcula por renders no relacionados"
+    ],
+    "answer": 3,
+    "explanation": "useMemo evita repetir cálculos mientras no cambien dependencias, pero agrega complejidad. Primero se mide si existe un problema."
+  },
+  {
+    "id": "infra-docker",
+    "topic": "infrastructure",
+    "question": "¿Cuál afirmación sobre Docker es correcta?",
+    "options": [
+      "Una imagen define el artefacto; un contenedor es una instancia en ejecución",
+      "Los volúmenes reemplazan backups verificados",
+      "Compose solo funciona con un contenedor",
+      "Cada contenedor incluye un kernel completo distinto"
+    ],
+    "answer": 0,
+    "explanation": "Las imágenes empaquetan lo necesario; los contenedores ejecutan esos paquetes y comparten el kernel del host. Compose coordina varios servicios."
+  },
+  {
+    "id": "infra-horizontal-stateless",
+    "topic": "infrastructure",
+    "question": "Escalas una API a cuatro instancias detrás de un load balancer y las sesiones están solo en memoria local. ¿Qué problema puede surgir?",
+    "options": [
+      "La cantidad de nodos obligará a regenerar el schema de la DB",
+      "La sesión puede no existir en la instancia que recibe la siguiente request",
+      "Todas las requests serán atendidas por la misma instancia automáticamente",
+      "El balanceador garantizará compartir cualquier objeto en memoria"
+    ],
+    "answer": 1,
+    "explanation": "Con múltiples instancias, el estado de sesión debe compartirse (DB/Redis) o diseñarse una estrategia compatible; la memoria local no es común."
+  },
+  {
+    "id": "infra-monolith-vs-micro",
+    "topic": "infrastructure",
+    "question": "¿Cuándo suele ser razonable separar un microservicio?",
+    "options": [
+      "Porque añade menos complejidad operativa que un monolito",
+      "Siempre desde el primer endpoint",
+      "Cuando existe una frontera de negocio y una necesidad real de escalado o despliegue independiente",
+      "Para evitar escribir tests"
+    ],
+    "answer": 2,
+    "explanation": "Separar servicios añade costos de red, contratos, observabilidad y coordinación. Se justifica por necesidades concretas, no por moda."
+  },
+  {
+    "id": "infra-queue-retry",
+    "topic": "infrastructure",
+    "question": "Una cola entrega el mismo mensaje de notificación dos veces. ¿Qué característica necesita el consumidor para evitar efectos duplicados?",
+    "options": [
+      "Una variable global temporal sin persistencia",
+      "Cambiar cada mensaje a GET",
+      "Desactivar el logging",
+      "Idempotencia"
+    ],
+    "answer": 3,
+    "explanation": "Las colas pueden reentregar por fallos y reintentos; un consumidor idempotente reconoce operaciones ya procesadas."
+  },
+  {
+    "id": "infra-dead-letter",
+    "topic": "infrastructure",
+    "question": "Tras varios reintentos, un trabajo sigue fallando por datos inválidos. ¿Dónde conviene enviarlo para inspección sin bloquear la cola principal?",
+    "options": [
+      "Dead-letter queue (DLQ)",
+      "Pool de conexiones SQL",
+      "Caché del navegador",
+      "CDN"
+    ],
+    "answer": 0,
+    "explanation": "Una DLQ guarda mensajes fallidos para diagnóstico y tratamiento posterior, evitando ciclos de reintento infinitos."
+  },
+  {
+    "id": "infra-cdn-cache",
+    "topic": "infrastructure",
+    "question": "¿Qué diseño evita que un precio viejo cacheado determine el cobro final?",
+    "options": [
+      "Aplicar al precio la misma duración de caché de las imágenes",
+      "Validar el precio vigente en checkout contra la fuente autorizada",
+      "Confiar en el precio almacenado en el estado local del cliente",
+      "Aumentar la vida útil del caché para reducir inconsistencias"
+    ],
+    "answer": 1,
+    "explanation": "La caché puede mostrar datos momentáneamente obsoletos. En una operación crítica se vuelve a verificar el valor autorizado."
+  },
+  {
+    "id": "nest-components",
+    "topic": "nestjs",
+    "question": "En NestJS, ¿qué componente suele declarar rutas HTTP?",
+    "options": [
+      "Guard",
+      "Module",
+      "Controller",
+      "Provider / Service"
+    ],
+    "answer": 2,
+    "explanation": "Los controllers exponen endpoints. Los modules organizan piezas y los providers implementan servicios que pueden inyectarse."
+  },
+  {
+    "id": "nest-validationpipe",
+    "topic": "nestjs",
+    "question": "Con ValidationPipe({ whitelist: true, transform: true }), ¿qué hace whitelist con campos del body no decorados para validación?",
+    "options": [
+      "Los cifra",
+      "Los inyecta como servicios",
+      "Los devuelve como respuesta",
+      "Los descarta"
+    ],
+    "answer": 3,
+    "explanation": "whitelist elimina propiedades sin decoradores de validación; evita aceptar campos inesperados, mientras las reglas de dominio requieren comprobaciones aparte.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "app.useGlobalPipes(new ValidationPipe({",
+        "  whitelist: true, transform: true",
+        "}));"
+      ]
+    }
+  },
+  {
+    "id": "nest-di-interface-token",
+    "topic": "nestjs",
+    "question": "Un constructor necesita IssueRepository, que es una interface de TypeScript. ¿Por qué se usa un token @Inject(ISSUE_REPOSITORY)?",
+    "options": [
+      "Porque las interfaces no existen en runtime y Nest necesita un identificador real",
+      "Porque todos los repositories tienen que ser singletons",
+      "Porque el token convierte PostgreSQL en MongoDB",
+      "Porque así no se necesita registrar un provider"
+    ],
+    "answer": 0,
+    "explanation": "Las interfaces se eliminan al compilar; el token (por ejemplo Symbol o string) identifica el provider concreto en el contenedor de DI."
+  },
+  {
+    "id": "nest-request-order",
+    "topic": "nestjs",
+    "question": "¿Qué orden simplificado refleja mejor el procesamiento de una request NestJS exitosa?",
+    "options": [
+      "Controller → Guards → Middleware → Pipes",
+      "Middleware → Guards → Interceptors (antes) → Pipes → Controller",
+      "Pipes → Controller → Middleware → Guards",
+      "Exception filters → Controller → Middleware"
+    ],
+    "answer": 1,
+    "explanation": "Primero corre middleware y luego guards; interceptors envuelven la ejecución, pipes validan y transforman antes del handler del controller."
+  },
+  {
+    "id": "nest-guard-pipe-service",
+    "topic": "nestjs",
+    "question": "¿Dónde pondrías respectivamente la autenticación general, validación estructural del body y regla de proyecto archivado?",
+    "options": [
+      "Service, Guard y Pipe",
+      "Repository, Middleware y DTO de salida",
+      "Guard, Pipe y Service",
+      "Pipe, Controller y Middleware"
+    ],
+    "answer": 2,
+    "explanation": "El guard controla acceso a la ruta; el pipe valida datos entrantes; el service evalúa reglas dependientes del estado del negocio."
+  },
+  {
+    "id": "nest-exception-filter",
+    "topic": "nestjs",
+    "question": "¿Qué pieza de NestJS traduce de manera centralizada un DomainError a una respuesta HTTP?",
+    "options": [
+      "ConfigModule",
+      "Un decorador @Inject únicamente",
+      "ValidationPipe",
+      "Exception Filter"
+    ],
+    "answer": 3,
+    "explanation": "Un Exception Filter captura errores y crea la respuesta HTTP. El dominio puede seguir lanzando excepciones sin conocer status codes."
+  },
+  {
+    "id": "nest-testing-provider",
+    "topic": "nestjs",
+    "question": "En Test.createTestingModule, ¿cómo sustituyes un repository real por uno de pruebas?",
+    "options": [
+      "Registrando un provider con el mismo token y useValue del fake",
+      "Omitiendo la dependencia del constructor sin cambios",
+      "Desactivando toda la inyección de Nest",
+      "Modificando el código de producción en cada test"
+    ],
+    "answer": 0,
+    "explanation": "Nest permite registrar la implementación de pruebas bajo el mismo token que espera el service, aislando la persistencia real."
+  },
+  {
+    "id": "nest-request-scope",
+    "topic": "nestjs",
+    "question": "¿Cuál es un motivo para no declarar todos los providers como Scope.REQUEST?",
+    "options": [
+      "Porque dejan de tener constructor",
+      "Porque crea instancias por request y puede añadir costo innecesario",
+      "Porque TypeScript prohíbe scopes",
+      "Porque convierte cada provider en un controller HTTP"
+    ],
+    "answer": 1,
+    "explanation": "Los providers singleton suelen ser suficientes. El scope por request añade trabajo y conviene solo cuando es necesario un ciclo de vida aislado."
+  },
+  {
+    "id": "ai-agent-vs-chat",
+    "topic": "ai-assisted-development",
+    "question": "¿Qué distingue a un agente de programación con permisos de un chatbot que solo propone código?",
+    "options": [
+      "El agente sustituye automáticamente la revisión de pull requests",
+      "El agente garantiza que un cambio es compatible con versiones previas",
+      "El agente puede explorar archivos, editar y ejecutar herramientas",
+      "El agente dispone de tipos TypeScript en tiempo de ejecución"
+    ],
+    "answer": 2,
+    "explanation": "Un agente puede actuar sobre el entorno de desarrollo, pero el equipo sigue siendo responsable de revisar diseño, seguridad y comportamiento."
+  },
+  {
+    "id": "ai-workflow",
+    "topic": "ai-assisted-development",
+    "question": "¿Qué secuencia es más segura para cambiar una API existente con un agente?",
+    "options": [
+      "Dejar todos los permisos habilitados sin límites",
+      "Pedir al agente que reemplace todo el repositorio",
+      "Editar cientos de archivos y mergear sin revisar",
+      "Definir criterios, revisar plan, cambiar en pequeño, inspeccionar diff y ejecutar tests"
+    ],
+    "answer": 3,
+    "explanation": "Acotar el alcance y verificar cada cambio reduce errores y facilita distinguir decisiones del agente de requisitos comprobados."
+  },
+  {
+    "id": "ai-claude-md",
+    "topic": "ai-assisted-development",
+    "question": "¿Qué información es apropiada para un archivo CLAUDE.md del repositorio?",
+    "options": [
+      "Arquitectura, convenciones, comandos de tests y límites del proyecto",
+      "Un historial de mensajes privados de los desarrolladores",
+      "Una copia de logs con tokens para facilitar la depuración",
+      "Variables de entorno reales con las claves de producción"
+    ],
+    "answer": 0,
+    "explanation": "Las instrucciones del repositorio deben orientar al agente de forma repetible sin exponer secretos ni información sensible."
+  },
+  {
+    "id": "ai-mcp",
+    "topic": "ai-assisted-development",
+    "question": "¿Para qué sirve MCP en herramientas de desarrollo asistido por IA?",
+    "options": [
+      "Garantizar que ninguna herramienta ejecuta comandos",
+      "Conectar herramientas y fuentes de datos mediante un protocolo",
+      "Reemplazar todas las validaciones de entrada",
+      "Compilar TypeScript a código nativo"
+    ],
+    "answer": 1,
+    "explanation": "MCP permite integrar herramientas y contextos externos con agentes, según los permisos y las capacidades disponibles."
+  },
+  {
+    "id": "ai-bola-review",
+    "topic": "ai-assisted-development",
+    "question": "Un agente genera GET /users/:id y todos los tests positivos pasan. ¿Cuál verificación de seguridad falta especialmente?",
+    "options": [
+      "Que la respuesta tenga un campo de versión de contrato",
+      "Que la ruta tenga una prueba de tiempo de respuesta promedio",
+      "Que un usuario no pueda consultar perfiles ajenos cambiando id",
+      "Que los errores de base de datos se reintenten en todos los casos"
+    ],
+    "answer": 2,
+    "explanation": "Los tests positivos pueden pasar incluso con BOLA. Debes probar autorización por recurso y casos negativos además del camino feliz."
+  },
+  {
+    "id": "ai-subagents",
+    "topic": "ai-assisted-development",
+    "question": "¿Cuándo tiene más sentido delegar subtareas a subagentes?",
+    "options": [
+      "Para omitir los tests del agente principal",
+      "Siempre, incluso si aumenta la coordinación",
+      "Para cambiar una única línea sin contexto",
+      "Para tareas acotadas e independientes que se benefician de contextos separados"
+    ],
+    "answer": 3,
+    "explanation": "Los subagentes pueden dividir análisis o implementaciones acotadas, pero no son necesarios para tareas simples y añaden costo de coordinación."
   }
 ]
