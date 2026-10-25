@@ -4,6 +4,10 @@ A local multiple-choice quiz for interview study. Each round draws random questi
 
 **Status: work in progress.** The question bank and its startup validation exist. The round logic and the UI are still being built (groups 4-6 of the OpenSpec change `quiz-game`).
 
+## Live demo
+
+Deployed on Cloudflare: https://interview-quiz.gonzalodaroch.workers.dev/
+
 ## Requirements
 
 - Node.js and npm
