@@ -19,7 +19,7 @@ let bank = [];
 
 /**
  * Shows only the screen with the given name and hides the others.
- * @param {string} name - One of "start", "question", "results".
+ * @param {string} name - One of "start", "question", "results", "error".
  * @returns {void}
  */
 function showScreen(name) {
@@ -214,6 +214,32 @@ export function nextQuestion() {
     state.submitted = false;
   }
   render();
+}
+
+/**
+ * Builds one error row: question reference, field and message.
+ * @param {{questionRef: string, field: string, message: string}} err - One validation error.
+ * @returns {HTMLLIElement} The list item.
+ */
+function buildError(err) {
+  const li = document.createElement("li");
+  const ref = document.createElement("code");
+  ref.textContent = err.questionRef;
+  const field = document.createElement("code");
+  field.textContent = err.field;
+  // The separators are plain text nodes, so no innerHTML is needed.
+  li.append(ref, " · field ", field, `: ${err.message}`);
+  return li;
+}
+
+/**
+ * Shows only the error screen with one row per validation error.
+ * @param {Array<{questionRef: string, field: string, message: string}>} errors - The errors to list.
+ * @returns {void}
+ */
+export function showErrors(errors) {
+  document.querySelector("#screen-error .errors").replaceChildren(...errors.map(buildError));
+  showScreen("error");
 }
 
 /**
