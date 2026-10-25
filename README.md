@@ -22,28 +22,56 @@ The first time you run the e2e tests, install the browser with `npx playwright i
 
 ## Editing the question bank
 
-Questions live in `src/questions.json`, a JSON array. Each question has:
-
-- `id`: unique string.
-- `topic`: string.
-- `question`: string.
-- `options`: array of at least 2 non-empty strings.
-- `answer`: integer index (0-based) of the correct option.
-- `explanation`: string shown after answering.
-- `code` (optional): `{ "language": "javascript", "lines": ["...", "..."] }`, with a non-empty `language` and a non-empty array of string lines.
+Questions live in `src/questions.json`, a JSON array of question objects. Example with two questions: a minimal one, and one with the optional `code` field.
 
 ```json
-{
-  "id": "js-typeof-null",
-  "topic": "javascript",
-  "question": "What does typeof null return?",
-  "options": ["\"null\"", "\"object\"", "\"undefined\""],
-  "answer": 1,
-  "explanation": "A historical quirk of JavaScript: typeof null is \"object\"."
-}
+[
+  {
+    "id": "js-typeof-null",
+    "topic": "javascript",
+    "question": "What does typeof null return?",
+    "options": ["\"null\"", "\"object\"", "\"undefined\""],
+    "answer": 1,
+    "explanation": "A historical quirk of JavaScript: typeof null is \"object\"."
+  },
+  {
+    "id": "js-closure-counter",
+    "topic": "javascript",
+    "question": "What does the last line print?",
+    "options": ["0", "1", "2", "undefined"],
+    "answer": 2,
+    "explanation": "The returned function keeps access to count, so each call increments the same variable.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "function makeCounter() {",
+        "  let count = 0;",
+        "  return () => ++count;",
+        "}",
+        "const next = makeCounter();",
+        "next();",
+        "console.log(next());"
+      ]
+    }
+  }
+]
 ```
 
-The bank is validated at startup (`src/validate.js`). All problems are listed at once, not just the first one.
+Fields of each question:
+
+| Field | Type | Required | Rules |
+| --- | --- | --- | --- |
+| `id` | string | yes | Unique in the whole file. |
+| `topic` | string | yes | Subject of the question. |
+| `question` | string | yes | The question text. |
+| `options` | array of strings | yes | At least 2 entries; each one a non-empty string. |
+| `answer` | integer | yes | 0-based index of the correct option in the original `options` order (the game shuffles the options itself). |
+| `explanation` | string | yes | Shown after the player answers. |
+| `code` | object | no | Code snippet shown with the question. |
+| `code.language` | string | if `code` is present | Non-empty. Highlighted languages: `javascript`, `typescript`, `css`, `html`. Any other language is shown as plain text. |
+| `code.lines` | array of strings | if `code` is present | Non-empty; one string per line of code. |
+
+The bank is validated at startup (`src/parse.js` checks that the file is valid JSON, `src/validate.js` checks the questions). If the file is not valid JSON, or any question is invalid, the game does not start: an error screen lists every problem found, not just the first one.
 
 ## Round size
 
