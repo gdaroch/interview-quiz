@@ -65,6 +65,10 @@ The system SHALL validate the entire question bank when the application starts a
 - **WHEN** the application starts and the bank contains no questions
 - **THEN** the bank is reported as invalid and the game is not available
 
+#### Scenario: Malformed JSON file
+- **WHEN** the application starts and the question file is not valid JSON
+- **THEN** the game is not available and the error screen shows an invalid-JSON error
+
 #### Scenario: Bank is not a list
 - **WHEN** the bank data is missing or is not a list of questions
 - **THEN** the bank is reported as invalid and the game is not available

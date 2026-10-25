@@ -43,8 +43,11 @@
 
 ## 6. Startup validation in the app
 
-- [ ] 6.1 Run `validateBank` at startup and render an error screen (instead of the start screen) listing every error with its question and field, plus an instruction to fix the question data; verify manually with a deliberately broken `questions.json` (bad `answer`, missing `explanation`) that both errors are listed and the game cannot start
-- [ ] 6.2 Verify manually that an empty bank (`[]`) and a non-list value show the error screen, and that restoring a valid file lets the game start after reload
+- [x] 6.1 Run `validateBank` at startup and render an error screen (instead of the start screen) listing every error with its question and field, plus an instruction to fix the question data; verify manually with a deliberately broken `questions.json` (bad `answer`, missing `explanation`) that both errors are listed and the game cannot start
+- [x] 6.2 Verify manually that an empty bank (`[]`) and a non-list value show the error screen, and that restoring a valid file lets the game start after reload
+- [x] 6.3 Implement `parseBank(text)` in `src/parse.js`, import the bank as raw text (`questions.json?raw`) in `main.js`, and show the invalid-JSON error on the error screen
+- [x] 6.4 Write Vitest tests for `parseBank` (valid JSON, broken syntax, empty text) and verify `npm test` passes
+- [x] 6.5 Verify manually with a broken `questions.json` (for example, an unclosed brace) that the error screen appears with its styles, and that Vite auto-reload starts the game after the file is fixed
 
 ## 7. Final checks
 
@@ -52,3 +55,4 @@
 - [ ] 7.2 Add a short README with the commands to install, run, and test (unit and e2e), and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
 - [ ] 7.3 Run `openspec validate quiz-game` and verify it passes
 - [ ] 7.4 Apply the `jsdoc-comments` skill to the remaining code files in `src/` (`validate.js`, `config.js`, `main.js`, `ui.js`; `round.js` is already done) and verify `npm test` and `npm run build` still pass
+- [ ] 7.5 Extend the README with a complete question example that includes the optional `code` field, and a note that a malformed JSON file is reported on the error screen

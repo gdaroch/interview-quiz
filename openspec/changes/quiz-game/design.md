@@ -21,10 +21,11 @@ The question bank is authored by hand (or from a script/LLM) outside the app, so
 ## Decisions
 
 ### Vite + vanilla JS
-Vite gives a dev server and lets the JSON be imported directly (`import questions from './questions.json'`), which avoids `fetch` and the `file://` restriction that breaks fetching a local JSON file.
+Vite gives a dev server and lets the JSON be imported as raw text (`import raw from './questions.json?raw'`), which avoids `fetch` and the `file://` restriction that breaks fetching a local JSON file. The text is parsed by the app (see Validate once at startup) instead of being imported as parsed JSON: with a direct import, a syntax error in the file made Vite's dev error overlay crash (`TypeError: ... .split is not a function`) and left the quiz running without CSS.
 Alternatives: plain static files served by a manual static server (extra step, no hot reload); Vite + React (more machinery than three screens need, easy to adopt later if the app grows).
 
 ### Module split: pure logic vs. UI
+- `parse.js`: `parseBank(text)` runs `JSON.parse` inside a try/catch and returns `{ data }` when the text is valid JSON, or `{ errors }` with one error (`{ questionRef: "questions.json", field: "(file)", message: "Invalid JSON: <parser message>" }`) when it is not.
 - `validate.js`: `validateBank(data)` returns a list of error objects (`{ questionRef, field, message }`); an empty list means valid.
 - `round.js`: `createRound(bank, size)` picks `min(size, bank.length)` distinct questions with a Fisher-Yates shuffle and shuffles each question's options while tracking the correct option's new position; plus pure scoring helpers.
 - `main.js` / `ui.js`: renders the screens (start, question, feedback, results, error) and wires events.
@@ -36,7 +37,7 @@ Pure modules take the random source as an optional parameter (default `Math.rand
 A small state object (`screen`, `round`, `index`, `selected`, `submitted`, `score`) drives a `render()` that rebuilds the view. This is enough for a few screens and avoids a framework. The `submitted` flag implements select-then-submit: options are interactive while it is false, locked once true.
 
 ### Validate once at startup, collect all errors
-`validateBank` runs on module load, before the start screen is shown. If it returns errors, the app renders only the error screen listing every error (question id, or index when the id is missing, plus the field). Collecting everything in one pass lets the user fix the file in one editing session rather than one error per reload. Because the JSON is imported at build/dev time, fixing it triggers a Vite reload and re-validation.
+On module load, before the start screen is shown, `parseBank` turns the raw file text into data, and `validateBank` then checks that data. If either returns errors, the app renders only the error screen listing every error (question id, or index when the id is missing, plus the field). Collecting everything in one pass lets the user fix the file in one editing session rather than one error per reload. Because the file is imported as raw text at build/dev time, fixing it triggers a Vite reload and re-validation, and a malformed file reaches the error screen instead of Vite's overlay.
 
 ### Option shuffling keeps the answer by identity
 When shuffling options, the round stores the shuffled options along with the index of the correct one computed from the original `answer`, instead of comparing option text. This stays correct even if two options share text and keeps the bank format (`answer` as an index) unchanged.
@@ -71,6 +72,8 @@ src/
   questions.json    the question bank
   validate.js       validateBank(data)
   validate.test.js  tests for validate.js
+  parse.js          parseBank(text)
+  parse.test.js     tests for parse.js
   round.js          createRound(), shuffling, scoring
   round.test.js     tests for round.js
   ui.js             state and render() per screen
@@ -81,7 +84,7 @@ vitest.config.js    Vitest config (ignores e2e/)
 openspec/           OpenSpec config, specs and changes (unchanged)
 ```
 
-Dependencies flow one way: `main.js` imports `questions.json`, `validate.js`, `config.js`, `round.js` and `ui.js`. `validate.js` and `round.js` import nothing from the DOM or from each other, and only `main.js` and `ui.js` touch the page.
+Dependencies flow one way: `main.js` imports `questions.json` (as raw text), `parse.js`, `validate.js`, `config.js`, `round.js` and `ui.js`. `parse.js`, `validate.js` and `round.js` import nothing from the DOM or from each other, and only `main.js` and `ui.js` touch the page.
 
 Tests are colocated: each module has its test file next to it (`<module>.test.js`), so what a test covers is obvious from the file listing. Vitest picks them up by that naming convention without extra configuration.
 
