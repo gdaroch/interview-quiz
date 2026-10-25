@@ -34,31 +34,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Wireframe-only bar: jumps between screens so each one can be reviewed */
-.wf-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  padding: 8px 16px;
-  font-size: 12px;
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
-  background: rgba(0, 0, 0, .35);
-}
-.wf-bar strong { margin-right: 6px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 11px; }
-.wf-bar button {
-  font: inherit;
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  padding: 3px 12px;
-  cursor: pointer;
-  transition: background .15s, border-color .15s;
-}
-.wf-bar button:hover { background: var(--accent-soft); border-color: var(--accent); }
-
 main {
   max-width: 700px;
   margin: 0 auto;
@@ -119,13 +94,13 @@ pre.code {
 }
 pre.code code { font: inherit; white-space: pre; }
 
-/* Token colors: same class names highlight.js emits, so this block moves to style.css as is */
-.hljs-keyword, .hljs-selector-tag, .hljs-literal { color: #c58bff; }
-.hljs-string, .hljs-attr-value { color: #3ddc97; }
-.hljs-number { color: #ffb86b; }
+/* Token colors: class names emitted by highlight.js (JavaScript, TypeScript, CSS, HTML) */
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-meta { color: #c58bff; }
+.hljs-string, .hljs-attr-value, .hljs-regexp { color: #3ddc97; }
+.hljs-number, .hljs-symbol { color: #ffb86b; }
 .hljs-built_in, .hljs-type { color: #8b9bff; }
-.hljs-title, .hljs-name, .hljs-tag { color: #7fd4ff; }
-.hljs-variable, .hljs-attr, .hljs-property { color: #f0b4c8; }
+.hljs-title, .hljs-name, .hljs-tag, .hljs-selector-class, .hljs-selector-id, .hljs-selector-pseudo { color: #7fd4ff; }
+.hljs-variable, .hljs-attr, .hljs-property, .hljs-attribute { color: #f0b4c8; }
 .hljs-comment { color: #6b7390; font-style: italic; }
 
 /* Options */
