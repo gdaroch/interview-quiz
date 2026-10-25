@@ -2,15 +2,10 @@
   {
     "id": "js-scope-shadow",
     "topic": "javascript",
-    "question": "¿Qué imprime este código?",
-    "options": [
-      "110 y 0.19",
-      "119 y 0.10",
-      "110 y 0.10",
-      "ReferenceError"
-    ],
+    "question": "What does this code print?",
+    "options": ["110 and 0.19", "119 and 0.19", "110 and 0.10", "119 and 0.10"],
     "answer": 0,
-    "explanation": "El tax local oculta al global solo dentro de calculatePrice. Fuera de la función se mantiene 0.19.",
+    "explanation": "The local tax shadows the global variable only inside calculatePrice. Outside the function, tax remains 0.19. The local result is 110 because it uses 10%; the second value comes from global scope, where tax remains 0.19. Identical variable names do not imply shared storage.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -26,15 +21,15 @@
   {
     "id": "js-tdz-shadow",
     "topic": "javascript",
-    "question": "¿Qué sucede cuando se llama a calculate?",
+    "question": "What happens when calculate is called?",
     "options": [
-      "Imprime undefined",
-      "Lanza ReferenceError",
-      "Imprime 50",
-      "Imprime 100"
+      "Prints undefined",
+      "Throws ReferenceError",
+      "Prints 50",
+      "Prints 100"
     ],
     "answer": 1,
-    "explanation": "La declaración local de price existe en todo su scope, pero está en la temporal dead zone hasta su inicialización; no se consulta la variable exterior.",
+    "explanation": "The local price declaration is in scope throughout the function, but it remains in the temporal dead zone until initialization. The outer variable is not used. The inner const shadows the outer binding from the start of its scope. Accessing it before initialization throws instead of producing undefined, unlike a var binding.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -50,15 +45,10 @@
   {
     "id": "js-closure-independent",
     "topic": "javascript",
-    "question": "¿Qué valores se imprimen?",
-    "options": [
-      "3 y 1",
-      "2 y 2",
-      "2 y 1",
-      "1 y 1"
-    ],
+    "question": "Which values are printed?",
+    "options": ["3 and 1", "2 and 2", "2 and 1", "1 and 1"],
     "answer": 2,
-    "explanation": "Cada llamada a makeCounter crea un closure con su propia variable count. a se incrementa dos veces y b una.",
+    "explanation": "Each call to makeCounter creates a closure with its own count variable. Counter a is incremented twice and b once. Even though the functions run identical code, each factory invocation has its own lexical environment. A closure retains access to a binding, not a frozen snapshot of the number.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -76,28 +66,23 @@
   {
     "id": "js-arrow-this",
     "topic": "javascript",
-    "question": "En un método heal de un objeto player, ¿qué callback de setTimeout mantiene el this del método que lo contiene?",
+    "question": "In a method named heal on a player object, which setTimeout callback preserves the this value of the enclosing method?",
     "options": [
-      "function () { return this.health; }",
+      "function () { this.health += 10; }.bind({ health: 50 })",
       "function heal() { this.health += 10; }",
       "function () { this.health += 10; }",
       "() => { this.health += 10; }"
     ],
     "answer": 3,
-    "explanation": "Las arrow functions capturan this léxicamente; un callback declarado con function recibe su this según cómo sea invocado."
+    "explanation": "Arrow functions capture this lexically; callbacks declared with function get their this from how they are invoked. The arrow must be created inside heal, whose this is player when invoked as player.heal(). An ordinary function without binding gets its this from how that callback is called."
   },
   {
     "id": "js-bind-method",
     "topic": "javascript",
-    "question": "¿Qué ocurre al ejecutar el último console.log?",
-    "options": [
-      "Imprime 8",
-      "Imprime undefined",
-      "Imprime 5",
-      "Lanza TypeError"
-    ],
+    "question": "What happens when the final console.log executes?",
+    "options": ["Prints 8", "Prints undefined", "Prints 5", "Throws TypeError"],
     "answer": 0,
-    "explanation": "bind fija this en player. Aunque la función resultante se asigne a otra variable, usa player.health.",
+    "explanation": "bind fixes this to player. Even if the resulting function is assigned to another variable, it still uses player.health. bind creates a new function with its receiver fixed. It does not invoke the method immediately; when later called, it still accesses the bound object’s property.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -113,33 +98,33 @@
   {
     "id": "js-callback-sync",
     "topic": "javascript",
-    "question": "¿Cuál afirmación describe correctamente los callbacks?",
+    "question": "Which statement correctly describes callbacks?",
     "options": [
-      "Todos los callbacks son asíncronos",
-      "Un callback puede ser síncrono, como el de Array.filter",
-      "Los callbacks siempre reciben (error, data)",
-      "Todo callback se ejecuta en una microtask"
+      "I/O callbacks must be async functions",
+      "A callback may run synchronously, as in filter",
+      "Callbacks require a Promise to execute",
+      "Callbacks are always scheduled as microtasks"
     ],
     "answer": 1,
-    "explanation": "Un callback es una función que se pasa como argumento. filter lo ejecuta sincrónicamente; readFile usa un callback asíncrono error-first."
+    "explanation": "A callback is a function passed as an argument. filter calls its callback synchronously, while readFile uses an asynchronous error-first callback. A callback is defined by being passed to another function to be invoked, not by when it runs. The (error, data) pattern is a convention in some Node APIs, not a universal requirement."
   },
   {
     "id": "js-promise-all",
     "topic": "javascript",
-    "question": "Dos consultas independientes a servicios tardan 200 ms y 300 ms. ¿Qué estrategia normalmente reduce la espera total?",
+    "question": "Two independent service requests take 200 ms and 300 ms. Which strategy generally reduces total waiting time?",
     "options": [
-      "Usar await dentro de forEach",
-      "Esperarlas una tras otra",
-      "Lanzarlas juntas con Promise.all",
-      "Encadenar la segunda en un .then de la primera"
+      "Use Promise.race and await its first result",
+      "Use two consecutive awaits",
+      "Start both with Promise.all",
+      "Chain the second request after the first"
     ],
     "answer": 2,
-    "explanation": "Promise.all permite ejecutar ambas operaciones independientes concurrentemente. La duración será aproximadamente la más lenta, no la suma."
+    "explanation": "Promise.all allows independent operations to run concurrently. Total time is approximately that of the slower operation, rather than the sum. Starting both together takes roughly 300 ms plus overhead; sequential execution takes around 500 ms. Promise.race settles on the first outcome and does not necessarily return both responses."
   },
   {
     "id": "js-promise-allsettled",
     "topic": "javascript",
-    "question": "Necesitas mostrar tanto los resultados exitosos como los errores de tres operaciones independientes. ¿Qué método usarías?",
+    "question": "You need to display both successful results and errors from three independent operations. Which method should you use?",
     "options": [
       "Promise.race",
       "Promise.any",
@@ -147,20 +132,15 @@
       "Promise.allSettled"
     ],
     "answer": 3,
-    "explanation": "allSettled espera a todas y entrega estados fulfilled o rejected, incluso si algunas fallan. all rechaza al primer rechazo."
+    "explanation": "allSettled waits for every promise and reports fulfilled or rejected status, even when some fail. all rejects as soon as one promise rejects. Each resulting entry has status plus value or reason. Promise.all rejects on failure, Promise.any seeks the first success, and Promise.race settles with the first fulfilled or rejected result."
   },
   {
     "id": "js-event-loop",
     "topic": "javascript",
-    "question": "¿Cuál es el comienzo garantizado de la salida en Node.js para este script principal?",
-    "options": [
-      "A, D, N, C",
-      "A, N, C, D",
-      "A, D, B, E",
-      "A, C, N, D"
-    ],
+    "question": "What is the guaranteed beginning of the output in Node.js for this top-level script?",
+    "options": ["A, D, N, C", "A, D, C, N", "A, D, B, N", "A, N, D, C"],
     "answer": 0,
-    "explanation": "Primero corre el código síncrono (A, D), luego nextTick (N) y luego la microtask de Promise (C). El orden posterior entre timer y setImmediate no está garantizado aquí.",
+    "explanation": "Synchronous code runs first (A, D), followed by nextTick (N) and then the Promise microtask (C). The subsequent order of the timer and setImmediate is not guaranteed here. Timer and setImmediate callbacks follow that sequence, but their relative order may vary from the top-level script. Here Node’s special process.nextTick queue runs before Promise microtasks.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -176,15 +156,15 @@
   {
     "id": "js-async-foreach",
     "topic": "javascript",
-    "question": "¿Por qué el mensaje \"listo\" puede aparecer antes de terminar los guardados?",
+    "question": "Why can the message \"listo\" appear before the saves finish?",
     "options": [
-      "save se ejecuta solo una vez",
-      "forEach ignora las promesas retornadas por sus callbacks",
-      "await se comporta como setTimeout",
-      "console.log tiene prioridad sobre I/O"
+      "forEach only awaits the first Promise",
+      "forEach ignores Promises returned by its callback",
+      "await waits for the loop but not its callbacks",
+      "console.log executes before every microtask"
     ],
     "answer": 1,
-    "explanation": "forEach no espera callbacks async. Para esperar operaciones independientes usa await Promise.all(items.map(save)); para secuencia usa for...of.",
+    "explanation": "forEach does not wait for async callbacks. Use await Promise.all(items.map(save)) for independent operations, or for...of for sequential execution. forEach returns without collecting or awaiting the Promises from its callbacks. Use for...of with await for sequential work or Promise.all(items.map(...)) to await concurrent operations.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -198,61 +178,58 @@
   {
     "id": "js-concurrency-limit",
     "topic": "javascript",
-    "question": "Debes enviar 10.000 correos mediante una API con rate limit. ¿Qué implementación es más adecuada?",
+    "question": "You must send 10,000 emails through an API with a rate limit. Which implementation is most appropriate?",
     "options": [
-      "Un Promise.all con las 10.000 peticiones",
-      "Un forEach async sin await",
-      "Concurrencia limitada o procesamiento por lotes",
-      "Un bucle síncrono que bloquee el event loop"
+      "Unbounded Promise.all for maximum throughput",
+      "Sequential for...of with unlimited retries",
+      "Process in batches or with bounded concurrency",
+      "Promise.race with every request"
     ],
     "answer": 2,
-    "explanation": "Limitar operaciones simultáneas evita saturar el pool de conexiones y superar el rate limit sin renunciar a toda concurrencia."
+    "explanation": "Limiting simultaneous operations avoids exhausting the connection pool and exceeding rate limits while retaining some concurrency. Promise.all does not throttle work on its own. Bounded concurrency reduces HTTP 429 responses and network, memory or pool pressure; pair it with limited retries and backoff when needed."
   },
   {
     "id": "js-react-immutability",
     "topic": "javascript",
-    "question": "¿Cuál actualización de estado React evita mutar el objeto original?",
+    "question": "Which React state update avoids mutating the original object?",
     "options": [
-      "Object.assign(user, { age: 31 }); setUser(user)",
-      "user.age++; setUser(prev => prev)",
-      "user.age = 31; setUser(user)",
+      "setUser(Object.assign(user, { age: 31 }))",
+      "setUser(prev => { prev.age = 31; return prev; })",
+      "user.age = 31; setUser({ ...user })",
       "setUser(prev => ({ ...prev, age: 31 }))"
     ],
     "answer": 3,
-    "explanation": "Se crea un objeto nuevo mediante spread y se actualiza con el setter. Mutar directamente y reutilizar la referencia puede impedir que React detecte el cambio."
+    "explanation": "This creates a new object using spread and updates it through the setter. Direct mutation followed by reusing the same reference can prevent React from detecting the change. Spread creates a new top-level object reference. It is a shallow copy, so nested updates also require copying the affected levels rather than mutating previous state."
   },
   {
     "id": "js-equality",
     "topic": "javascript",
-    "question": "¿Qué imprime este código?",
+    "question": "What does this code print?",
     "options": [
-      "true y false",
-      "false y true",
-      "true y true",
-      "false y false"
+      "true and false",
+      "false and true",
+      "true and true",
+      "false and false"
     ],
     "answer": 0,
-    "explanation": "== convierte tipos implícitamente, mientras === compara sin coerción. El string \"15\" no es estrictamente igual al número 15.",
+    "explanation": "== performs implicit type coercion, while === compares without coercion. The string \"15\" is not strictly equal to the number 15. 15 == \"15\" is true due to implicit string-to-number coercion. 15 === \"15\" is false because the types differ. For HTTP input, explicit conversion and validation are clearer.",
     "code": {
       "language": "javascript",
-      "lines": [
-        "const id = '15';",
-        "console.log(15 == id, 15 === id);"
-      ]
+      "lines": ["const id = '15';", "console.log(15 == id, 15 === id);"]
     }
   },
   {
     "id": "js-purity",
     "topic": "javascript",
-    "question": "¿Cuál función es pura en el contexto del ejemplo?",
+    "question": "Which function is pure in this example?",
     "options": [
-      "f1, porque no modifica discount",
-      "f2, porque depende solo de sus argumentos",
-      "Ambas, porque devuelven un número",
-      "Ninguna, porque multiplican valores"
+      "f1, because it only reads discount",
+      "f2, because its dependencies are arguments",
+      "Both, because neither mutates its parameters",
+      "Neither, because both depend on price"
     ],
     "answer": 1,
-    "explanation": "f2 depende exclusivamente de sus argumentos y no produce efectos secundarios. f1 depende de la variable externa discount, que puede cambiar.",
+    "explanation": "f2 depends exclusively on its arguments and produces no side effects. f1 depends on the external variable discount, which may change. Reading mutable external state makes the result depend on more than the arguments, even if the function never writes that state. Purity makes tests reproducible and results easier to reason about.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -265,28 +242,28 @@
   {
     "id": "ts-runtime-types",
     "topic": "typescript",
-    "question": "¿Qué sucede con las interfaces TypeScript cuando la aplicación recibe JSON en ejecución?",
+    "question": "What happens to TypeScript interfaces when the application receives JSON at runtime?",
     "options": [
-      "Validan automáticamente el body",
-      "Se convierten en reglas JavaScript",
-      "Se eliminan al compilar; necesitas validar datos externos en runtime",
-      "Solo validan si el archivo usa strict"
+      "The interface validates JSON when strict is enabled",
+      "Interface checks remain in JavaScript",
+      "Types are erased; runtime validation is required",
+      "Optional fields are removed from incoming JSON"
     ],
     "answer": 2,
-    "explanation": "Las interfaces sirven para el chequeo estático; no inspeccionan datos recibidos de una red. Zod o class-validator pueden validar en runtime."
+    "explanation": "Interfaces provide static type checking; they do not inspect data received over a network. Zod or class-validator can perform runtime validation. TypeScript does not turn an interface into an object validator. Even if an API declares Promise<User>, the server may return invalid data: validate at boundaries with a schema or sufficiently thorough guard."
   },
   {
     "id": "ts-interface-extra",
     "topic": "typescript",
-    "question": "Una variable existente tiene los campos id, name y role. ¿Puede asignarse a una interfaz que solo exige id y name?",
+    "question": "An existing variable has id, name, and role fields. Can it be assigned to an interface that only requires id and name?",
     "options": [
-      "No, las interfaces prohíben campos adicionales en todos los casos",
-      "Sí, pero TypeScript elimina role del objeto",
-      "No, porque siempre hay que usar type y no interface",
-      "Sí, si los campos exigidos tienen los tipos correctos"
+      "No, because the object has an extra role field",
+      "Yes, but role is removed on assignment",
+      "Only if User uses type instead of interface",
+      "Yes, if all required members match"
     ],
     "answer": 3,
-    "explanation": "El tipado estructural permite asignar objetos con propiedades extra. Los excess property checks pueden rechazar un literal fresco con campos desconocidos; los tipos no eliminan campos en runtime.",
+    "explanation": "Structural typing allows assigning objects with extra properties. Excess property checks may reject fresh object literals with unknown fields; types do not remove properties at runtime. TypeScript is structurally typed: required properties matter. An important interview nuance is that fresh object literals may fail excess-property checks, while assigning an existing object with extra fields generally works.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -299,15 +276,10 @@
   {
     "id": "ts-optional-nullish",
     "topic": "typescript",
-    "question": "¿Qué devuelve displayName cuando nickname es la cadena vacía?",
-    "options": [
-      "\"\" (cadena vacía)",
-      "\"Ana\"",
-      "null",
-      "undefined"
-    ],
+    "question": "What does displayName return when nickname is an empty string?",
+    "options": ["\"\" (empty string)", "\"Ana\"", "null", "undefined"],
     "answer": 0,
-    "explanation": "?? solo recurre al segundo operando cuando el primero es null o undefined; una cadena vacía sigue siendo válida.",
+    "explanation": "?? uses the second operand only when the first is null or undefined; an empty string is still a valid value. The ?? operator falls back only for null or undefined. Unlike ||, it preserves values such as \"\", 0 and false, which are often meaningful data.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -320,41 +292,41 @@
   {
     "id": "ts-exhaustive-never",
     "topic": "typescript",
-    "question": "¿Para qué sirve asignar event a never en el default de un switch de una unión discriminada?",
+    "question": "Why assign event to never in the default branch of a switch over a discriminated union?",
     "options": [
-      "Para ignorar errores en runtime",
-      "Para comprobar en compilación que se manejaron todas las variantes",
-      "Para hacer más rápida la ejecución",
-      "Para convertir automáticamente la unión en string"
+      "Cast unknown values to never at runtime",
+      "Detect unhandled variants at compile time",
+      "Prevent the default branch from ever running",
+      "Force each case to return the same literal"
     ],
     "answer": 1,
-    "explanation": "Si se agrega una nueva variante y no se maneja, event ya no es never y TypeScript marca un error. Esto permite detectar casos omitidos."
+    "explanation": "If a new variant is added without a matching case, event is no longer never and TypeScript reports an error. This catches unhandled cases. Once all variants have been narrowed away, no possible type remains in default: never. Adding a new unhandled variant makes the assignment to never fail at compile time."
   },
   {
     "id": "ts-generic-first",
     "topic": "typescript",
-    "question": "¿Qué ventaja tiene first<T>(items: T[]): T | undefined frente a first(items: any[]): any?",
+    "question": "What advantage does first<T>(items: T[]): T | undefined have over first(items: any[]): any?",
     "options": [
-      "Convierte los valores al tipo T en runtime",
-      "Evita que el array esté vacío",
-      "Conserva el tipo concreto de entrada en la salida",
-      "Garantiza que siempre retorna un elemento"
+      "It casts elements to T at runtime",
+      "It removes the need to handle empty arrays",
+      "It preserves the input/output type relationship",
+      "It eliminates undefined for nonempty inputs"
     ],
     "answer": 2,
-    "explanation": "El parámetro genérico vincula el tipo del array con el retorno. undefined modela la posibilidad de un array vacío."
+    "explanation": "The generic parameter links the array's element type to the return type. undefined represents the possibility of an empty array. With number[] TypeScript infers number | undefined; with User[] it infers User | undefined. It preserves information that any would erase, while honestly modeling empty arrays."
   },
   {
     "id": "ts-unknown-guard",
     "topic": "typescript",
-    "question": "Una respuesta HTTP se guarda como unknown. ¿Qué debes hacer antes de usar payload.name?",
+    "question": "An HTTP response is stored as unknown. What must you do before accessing payload.name?",
     "options": [
-      "Asignarla inmediatamente a any",
-      "Usar as User, que valida el JSON",
-      "Desactivar strict",
-      "Usar un type guard o validar el esquema"
+      "Cast the result to any before reading it",
+      "Use as User to verify the shape",
+      "Access payload?.name without narrowing",
+      "Check it with a guard or runtime schema"
     ],
     "answer": 3,
-    "explanation": "unknown requiere narrowing seguro. Una assertion as User solo convence al compilador; no valida propiedades en runtime.",
+    "explanation": "unknown requires safe narrowing. An as User assertion only convinces the compiler; it does not validate properties at runtime. The guard must actually check the fields you intend to use. An as User assertion can silence TypeScript, but it neither adds missing properties nor validates server input.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -366,54 +338,54 @@
   {
     "id": "ts-zod-safeparse",
     "topic": "typescript",
-    "question": "¿Qué ventaja principal ofrece safeParse de Zod en un endpoint?",
+    "question": "What is the main advantage of Zod's safeParse in an endpoint?",
     "options": [
-      "Valida en runtime y devuelve un resultado de éxito o error",
-      "Hace que los tipos TypeScript funcionen en producción",
-      "Reemplaza la autorización de usuarios",
-      "Transforma cualquier payload en uno válido"
+      "It validates inputs and reports success or errors",
+      "It automatically generates HTTP endpoints",
+      "It converts any input to the requested type",
+      "It authorizes users before parsing"
     ],
     "answer": 0,
-    "explanation": "safeParse evalúa los datos reales según el esquema y entrega éxito con data o error con detalles. El tipo puede inferirse del esquema."
+    "explanation": "safeParse checks actual data against a schema and returns either success with data or error with details. The TypeScript type can be inferred from the schema. safeParse returns success: false with validation issues instead of throwing on ordinary validation failure. On success, data is validated, and z.infer derives the static TypeScript type from the same schema."
   },
   {
     "id": "ts-omit-runtime",
     "topic": "typescript",
-    "question": "¿Es suficiente Omit<User, \"passwordHash\"> para asegurarte de no enviar passwordHash en la respuesta HTTP?",
+    "question": "Is Omit<User, \"passwordHash\"> enough to ensure passwordHash is not sent in an HTTP response?",
     "options": [
-      "Sí, solo con strict=true",
-      "No, hay que construir o mapear el DTO de salida con los campos permitidos",
-      "No, hay que usar Partial en su lugar",
-      "Sí, Omit borra la propiedad en runtime"
+      "Yes, because Omit changes serialization too",
+      "No, map the fields actually sent at runtime",
+      "No, replace it with Pick plus an assertion",
+      "Yes, provided the DTO is readonly"
     ],
     "answer": 1,
-    "explanation": "Omit afecta al chequeo de tipos, no a los objetos JavaScript. Un mapper de respuesta debe omitir realmente los campos sensibles."
+    "explanation": "Omit affects type checking, not JavaScript objects. A response mapper must actually exclude sensitive fields. For example, const publicUser: Omit<User,\"passwordHash\"> = user may still point to an object containing passwordHash. Building an explicit response DTO determines which fields are actually serialized."
   },
   {
     "id": "ts-keyof",
     "topic": "typescript",
-    "question": "¿Qué representa keyof User?",
+    "question": "What does keyof User represent?",
     "options": [
-      "Un array con los valores de User",
-      "Un enum generado en JavaScript",
-      "Una unión de nombres de las propiedades de User",
-      "Una instancia de User"
+      "The values of every User property",
+      "A runtime array of User keys",
+      "A type union of its property names",
+      "Only required keys, not optional ones"
     ],
     "answer": 2,
-    "explanation": "keyof produce un tipo unión con las claves de un objeto. No genera datos en tiempo de ejecución."
+    "explanation": "keyof produces a union type of an object's keys. It does not generate runtime data. For type User = { id: string; name: string }, keyof User is \"id\" | \"name\". This is type-level only; use Object.keys to obtain actual object keys at runtime."
   },
   {
     "id": "ts-as-const",
     "topic": "typescript",
-    "question": "¿Qué tipo se obtiene al usar typeof ROLES[number]?",
+    "question": "What type results from using typeof ROLES[number]?",
     "options": [
       "string[]",
-      "number",
-      "Record<string, string>",
+      "\"admin\"[]",
+      "readonly [string, string]",
       "\"admin\" | \"member\""
     ],
     "answer": 3,
-    "explanation": "as const conserva los literales del array y typeof ROLES[number] extrae la unión de sus elementos.",
+    "explanation": "as const preserves the array's literal types, and typeof ROLES[number] extracts a union of its elements. as const makes the array a readonly tuple of literals; typeof ROLES[number] extracts the union of element types. It is useful for defining valid options without duplicating an enum.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -425,379 +397,374 @@
   {
     "id": "ts-readonly",
     "topic": "typescript",
-    "question": "¿Qué garantiza la palabra readonly en una propiedad TypeScript?",
+    "question": "What does readonly guarantee for a TypeScript property?",
     "options": [
-      "Que el compilador impide asignaciones a través de ese tipo, pero no congela el objeto en runtime",
-      "Que la propiedad se elimina al serializar JSON",
-      "Que toda estructura anidada queda inmutable",
-      "Que Object.freeze se ejecuta automáticamente"
+      "It prevents assignment through the type, not at runtime",
+      "It recursively prevents all nested edits",
+      "It makes a JavaScript getter with no setter",
+      "It automatically calls Object.freeze on all object fields"
     ],
     "answer": 0,
-    "explanation": "readonly es una restricción estática de escritura. No ejecuta Object.freeze ni vuelve profundamente inmutables los objetos."
+    "explanation": "readonly is a static restriction on assignments. It does not call Object.freeze or make objects deeply immutable. It is a type-system restriction, not a JavaScript object transformation. Also, readonly does not ensure deep immutability: a readonly property referring to an object may still have mutable nested fields."
   },
   {
     "id": "node-io-cpu",
     "topic": "nodejs-http",
-    "question": "Un endpoint ejecuta un cálculo síncrono que tarda 5 segundos. ¿Qué efecto tiene en una instancia normal de Node?",
+    "question": "An endpoint performs a synchronous calculation that takes five seconds. What is the effect in a typical Node.js instance?",
     "options": [
-      "Solo retrasa al cliente actual",
-      "Bloquea el hilo principal y demora otras requests de esa instancia",
-      "Node crea automáticamente un hilo para ese cálculo",
-      "El event loop ejecuta otros callbacks en paralelo mientras calcula"
+      "It delays only requests that share the computed variable",
+      "It blocks the JS thread and other requests in that instance",
+      "Node automatically moves the computation to libuv",
+      "It blocks only while waiting for I/O"
     ],
     "answer": 1,
-    "explanation": "El código JavaScript síncrono ocupa la Call Stack del hilo principal; para trabajo pesado de CPU puede usarse un Worker Thread o un proceso separado."
+    "explanation": "Synchronous JavaScript occupies the main thread's call stack. CPU-intensive work can be moved to a Worker Thread or a separate process. Async I/O is efficient because the JS thread need not sit waiting for responses. A synchronous CPU-heavy calculation occupies that thread; use Worker Threads or separate processes for such work."
   },
   {
     "id": "node-request-layer",
     "topic": "nodejs-http",
-    "question": "En una API con controller, service y repository, ¿dónde debería estar la regla \"no crear tareas en proyectos archivados\"?",
+    "question": "In an API with controller, service, and repository layers, where should the rule \"do not create issues in archived projects\" live?",
     "options": [
-      "En el middleware CORS",
-      "En el repository, junto al SQL",
-      "En el service o caso de uso",
-      "En el controller HTTP"
+      "In the authentication guard, since it identifies the user",
+      "In the repository, since it queries project state",
+      "In the shared service or use case",
+      "In the controller, before calling the service"
     ],
     "answer": 2,
-    "explanation": "Es una regla de negocio que debe aplicarse independientemente de cómo se invoque el caso de uso: HTTP, worker o CLI."
+    "explanation": "This is a business rule that must apply regardless of how the use case is invoked: HTTP, worker, or CLI. The service knows business state and can be called from multiple transports. The repository retrieves data and the controller adapts HTTP, but neither should duplicate that invariant."
   },
   {
     "id": "http-methods-idempotent",
     "topic": "nodejs-http",
-    "question": "¿Cuál método HTTP se espera que sea idempotente cuando está correctamente implementado?",
+    "question": "Which HTTP method is expected to be idempotent when implemented correctly?",
     "options": [
-      "PATCH siempre, sin importar el cambio",
-      "POST para procesar un nuevo pago sin clave de idempotencia",
-      "POST para crear un recurso nuevo cada vez",
-      "PUT para reemplazar un recurso en una URL conocida"
+      "PATCH that increments a counter by one",
+      "POST that records each retry as a new payment",
+      "POST that creates an order with a new ID",
+      "PUT that replaces a resource at a stable URL"
     ],
     "answer": 3,
-    "explanation": "Repetir un PUT que reemplaza el recurso por el mismo estado deja el mismo efecto. PATCH puede o no ser idempotente; POST normalmente no lo es."
+    "explanation": "Repeating a PUT that replaces a resource with the same state has the same effect. PATCH may or may not be idempotent; POST usually is not. Idempotency means repeating an operation has the same final effect on the resource, not necessarily the same HTTP response. PATCH incrementing a counter is not idempotent; PATCH setting a fixed value can be."
   },
   {
     "id": "http-401-403",
     "topic": "nodejs-http",
-    "question": "Una request tiene un usuario autenticado, pero no tiene permiso para eliminar el recurso. ¿Qué código suele corresponder?",
+    "question": "A request comes from an authenticated user who lacks permission to delete the resource. Which status code is normally appropriate?",
     "options": [
       "403",
-      "201",
-      "429",
-      "401"
+      "Always 404, even if the client may know the resource",
+      "409 because its permissions conflict",
+      "401 because the action is unauthorized"
     ],
     "answer": 0,
-    "explanation": "403 indica que la identidad es conocida pero la acción no está permitida. 401 se usa cuando falta autenticación válida."
+    "explanation": "403 means the identity is known but the action is not permitted. 401 is used when valid authentication is missing. 401 means authentication is absent or invalid; 403 means the identity is known but access is denied. To avoid revealing private resource existence, some APIs deliberately return 404 instead."
   },
   {
     "id": "http-created-conflict",
     "topic": "nodejs-http",
-    "question": "¿Qué respuesta corresponde normalmente al crear correctamente un recurso con POST?",
+    "question": "What response is normally appropriate after successfully creating a resource with POST?",
     "options": [
-      "204 con body del objeto",
-      "201, idealmente con datos o localización del recurso",
-      "409",
-      "200 con body vacío siempre"
+      "204 with the object in its body",
+      "201, often with data or the resource location",
+      "409 indicating the object was created",
+      "200 is mandatory for any successful POST"
     ],
     "answer": 1,
-    "explanation": "201 Created informa que se creó un recurso. 409 expresa conflicto y 204 no admite body."
+    "explanation": "201 Created indicates that a resource was created. 409 indicates a conflict, and 204 does not allow a response body. 201 Created signals successful resource creation and may include a Location header. 204 means success without a response body, while 409 indicates a conflict with current state, not successful creation."
   },
   {
     "id": "http-cursor-pagination",
     "topic": "nodejs-http",
-    "question": "Una lista enorme cambia constantemente y quieres evitar que registros se repitan entre páginas. ¿Qué diseño ayuda más?",
+    "question": "A huge list changes constantly, and you want to avoid repeated records across pages. Which design helps most?",
     "options": [
-      "Un offset aleatorio en cada request",
-      "Offset grande sin ordenar",
-      "Cursor basado en un orden estable, por ejemplo created_at e id",
-      "Sin paginación, descargando todo"
+      "Offset adjusted to the total rows on each call",
+      "Fixed offset with ORDER BY created_at DESC",
+      "Cursor with stable ordering by timestamp and ID",
+      "Cursor that stores only the current page number"
     ],
     "answer": 2,
-    "explanation": "La paginación por cursor con orden determinista e índice apropiado reduce problemas de desplazamiento que aparecen con offset cuando cambian los registros."
+    "explanation": "Cursor pagination with deterministic ordering and an appropriate index reduces the shifting-record problems that occur with offset pagination when data changes. With offset, an insertion near the beginning can shift positions and duplicate items. A cursor based on a stable total order such as (created_at,id) continues after the last seen item."
   },
   {
     "id": "http-idempotency-payment",
     "topic": "nodejs-http",
-    "question": "Se procesó un POST /payments, pero la respuesta al cliente se perdió. ¿Cómo evitas un segundo cobro cuando el cliente reintenta?",
+    "question": "A POST /payments was processed, but the response to the client was lost. How do you avoid a second charge when the client retries?",
     "options": [
-      "Aumentar el timeout sin más protecciones",
-      "Deshabilitar todos los reintentos para siempre",
-      "Enviar otro POST con identificador aleatorio diferente",
-      "Usar una idempotency key persistida con unicidad y resultado reutilizable"
+      "Increase the timeout and retry without tracking the operation",
+      "Retry only when the response was 500",
+      "Create a new order ID for each retry",
+      "Persist an idempotency key and reuse the outcome"
     ],
     "answer": 3,
-    "explanation": "Una clave de idempotencia identifica la misma operación incluso si la respuesta se perdió; su persistencia y manejo concurrente impiden duplicados."
+    "explanation": "An idempotency key identifies the same operation even if its response was lost. Persisting it and handling concurrent retries prevents duplicate charges. If the charge succeeded but the response was lost, retrying an identical POST might charge again. Persist a key with a UNIQUE constraint and the outcome, accounting for concurrent requests using that key."
   },
   {
     "id": "http-cors-security",
     "topic": "nodejs-http",
-    "question": "¿Cuál afirmación sobre CORS es correcta?",
+    "question": "Which statement about CORS is correct?",
     "options": [
-      "Es una política aplicada por navegadores y no sustituye autenticación ni autorización",
-      "Impide que curl envíe cualquier solicitud a la API",
-      "Demuestra que un usuario tiene permiso sobre un recurso",
-      "Reemplaza los tokens y cookies de sesión"
+      "It controls cross-origin reads in browsers, not API permissions",
+      "It verifies user tokens before checking origin policy",
+      "It blocks nonbrowser HTTP clients before requests reach the server",
+      "It replaces CSRF protections whenever cookies are used"
     ],
     "answer": 0,
-    "explanation": "CORS regula qué respuestas entre orígenes puede leer JavaScript en un navegador. Clientes como curl no dependen de esa política."
+    "explanation": "CORS controls which cross-origin responses browser JavaScript can read. Clients such as curl are not subject to this policy. CORS is not an authorization mechanism and does not stop servers or tools from calling an API. It tells browsers whether cross-origin JavaScript may read the response; permissions belong in backend checks."
   },
   {
     "id": "node-stream-backpressure",
     "topic": "nodejs-http",
-    "question": "Debes entregar un CSV de 2 GB por HTTP a un cliente lento. ¿Qué enfoque es más apropiado?",
+    "question": "You need to send a 2 GB CSV over HTTP to a slow client. Which approach is most appropriate?",
     "options": [
-      "Leerlo completo en memoria antes de responder",
-      "Usar un stream con pipeline y backpressure",
-      "Convertirlo a JSON en una sola cadena",
-      "Hacer JSON.stringify de todo el archivo"
+      "Compress the file after fully buffering it",
+      "Use streams and pipeline to manage data flow",
+      "Increase heap size and buffer the entire CSV",
+      "Parallelize full-file reads with Worker Threads"
     ],
     "answer": 1,
-    "explanation": "Los streams procesan por partes; pipeline gestiona backpressure y propaga errores, evitando llenar memoria si el cliente recibe lentamente."
+    "explanation": "Streams process data in chunks; pipeline handles backpressure and propagates errors, avoiding memory exhaustion when the client receives data slowly. Backpressure slows or pauses production when the consumer is slower. This prevents a slow client from forcing the whole CSV into memory; pipeline also helps propagate errors."
   },
   {
     "id": "node-connection-pool",
     "topic": "nodejs-http",
-    "question": "Tienes 10 instancias de una API; cada una abre un pool de 20 conexiones a PostgreSQL. ¿Cuál es el máximo teórico total de conexiones de esos pools?",
-    "options": [
-      "30",
-      "100",
-      "200",
-      "20"
-    ],
+    "question": "You have 10 API instances, each with a pool of 20 connections to PostgreSQL. What is the theoretical maximum total number of connections in those pools?",
+    "options": ["30", "100", "200", "20"],
     "answer": 2,
-    "explanation": "Cada instancia tiene su propio pool. 10 × 20 = 200; al escalar hay que considerar el límite de conexiones de la base."
+    "explanation": "Each instance has its own pool. 10 × 20 = 200; when scaling, you must account for the database connection limit. The pool size is per instance, not global. Ten instances with up to 20 connections each can use 200 total, excluding administrative tools and other services."
   },
   {
     "id": "http-etag",
     "topic": "nodejs-http",
-    "question": "El navegador envía If-None-Match con el ETag recibido antes y el recurso no cambió. ¿Qué respuesta puede ahorrar el body?",
+    "question": "A browser sends If-None-Match with a previously received ETag, and the resource has not changed. Which response can avoid transferring the body?",
     "options": [
-      "201 Created",
-      "409 Conflict",
-      "422 Unprocessable Content",
+      "200 OK with the same body",
+      "206 Partial Content",
+      "204 No Content",
       "304 Not Modified"
     ],
     "answer": 3,
-    "explanation": "304 permite reutilizar una copia cacheada sin transferir el contenido completo. Se combina con políticas de caché correctas."
+    "explanation": "304 lets the client reuse a cached copy without transferring the full response body. It works together with appropriate caching policies. The server compares the supplied validator with the current version. If they match, 304 tells the client to reuse its cached representation instead of downloading the full body again."
   },
   {
     "id": "sec-authn-authz",
     "topic": "security",
-    "question": "Un token es válido, pero la persona no pertenece al proyecto solicitado. ¿Qué comprobación está faltando?",
+    "question": "A token is valid, but the user is not a member of the requested project. Which check is missing?",
     "options": [
-      "Autorización sobre el recurso",
-      "Hash de contraseña",
-      "Validación de sintaxis del JWT",
-      "Autenticación"
+      "Authorization on the specific resource",
+      "Verification of the token signature",
+      "Authentication of the account with MFA",
+      "Checking that the token has not expired"
     ],
     "answer": 0,
-    "explanation": "Autenticarse verifica la identidad; autorizar comprueba si esa identidad puede acceder a ese proyecto concreto."
+    "explanation": "Authentication verifies identity; authorization checks whether that identity can access this particular project. A valid token establishes authenticated identity, not universal permissions. Check project membership, ownership or the applicable policy before permitting the requested operation."
   },
   {
     "id": "sec-bola",
     "topic": "security",
-    "question": "En GET /invoices/:id, ¿qué cambio reduce una vulnerabilidad BOLA/IDOR?",
+    "question": "For GET /invoices/:id, which change reduces a BOLA/IDOR vulnerability?",
     "options": [
-      "Validar solo que exista req.user",
-      "Buscar la factura por id y comprobar ownerId o permiso del usuario",
-      "Ocultar el campo id en el frontend",
-      "Añadir un índice a la tabla"
+      "Require a valid JWT on every route",
+      "Check ownership or permission when looking up the ID",
+      "Use hard-to-guess UUIDs",
+      "Add rate limiting to hinder enumeration"
     ],
     "answer": 1,
-    "explanation": "BOLA aparece cuando una request autenticada puede acceder a objetos ajenos cambiando el identificador. Hay que filtrar o comprobar la autorización por recurso."
+    "explanation": "BOLA occurs when an authenticated request can access another user's objects by changing an identifier. Authorization must be checked or enforced at the resource level. If a query uses only the URL identifier, changing it may expose someone else’s invoice. Include ownerId or check permissions on the backend so a valid user cannot access another user’s objects."
   },
   {
     "id": "sec-rbac-abac",
     "topic": "security",
-    "question": "Un member puede modificar tareas solo si pertenece al proyecto. ¿Qué política expresa mejor esa regla?",
+    "question": "A member may edit issues only in projects they belong to. Which policy best expresses this rule?",
     "options": [
-      "Solo rol member, sin revisar proyecto",
-      "Solo ocultar el botón de editar",
-      "Combinar rol con verificación de pertenencia al recurso",
-      "Aceptar cualquier JWT firmado"
+      "Allow every user with the member role",
+      "Allow access if the frontend shows the edit button",
+      "Combine role with resource membership",
+      "Check only whether the JWT includes a projectId"
     ],
     "answer": 2,
-    "explanation": "El rol da una autorización general; la pertenencia o los atributos del recurso agregan la comprobación específica necesaria."
+    "explanation": "A role provides general authorization, while membership or resource attributes supply the required resource-specific check. RBAC grants broad role-based permissions, while resource attributes or membership restrict those permissions to authorized objects. Neither a signed token nor a hidden button replaces backend authorization."
   },
   {
     "id": "sec-jwt-payload",
     "topic": "security",
-    "question": "¿Cuál afirmación sobre un JWT firmado común es correcta?",
+    "question": "Which statement about a typical signed JWT is correct?",
     "options": [
-      "Todo JWT se puede revocar sin estado adicional",
-      "Un JWT válido concede acceso a todos los recursos",
-      "La firma cifra y oculta el payload",
-      "Se puede leer el payload, pero no modificarlo sin invalidar la firma"
+      "Its signature makes immediate revocation possible",
+      "A signed JWT always encrypts its payload",
+      "Only the issuer can read the claims",
+      "The payload is readable; edits invalidate its signature"
     ],
     "answer": 3,
-    "explanation": "La firma verifica integridad y emisor, no confidencialidad. Se deben comprobar claims, expiración y permisos por recurso."
+    "explanation": "The signature verifies integrity and the issuer, not confidentiality. Claims, expiration, and resource permissions must also be checked. In a typical signed JWT, header and payload are Base64URL-encoded, not encrypted. The signature detects tampering but provides no confidentiality and does not replace expiration, audience or permission checks."
   },
   {
     "id": "sec-jwt-claims",
     "topic": "security",
-    "question": "Además de verificar la firma de un JWT, ¿qué validaciones relevantes debe realizar el backend?",
+    "question": "Besides verifying a JWT signature, which relevant checks must the backend perform?",
     "options": [
-      "Expiración, emisor, audiencia y algoritmo admitido según el contrato",
-      "Que el payload contenga la contraseña del usuario",
-      "Solo longitud del token",
-      "Solo que exista un sub"
+      "Validate expiration, issuer, audience and allowed algorithm",
+      "Check only that the token contains sub",
+      "Accept any algorithm if its signature verifies",
+      "Check only exp because the signature covers other claims"
     ],
     "answer": 0,
-    "explanation": "La firma por sí sola no asegura que el token esté vigente ni destinado al servicio actual; hay que validar los claims pertinentes."
+    "explanation": "A signature alone does not establish that the token is still valid or intended for this service; the relevant claims must also be validated. A mathematically valid signature is insufficient if the token was intended for another API or has expired. Check iss, aud, exp and allowed algorithms according to your issuer and service policy."
   },
   {
     "id": "sec-session-refresh",
     "topic": "security",
-    "question": "¿Cuál es una ventaja frecuente de una sesión de servidor con ID opaco respecto de un JWT stateless?",
+    "question": "What is a common advantage of a server-side session with an opaque ID over a stateless JWT?",
     "options": [
-      "No necesita autenticación",
-      "Es más sencillo revocar la sesión desde el backend",
-      "Las cookies nunca tienen riesgo de CSRF",
-      "No requiere almacenamiento de estado"
+      "It works without cookies or a session identifier",
+      "The backend can revoke a session more easily",
+      "It is immune to CSRF even when cookies are used",
+      "It needs no storage to remember users"
     ],
     "answer": 1,
-    "explanation": "El servidor mantiene el estado de sesión y puede invalidar el identificador. JWT stateless necesita otra estrategia si se busca revocación inmediata."
+    "explanation": "The server keeps session state and can invalidate its identifier. Stateless JWTs require another mechanism for immediate revocation. Because the server stores session state, it can invalidate the identifier without waiting for expiration. A purely stateless JWT needs an additional revocation strategy, and session cookies still require appropriate CSRF defenses."
   },
   {
     "id": "sec-oauth-oidc",
     "topic": "security",
-    "question": "¿Qué agrega OpenID Connect sobre OAuth2 para habilitar un login federado?",
+    "question": "What does OpenID Connect add to OAuth2 to support federated login?",
     "options": [
-      "Un acceso permanente sin expiración",
-      "Un reemplazo para TLS",
-      "Un ID token y un protocolo de identidad",
-      "Una base SQL obligatoria"
+      "A persistent HTTP session managed by the browser",
+      "An access grant that replaces passwords",
+      "An identity protocol with an ID token",
+      "A refresh token that cannot be revoked"
     ],
     "answer": 2,
-    "explanation": "OAuth2 trata autorización delegada; OIDC agrega identidad y un ID token, habitualmente con Authorization Code y PKCE."
+    "explanation": "OAuth2 addresses delegated authorization; OIDC adds identity and an ID token, commonly using Authorization Code with PKCE. OAuth2 delegates resource access; OIDC adds standardized authentication and an ID token. Modern public clients commonly use Authorization Code with PKCE, which helps protect the authorization-code exchange."
   },
   {
     "id": "sec-xss-cookie",
     "topic": "security",
-    "question": "¿Qué protege una cookie HttpOnly y qué NO garantiza?",
+    "question": "What does an HttpOnly cookie protect, and what does it NOT guarantee?",
     "options": [
-      "Cifra el contenido para el servidor",
-      "Evita que el navegador adjunte cookies en requests",
-      "Impide todos los ataques XSS y CSRF",
-      "Evita que JavaScript lea el valor de la cookie, pero un XSS aún puede hacer requests autenticadas"
+      "It stops all requests made by third-party scripts",
+      "It lets only same-origin scripts read the cookie",
+      "It prevents XSS, but needs separate CSRF protection",
+      "JS cannot read it, but XSS can still send requests"
     ],
     "answer": 3,
-    "explanation": "HttpOnly dificulta robar la cookie mediante JavaScript, pero no impide que código malicioso ejecutado en la página invoque endpoints con esa cookie."
+    "explanation": "HttpOnly makes stealing a cookie through JavaScript harder, but it does not stop malicious code running on the page from calling endpoints with that cookie. HttpOnly reduces cookie theft via document.cookie, but injected scripts may still act from the origin while the user is logged in. Secure and SameSite help, but XSS prevention and CSRF defenses remain relevant."
   },
   {
     "id": "sec-password-hashing",
     "topic": "security",
-    "question": "¿Qué algoritmo es apropiado para almacenar contraseñas?",
+    "question": "Which algorithm is appropriate for storing passwords?",
     "options": [
-      "Argon2id con parámetros adecuados",
-      "Base64 reversible",
-      "SHA-256 directo sin sal",
-      "MD5 simple"
+      "Argon2id with a salt and tuned work factor",
+      "PBKDF2 with only one iteration",
+      "SHA-256 with one fixed global salt and manual repeated hashing",
+      "bcrypt with a very low cost factor"
     ],
     "answer": 0,
-    "explanation": "Argon2id es un algoritmo lento diseñado para contraseñas. Un hash rápido o codificación reversible no proporciona la protección requerida."
+    "explanation": "Argon2id is a deliberately slow password-hashing algorithm. A fast hash or reversible encoding does not provide the necessary protection. The goal is not a fast hash but to make offline password guessing expensive after a database leak. Argon2id provides tunable memory-hard protection; properly configured bcrypt or scrypt are alternatives."
   },
   {
     "id": "sec-sql-injection",
     "topic": "security",
-    "question": "¿Cuál alternativa evita interpolar directamente una entrada externa en el SQL?",
+    "question": "Which option avoids directly interpolating external input into SQL?",
     "options": [
       "`SELECT ... WHERE email = ${input}`",
       "`db.query(\"SELECT ... WHERE email = $1\", [input])`",
-      "Eliminar las comillas del input y concatenarlo",
-      "Confiar en los tipos TypeScript de req.body"
+      "`escape(input)` and concatenate the SQL",
+      "`String(input)` then append it to the SQL string"
     ],
     "answer": 1,
-    "explanation": "Las consultas parametrizadas separan la estructura SQL de los valores aportados por el usuario, mitigando la inyección."
+    "explanation": "Parameterized queries separate SQL structure from user-provided values, mitigating injection attacks. Parameters separate SQL structure from user-supplied values. Manual escaping or trusting TypeScript types is easy to get wrong and does not provide the same robust separation."
   },
   {
     "id": "arch-soc",
     "topic": "architecture",
-    "question": "Si cambia una regla de negocio usada desde HTTP y desde un worker, ¿dónde conviene implementarla?",
+    "question": "If a business rule used by both HTTP and a worker changes, where should you implement it?",
     "options": [
-      "Dentro de un middleware exclusivo de HTTP",
-      "Duplicarla en ambos controllers",
-      "En el caso de uso compartido",
-      "Solo en el DTO de respuesta"
+      "Inside each controller to respect the transport",
+      "In HTTP middleware and in the worker handler",
+      "In a use case shared by both callers",
+      "In each adapter’s response mapper"
     ],
     "answer": 2,
-    "explanation": "Separar responsabilidades permite reutilizar una misma regla de negocio desde transportes distintos y probarla de forma aislada."
+    "explanation": "Separating concerns allows different transports to reuse the same business rule and enables isolated testing. Putting the rule in a shared use case prevents HTTP and workers from behaving differently. Controllers adapt protocols and repositories persist data, but domain decisions should be testable without either transport."
   },
   {
     "id": "arch-thin-controller",
     "topic": "architecture",
-    "question": "¿Cuál es la responsabilidad preferida de un controller delgado?",
+    "question": "What is the preferred responsibility of a thin controller?",
     "options": [
-      "Mantener transacciones y reglas del dominio mezcladas",
-      "Implementar las entidades de base de datos",
-      "Escribir directamente consultas complejas y validar todas las invariantes",
-      "Traducir HTTP, invocar el caso de uso y construir la respuesta"
+      "Coordinate SQL, domain rules and transactions directly",
+      "Build DTOs and own business rules",
+      "Validate every invariant inside the handler",
+      "Adapt HTTP, call a use case and respond"
     ],
     "answer": 3,
-    "explanation": "El controller adapta request/response. Las reglas y orquestación del negocio deben vivir en el service o caso de uso."
+    "explanation": "A controller adapts the request and response. Business rules and orchestration belong in a service or use case. Its job is to adapt inputs, delegate, and serialize outputs. Putting business rules or SQL in it duplicates decisions and makes testing harder when other entry points appear."
   },
   {
     "id": "arch-dto-mapper",
     "topic": "architecture",
-    "question": "¿Por qué construir un ResponseDTO explícito en lugar de serializar directamente una entidad de persistencia?",
+    "question": "Why build an explicit ResponseDTO instead of directly serializing a persistence entity?",
     "options": [
-      "Para controlar los campos públicos y evitar filtrar atributos internos",
-      "Para ejecutar validaciones SQL",
-      "Porque siempre mejora el rendimiento de la base de datos",
-      "Porque TypeScript borra campos extra en ejecución"
+      "Explicitly choose which fields the client receives",
+      "Automatically convert SQL queries to indexes",
+      "Ensure serialization includes the full ORM model",
+      "Apply Omit at runtime when serializing an entity"
     ],
     "answer": 0,
-    "explanation": "Un mapper crea el objeto público con solo los atributos permitidos. Omit o una interfaz no borran propiedades al serializar en runtime."
+    "explanation": "A mapper creates a public object containing only allowed attributes. Omit and interfaces do not remove properties during runtime serialization. TypeScript types do not clean actual objects. An explicit mapper selects id, title and status, preventing fields such as passwordHash or internal flags from leaking through res.json."
   },
   {
     "id": "arch-validate-business",
     "topic": "architecture",
-    "question": "¿Cuál de estas reglas pertenece al dominio y no solo a la validación del formato del body?",
+    "question": "Which rule belongs in the domain rather than only in request-body format validation?",
     "options": [
-      "assigneeId es opcional",
-      "Un proyecto archivado no acepta tareas nuevas",
-      "title debe ser string",
-      "title tiene máximo 100 caracteres"
+      "assigneeId must be a valid UUID",
+      "Archived projects cannot receive new tasks",
+      "title must be nonempty text",
+      "dueDate must use a valid date format"
     ],
     "answer": 1,
-    "explanation": "La regla depende del estado y del significado del proyecto, no solo de la forma de los datos recibidos."
+    "explanation": "This rule depends on the project's state and business meaning, not merely the shape of the incoming data. Schema validation can check input length, format and types without querying a database. The archived-project rule requires knowing project state and must be enforced regardless of how the operation was initiated."
   },
   {
     "id": "arch-service-usecase",
     "topic": "architecture",
-    "question": "El flujo CreateIssue debe comprobar permisos y guardar una tarea. ¿Qué componente debería orquestarlo?",
+    "question": "The CreateIssue flow must check permissions and save an issue. Which component should orchestrate it?",
     "options": [
-      "Un middleware de registro de requests",
-      "El serializador de respuestas",
-      "Un use case o service",
-      "El DTO de entrada"
+      "A middleware that logs request events",
+      "The controller directly using the database",
+      "A use case or service",
+      "A mapper converting DTOs"
     ],
     "answer": 2,
-    "explanation": "El caso de uso concentra decisiones y coordinación de dependencias sin acoplarse al protocolo HTTP ni a una base específica."
+    "explanation": "A use case centralizes decisions and dependency coordination without coupling them to HTTP or a specific database. CreateIssue checks permissions and invariants and coordinates persistence. Unlike a controller, it need not know the eventual HTTP status: it may raise a DomainError that the boundary translates later."
   },
   {
     "id": "arch-repository-purpose",
     "topic": "architecture",
-    "question": "¿Qué describe mejor el propósito de un Repository Pattern?",
+    "question": "Which statement best describes the purpose of the Repository Pattern?",
     "options": [
-      "Reemplazar siempre al ORM incluso en CRUD trivial",
-      "Definir las rutas HTTP del sistema",
-      "Convertir cualquier SQL en MongoDB sin cambios",
-      "Esconder el acceso a datos detrás de un contrato útil para el negocio"
+      "Duplicate every ORM method for consistency",
+      "Guarantee SQL-to-NoSQL swaps without migration",
+      "Replace transactions with in-memory objects",
+      "Expose persistence through a domain-oriented contract"
     ],
     "answer": 3,
-    "explanation": "El repositorio abstrae operaciones relevantes de persistencia. No garantiza migraciones de motor sin costo y no siempre justifica otra capa."
+    "explanation": "A repository abstracts meaningful persistence operations. It does not guarantee painless database migrations and is not always worth an additional layer. A useful repository exposes business-relevant operations such as findById and save and makes fake-based testing possible. It does not require wrapping every query or make database changes free."
   },
   {
     "id": "arch-di-dip",
     "topic": "architecture",
-    "question": "¿Cuál es la diferencia entre Dependency Injection (DI) y Dependency Inversion Principle (DIP)?",
+    "question": "What is the difference between Dependency Injection (DI) and the Dependency Inversion Principle (DIP)?",
     "options": [
-      "DIP dice depender de abstracciones; DI entrega las dependencias desde afuera",
-      "DI obliga a usar NestJS",
-      "DI es un principio; DIP es una librería",
-      "Son sinónimos de singleton"
+      "DIP guides dependency direction; DI supplies implementations",
+      "DI defines dependencies; DIP requires decorators",
+      "DIP mandates containers; DI requires runtime interfaces",
+      "DI isolates domain data; DIP only simplifies testing"
     ],
     "answer": 0,
-    "explanation": "DIP define la dirección de dependencias; DI es una técnica para proporcionar implementaciones concretas sin construirlas dentro del consumidor.",
+    "explanation": "DIP defines the direction of dependencies; DI is a technique for supplying concrete implementations instead of constructing them inside the consumer. DIP is a design decision: business logic depends on contracts rather than PostgresRepository. DI is the mechanism: provide an implementation when constructing a service, with or without a framework container.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -811,93 +778,93 @@
   {
     "id": "arch-error-mapping",
     "topic": "architecture",
-    "question": "closeProject lanza ProjectArchivedError. ¿Cómo debería transformarse a HTTP 409?",
+    "question": "closeProject throws ProjectArchivedError. How should it be translated into HTTP 409?",
     "options": [
-      "El dominio ejecuta res.status(409)",
-      "Un mapper/filtro de errores en la frontera HTTP traduce el error",
-      "El repository retorna siempre un string \"409\"",
-      "Se convierte todo error en 200 con un mensaje"
+      "Catch the error in the repository and emit an HttpException",
+      "Translate it at the HTTP boundary with a mapper/filter",
+      "Make ProjectArchivedError extend Response",
+      "Serialize the domain error with HTTP 200"
     ],
     "answer": 1,
-    "explanation": "El dominio comunica un fallo de negocio; el adaptador HTTP decide su código y estructura sin introducir conceptos HTTP en el core."
+    "explanation": "The domain reports a business failure; the HTTP adapter decides the status code and response shape without introducing HTTP concepts into the core. ProjectArchivedError means project state prevents the action. The HTTP layer maps it to 409 Conflict; a CLI or queue consumer may represent the very same domain error differently."
   },
   {
     "id": "arch-observability",
     "topic": "architecture",
-    "question": "La latencia p95 subió a 2 s. ¿Qué dato ayuda a saber si el cuello de botella está en PostgreSQL?",
+    "question": "p95 latency has risen to 2 seconds. Which information helps determine whether PostgreSQL is the bottleneck?",
     "options": [
-      "El color del dashboard",
-      "Solo el nombre del endpoint",
-      "Trazas distribuidas correlacionadas con logs y métricas",
-      "La cantidad de líneas de código del controller"
+      "Count log records without measuring duration",
+      "Inspect only the overall endpoint duration",
+      "Inspect traces correlated with metrics and logs",
+      "Compare only frontend CPU usage"
     ],
     "answer": 2,
-    "explanation": "Las trazas revelan cuánto dura cada etapa; las métricas muestran el síntoma y los logs contextualizan requests sin exponer secretos."
+    "explanation": "Traces show how long each step takes; metrics reveal the symptom, and logs add request context without exposing secrets. p95 is roughly the latency at or below which 95% of requests finish. A trace breaks the request into spans and might show 1.8 s in SQL; logs and metrics add context and trends."
   },
   {
     "id": "arch-hexagonal",
     "topic": "architecture",
-    "question": "En arquitectura hexagonal, ¿qué rol suele tener PaymentGateway?",
+    "question": "In hexagonal architecture, what role does PaymentGateway usually play?",
     "options": [
-      "Un endpoint HTTP que expone el proveedor",
-      "Una implementación concreta del SDK de Stripe",
-      "Una entidad de la base de datos de pedidos",
-      "Un puerto (contrato) implementado por adaptadores externos"
+      "The external provider’s concrete HTTP implementation",
+      "The class instantiating the payment SDK",
+      "The ORM entity handling transactions",
+      "A domain port implemented by an adapter"
     ],
     "answer": 3,
-    "explanation": "El núcleo depende de un port que define lo que necesita; un adapter implementa el contrato contra un proveedor concreto."
+    "explanation": "The core depends on a port that defines what it needs; an adapter implements that contract for a specific provider. The port defines the operation the use case needs, such as charge(amount); StripeAdapter implements it against the vendor. This keeps vendor SDKs out of the domain and allows tests to use a fake."
   },
   {
     "id": "db-sql-nosql",
     "topic": "databases",
-    "question": "Diseñas pedidos con pagos, inventario y restricciones de consistencia entre varias entidades. ¿Cuál es un punto de partida razonable?",
+    "question": "You are designing orders with payments, inventory, and consistency constraints across multiple entities. What is a reasonable starting point?",
     "options": [
-      "PostgreSQL por relaciones y transacciones",
-      "MongoDB porque ningún dato tiene relaciones",
-      "Redis como única base para todas las operaciones críticas",
-      "Un archivo JSON sin restricciones"
+      "PostgreSQL for referential integrity and transactions",
+      "MongoDB to nest all payments inside user documents",
+      "Redis to process orders without durable transactions",
+      "MongoDB to remove all consistency concerns"
     ],
     "answer": 0,
-    "explanation": "La guía propone PostgreSQL como punto de partida para relaciones y consistencia. La decisión final depende también del acceso y las necesidades del sistema."
+    "explanation": "The guide suggests PostgreSQL as a starting point for relationships and consistency. The final choice also depends on access patterns and system requirements. When several entities need integrity and atomic changes, PostgreSQL foreign keys, constraints and transactions are valuable. MongoDB can fit different access patterns; this is not an absolute ranking."
   },
   {
     "id": "db-left-join",
     "topic": "databases",
-    "question": "Quieres listar usuarios aunque no tengan pedidos y mostrar un contador en cero. ¿Qué consulta encaja mejor?",
+    "question": "You want to list users even if they have no orders and show a count of zero. Which query fits best?",
     "options": [
       "INNER JOIN + COUNT(o.id)",
       "LEFT JOIN + COUNT(o.id)",
       "LEFT JOIN + HAVING COUNT(o.id) > 0",
-      "INNER JOIN + WHERE o.id IS NOT NULL"
+      "LEFT JOIN + WHERE o.id IS NOT NULL"
     ],
     "answer": 1,
-    "explanation": "LEFT JOIN conserva usuarios sin coincidencias y COUNT(o.id) cuenta cero para ellos. Los otros enfoques excluyen a quienes no tienen pedidos."
+    "explanation": "LEFT JOIN keeps users with no matching orders, and COUNT(o.id) returns zero for them. The other approaches exclude users with no orders. LEFT JOIN retains the user even if no order row matches; COUNT(o.id) excludes NULL values from the right side. Filtering with o.id IS NOT NULL afterward removes the users you wanted to keep."
   },
   {
     "id": "db-where-having",
     "topic": "databases",
-    "question": "¿Cuál es la diferencia principal entre WHERE y HAVING en SQL?",
+    "question": "What is the main difference between WHERE and HAVING in SQL?",
     "options": [
-      "Ambos hacen exactamente lo mismo en cualquier consulta",
-      "HAVING sirve solo para ordenar",
-      "WHERE filtra filas antes de agrupar; HAVING filtra los grupos agregados",
-      "HAVING filtra filas antes de agrupar; WHERE filtra grupos"
+      "WHERE and HAVING both filter only before grouping",
+      "HAVING replaces ORDER BY when using GROUP BY",
+      "WHERE filters rows; HAVING filters aggregated groups",
+      "WHERE filters groups; HAVING filters original rows"
     ],
     "answer": 2,
-    "explanation": "WHERE limita las filas que se agregan; HAVING aplica condiciones sobre resultados de agrupación como COUNT o SUM."
+    "explanation": "WHERE limits the rows to be aggregated; HAVING applies conditions to grouped results such as COUNT or SUM. WHERE filters before COUNT, SUM or other aggregates are computed. HAVING filters their grouped results afterward, such as HAVING COUNT(*) > 5; the two clauses are not interchangeable."
   },
   {
     "id": "db-composite-index",
     "topic": "databases",
-    "question": "Con un índice compuesto (user_id, created_at), ¿qué consulta aprovecha mejor su orden de columnas?",
+    "question": "Given a composite index on (user_id, created_at), which query best takes advantage of the index's column order?",
     "options": [
-      "WHERE total > 100 sin otras condiciones",
-      "WHERE status = \"paid\" sin otras condiciones",
-      "WHERE created_at > fecha sin filtrar user_id",
+      "WHERE total > 100 ORDER BY user_id",
+      "WHERE status = \"paid\" ORDER BY created_at",
+      "WHERE created_at > date ORDER BY total",
       "WHERE user_id = 42 ORDER BY created_at DESC"
     ],
     "answer": 3,
-    "explanation": "La primera columna user_id es el prefijo del índice y created_at permite ordenar dentro de ese usuario. Para confirmar se revisa EXPLAIN ANALYZE.",
+    "explanation": "The first column, user_id, is the index prefix, and created_at supports ordering within that user's rows. Check EXPLAIN ANALYZE to confirm. Composite B-tree indexes typically benefit leftmost-prefix searches: filtering by user_id leaves that user’s rows ordered by created_at. Searching only by created_at cannot exploit it equally; verify using EXPLAIN ANALYZE.",
     "code": {
       "language": "sql",
       "lines": [
@@ -908,306 +875,306 @@
   {
     "id": "db-index-cost",
     "topic": "databases",
-    "question": "¿Cuál es un trade-off de agregar índices a una tabla?",
+    "question": "What is a trade-off of adding indexes to a table?",
     "options": [
-      "Puede acelerar lecturas, pero añade costo a escrituras y almacenamiento",
-      "Hace innecesario revisar el plan de ejecución",
-      "Siempre reduce el tiempo de INSERT",
-      "No ocupa espacio en disco"
+      "It speeds up some reads but costs write time and storage",
+      "It speeds up SELECT with almost no INSERT overhead",
+      "It reduces disk usage at the cost of additional CPU",
+      "It speeds up writes but requires sorting reads"
     ],
     "answer": 0,
-    "explanation": "Mantener índices requiere almacenamiento y actualización en INSERT/UPDATE/DELETE; solo conviene crearlos de acuerdo con consultas reales."
+    "explanation": "Maintaining indexes requires storage and updates during INSERT/UPDATE/DELETE, so they should be created based on actual query needs. Each INSERT and some UPDATE operations also maintain affected indexes. Even if an index speeds suitable queries, it consumes space and can slow writes; choose indexes based on real filters, joins and ordering."
   },
   {
     "id": "db-transaction-outbox",
     "topic": "databases",
-    "question": "Necesitas guardar una orden y publicar un evento en un broker. ¿Qué patrón ayuda a no perder el evento si la transacción de BD confirma y el broker falla?",
+    "question": "You need to save an order and publish an event to a broker. Which pattern helps avoid losing the event if the database commits but the broker fails?",
     "options": [
-      "Singleton",
-      "Outbox transaccional",
-      "Observer solo en memoria",
-      "Una segunda transacción SQL en el broker"
+      "Publish to the broker before COMMIT without retries",
+      "Save an outbox event in the same database transaction",
+      "Store the event in process memory after COMMIT",
+      "Start a SQL transaction in the broker after COMMIT"
     ],
     "answer": 1,
-    "explanation": "Outbox guarda la orden y el evento pendiente en la misma transacción local. Otro proceso publica el evento posteriormente con reintentos idempotentes."
+    "explanation": "The outbox pattern stores the order and pending event in the same local transaction. Another process publishes the event later, using idempotent retries. A database transaction cannot atomically commit a remote broker. The outbox stores the pending event alongside the order in one local transaction; a publisher later retries, and consumers must tolerate duplicates."
   },
   {
     "id": "db-atomic-stock",
     "topic": "databases",
-    "question": "Dos compradores compiten por el último producto. ¿Cuál query evita descontar stock cuando ya es cero?",
+    "question": "Two buyers compete for the last item in stock. Which query prevents stock from being decremented when it is already zero?",
     "options": [
-      "DELETE FROM products WHERE stock = 0",
-      "SELECT stock y luego UPDATE sin condiciones",
+      "SELECT stock, then UPDATE if the in-memory value was positive",
+      "UPDATE products SET stock = stock - 1 WHERE id = $1",
       "UPDATE products SET stock = stock - 1 WHERE id = $1 AND stock > 0",
-      "UPDATE products SET stock = stock - 1 WHERE id = $1"
+      "UPDATE products SET stock = GREATEST(stock - 1, 0) WHERE id = $1"
     ],
     "answer": 2,
-    "explanation": "La condición se evalúa atómicamente con el UPDATE: solo un comprador afectará la fila cuando el stock parte en 1; el otro obtendrá 0 filas afectadas."
+    "explanation": "The condition is evaluated atomically with the UPDATE. When stock starts at 1, only one buyer updates the row; the other gets zero affected rows. UPDATE ... WHERE stock > 0 checks the condition and decrements atomically. With one unit available, one purchase updates a row and the other updates zero. GREATEST prevents negative stock but does not prevent selling nonexistent inventory."
   },
   {
     "id": "db-optimistic-lock",
     "topic": "databases",
-    "question": "Para evitar sobrescribir cambios concurrentes de una tarea con version = 4, ¿qué condición representa locking optimista?",
+    "question": "To avoid overwriting concurrent changes to an issue with version = 4, which condition represents optimistic locking?",
     "options": [
-      "SELECT * sin filtros",
-      "UPDATE sin revisar filas afectadas",
-      "WHERE id = $1",
-      "WHERE id = $1 AND version = 4, incrementando version al actualizar"
+      "Check version with SELECT but update without a condition",
+      "Increment version without checking affected rows",
+      "Use WHERE id = $1 and keep version unchanged",
+      "WHERE id = $1 AND version = 4; increment version in that UPDATE"
     ],
     "answer": 3,
-    "explanation": "Se modifica solo la versión esperada; si alguien escribió antes, el UPDATE afecta cero filas y se puede responder un conflicto."
+    "explanation": "Only the expected version is updated. If someone else wrote first, the UPDATE affects zero rows and a conflict can be returned. The client saw version=4 and updates only if the stored version is still 4. If another request changed it, the update affects zero rows, exposing a conflict rather than silently overwriting fresh changes."
   },
   {
     "id": "db-n-plus-one",
     "topic": "databases",
-    "question": "Una pantalla carga 100 usuarios y luego hace una consulta por cada uno para traer pedidos. ¿Qué problema tienes?",
+    "question": "A screen loads 100 users and then executes one query per user to fetch orders. What problem is this?",
     "options": [
-      "N+1 queries; conviene cargar relaciones en lote",
-      "Un fallo de DNS",
-      "Un deadlock inevitable",
-      "Una transacción serializable"
+      "N+1; batch the order reads",
+      "N+1; fix it only by increasing the DB pool",
+      "N+1; fix it with serializable transactions",
+      "N+1; parallelize all 100 individual queries"
     ],
     "answer": 0,
-    "explanation": "La carga ejecuta 1 + 100 consultas. JOIN, IN o eager loading permiten recuperar los datos en una o pocas consultas, según el volumen."
+    "explanation": "The page executes 1 + 100 queries. JOIN, IN, or eager loading can retrieve the data in one or a few queries, depending on volume. One initial read followed by 100 similar queries results in 101 database round trips. Eager loading, a JOIN, or WHERE user_id IN (...) can fetch orders in batches; also consider rows duplicated by a large JOIN."
   },
   {
     "id": "db-redis-cache-aside",
     "topic": "databases",
-    "question": "Usas cache-aside para productos en Redis. ¿Qué haces tras modificar el precio en PostgreSQL?",
+    "question": "You use cache-aside for products in Redis. What should you do after changing a price in PostgreSQL?",
     "options": [
-      "Mantener la clave antigua indefinidamente",
-      "Invalidar o actualizar la entrada correspondiente",
-      "Eliminar permanentemente el TTL de todos los productos",
-      "Borrar todas las tablas SQL"
+      "Increase TTL so the product expires with others",
+      "Invalidate or refresh that entry when the price changes",
+      "Wait for Redis to detect SQL changes",
+      "Increase cache capacity to prevent stale data"
     ],
     "answer": 1,
-    "explanation": "Cache-aside necesita una estrategia de invalidación para reducir respuestas obsoletas. En checkout se debe comprobar el precio real."
+    "explanation": "Cache-aside requires an invalidation strategy to reduce stale responses. The actual price should be verified at checkout. Redis does not automatically notice a SQL update. Invalidating or refreshing the key prevents the old price from lingering indefinitely; final charges must use the authoritative source."
   },
   {
     "id": "db-cache-stampede",
     "topic": "databases",
-    "question": "Una clave popular expira y cientos de requests recalculan el mismo dato simultáneamente. ¿Cómo se llama y cómo mitigarlo?",
+    "question": "A popular cache key expires and hundreds of requests recompute the same data simultaneously. What is this called, and how can you mitigate it?",
     "options": [
-      "SQL injection; usar un JWT",
-      "N+1; usar LEFT JOIN",
-      "Cache stampede; un lock de recálculo o TTL escalonados",
-      "Deadlock; aumentar el pool sin límite"
+      "Hot-key eviction; perform uncoordinated cache warming",
+      "Cache penetration; increase the DB pool",
+      "Cache stampede; coordinate recomputation or stagger TTLs",
+      "Cache miss; disable expiration for every key"
     ],
     "answer": 2,
-    "explanation": "El cache stampede provoca un pico de cargas en la fuente cuando expira una clave caliente. Bloquear un único recálculo o escalonar expiraciones reduce ese pico."
+    "explanation": "A cache stampede overloads the underlying data source when a hot key expires. Locking recomputation or staggering expiration times reduces the spike. When a highly requested key expires, simultaneous misses can overload the database. A recomputation lock lets one worker refresh it, while varying TTLs helps prevent synchronized expirations."
   },
   {
     "id": "test-unit-integration-e2e",
     "topic": "testing",
-    "question": "¿Cuál ejemplo es una prueba de integración (en lugar de unit o E2E)?",
+    "question": "Which example is an integration test rather than a unit or E2E test?",
     "options": [
-      "Abrir un navegador, iniciar sesión y pulsar un botón",
-      "Verificar un spy sin ejecutar servicios reales",
-      "Llamar una función pura con dos números",
-      "Probar HTTP + persistencia real en una base de prueba"
+      "Test a route while mocking the DB and all its dependencies",
+      "Test each validation function in isolation",
+      "Walk through the UI using a browser and account",
+      "Exercise the HTTP route against a test database"
     ],
     "answer": 3,
-    "explanation": "La integración verifica la interacción entre componentes reales, como una ruta API y la DB. E2E atraviesa el flujo completo de usuario."
+    "explanation": "Integration tests verify interactions between real components, such as an API route and a database. E2E tests exercise the full user journey. An integration test checks real components working together, such as a route and test database. A unit test isolates one component; E2E generally exercises a complete user-facing journey."
   },
   {
     "id": "test-aaa",
     "topic": "testing",
-    "question": "En Arrange, Act, Assert, ¿qué representa Assert?",
+    "question": "In Arrange, Act, Assert, what does Assert represent?",
     "options": [
-      "Verificar el resultado esperado",
-      "Eliminar el código de producción",
-      "Preparar datos y dependencias",
-      "Ejecutar la función bajo prueba"
+      "Verify that the observed result matches expectations",
+      "Build dependencies and input data",
+      "Execute the use case under test",
+      "Restore database state after the test"
     ],
     "answer": 0,
-    "explanation": "Arrange prepara el contexto; Act ejecuta la acción; Assert comprueba que el resultado o efecto cumple el requisito."
+    "explanation": "Arrange sets up the context; Act performs the action; Assert checks that the result or effect meets the requirement. Arrange sets up input and dependencies; Act executes the target behavior; Assert checks its outcome or effects. This makes failures easier to diagnose and avoids tests that run code without verifying anything."
   },
   {
     "id": "test-double-fake",
     "topic": "testing",
-    "question": "Una clase de repositorio en memoria implementa el contrato sin conectar a PostgreSQL. ¿Qué tipo de doble de prueba es?",
+    "question": "An in-memory repository class implements the contract without connecting to PostgreSQL. What type of test double is it?",
     "options": [
-      "Mock exclusivamente",
+      "Mock configured to expect specific calls",
       "Fake",
-      "Spy",
-      "Stub únicamente"
+      "Spy that records actual calls",
+      "Stub that always returns a fixed response"
     ],
     "answer": 1,
-    "explanation": "Un fake es una implementación funcional simplificada, como un repositorio en memoria. Los stubs devuelven datos prefijados y los mocks o spies verifican interacciones."
+    "explanation": "A fake is a simplified working implementation, such as an in-memory repository. Stubs return predetermined data, while mocks or spies verify interactions. A fake is a simplified working implementation, such as an in-memory Map implementing save and findById. A stub returns canned results, a spy records calls, and a mock verifies expected interactions."
   },
   {
     "id": "test-avoid-overmocking",
     "topic": "testing",
-    "question": "¿Cuál es el riesgo de mockear cada método interno de un service?",
+    "question": "What is the risk of mocking every internal method of a service?",
     "options": [
-      "Los tests dejarán de ser deterministas por definición",
-      "La suite siempre será más lenta",
-      "Los tests se acoplan a la implementación y fallan ante refactors válidos",
-      "Nunca podrás validar los argumentos de una llamada"
+      "Mocks execute every internal helper’s real behavior",
+      "Mocks automatically validate external integration contracts",
+      "Tests become coupled to internals and fail after refactors",
+      "Mocks remove the need for negative service tests"
     ],
     "answer": 2,
-    "explanation": "Si el test comprueba llamadas internas en lugar de comportamiento, cambios de estructura pueden romperlo aunque la funcionalidad sea correcta."
+    "explanation": "When tests assert internal calls instead of behavior, structural changes can break them even when the functionality remains correct. If a test asserts five specific helper calls, a behavior-preserving refactor can break it. Prefer checking outputs, persisted changes and meaningful failures; mock external boundaries where appropriate."
   },
   {
     "id": "test-create-issue-negative",
     "topic": "testing",
-    "question": "¿Qué prueba negativa es especialmente importante para CreateIssue?",
+    "question": "Which negative test is particularly important for CreateIssue?",
     "options": [
-      "Que el código tenga 100 % de cobertura por líneas",
-      "Que el nombre del service sea corto",
-      "Que el framework compile con cualquier DTO",
-      "Que un usuario sin permisos no cree la tarea ni provoque escrituras"
+      "An empty title reaches the output mapper",
+      "The returned ID has the expected shape",
+      "Logs are written even if email delivery fails",
+      "Reject unauthorized creation without writing data"
     ],
     "answer": 3,
-    "explanation": "Las pruebas negativas deben cubrir invariantes y permisos; además de esperar un error, conviene asegurar que no se persistió nada."
+    "explanation": "Negative tests should cover invariants and permissions. Beyond expecting an error, verify that nothing was persisted. A strong negative test checks both the expected error and that repo.save was never called. Detecting rejection alone is not enough if the operation already wrote data before failing."
   },
   {
     "id": "test-async-rejects",
     "topic": "testing",
-    "question": "Quieres comprobar que una Promise de createIssue rechaza al fallar la DB. ¿Qué enfoque de test es apropiado?",
+    "question": "You want to verify that a Promise returned by createIssue rejects when the database fails. Which testing approach is appropriate?",
     "options": [
-      "Usar await expect(createIssue()).rejects...",
-      "Encerrar createIssue() sin await en try/catch síncrono",
-      "Usar solo setTimeout de 5 segundos",
-      "No esperar la promesa y terminar el test"
+      "await expect(createIssue()).rejects.toThrow(...)",
+      "expect(() => createIssue()).toThrow(...)",
+      "expect(createIssue()).toThrow(...) without await",
+      "expect(createIssue()).resolves.toThrow(...)"
     ],
     "answer": 0,
-    "explanation": "El test necesita esperar el rechazo para poder comprobarlo. Los matchers rejects o un try/catch con await capturan correctamente el resultado asíncrono."
+    "explanation": "The test must await the rejection to assert on it. A rejects matcher or try/catch with await handles the asynchronous outcome correctly. The failure occurs when the Promise rejects, not necessarily during the synchronous call to createIssue(). In Jest or Vitest, await with rejects observes that outcome; try/catch around await also works."
   },
   {
     "id": "test-tdd-cycle",
     "topic": "testing",
-    "question": "¿Qué orden representa TDD?",
+    "question": "Which sequence represents TDD?",
     "options": [
-      "Implementar, refactorizar y finalmente añadir cobertura",
-      "Escribir un test que falla, implementar lo mínimo, refactorizar",
-      "Diseñar el esquema, generar mocks y desplegar sin tests",
-      "Implementar todos los casos antes de ejecutar la primera prueba"
+      "Write code, test it, then refactor",
+      "Failing test, minimal implementation, refactor",
+      "Write tests, deploy, and only then refactor",
+      "Refactor first, test later, then change requirements"
     ],
     "answer": 1,
-    "explanation": "El ciclo red-green-refactor empieza con una prueba que falla, sigue con código mínimo para pasarla y después mejora la implementación."
+    "explanation": "The red-green-refactor cycle starts with a failing test, continues with the minimum code to pass it, and then improves the implementation. Red: write a test that fails for the missing behavior. Green: add the minimum implementation to pass. Refactor: improve design while tests stay green. Repeat this in small increments."
   },
   {
     "id": "test-ai-assertions",
     "topic": "testing",
-    "question": "Una IA genera tests que pasan para un endpoint nuevo. ¿Qué sigue siendo responsabilidad del desarrollador?",
+    "question": "An AI generates passing tests for a new endpoint. What remains the developer's responsibility?",
     "options": [
-      "Eliminar todos los tests manuales",
-      "Aceptar los tests sin leerlos",
-      "Revisar que las aserciones reflejen los requisitos y cubran casos negativos",
-      "Confiar en cobertura alta como prueba de corrección"
+      "Approve tests when coverage exceeds 90%, without reviewing scenarios",
+      "Run tests once and skip reviewing the diff",
+      "Check assertions against requirements and relevant failures",
+      "Trust assertions that agree with the implementation"
     ],
     "answer": 2,
-    "explanation": "Una IA puede crear tests que confirman el comportamiento incorrecto de la implementación. Hay que contrastarlos con requisitos y riesgos reales."
+    "explanation": "AI can generate tests that confirm incorrect implementation behavior. They must be checked against the real requirements and risks. A passing test shows consistency with its own assertions, not necessarily with actual requirements. Review unauthorized cases, invalid inputs, side effects and assertions that could be approving a bug."
   },
   {
     "id": "interview-star",
     "topic": "interviews",
-    "question": "En una respuesta conductual usando STAR, ¿qué describe mejor la A?",
+    "question": "In a behavioral interview answer using STAR, what does the A best describe?",
     "options": [
-      "Un análisis de todas las tecnologías existentes",
-      "Una aspiración salarial",
-      "Antecedentes de la empresa en general",
-      "La acción concreta que tú realizaste y por qué"
+      "Analysis: how you compared the possible solutions",
+      "Aspiration: what you wanted to achieve in the role",
+      "Background: what happened before the project",
+      "Action: what you personally did to solve it"
     ],
     "answer": 3,
-    "explanation": "STAR se estructura en Situación, Tarea, Acción y Resultado. La acción distingue tu contribución de lo realizado por el equipo."
+    "explanation": "STAR stands for Situation, Task, Action, and Result. Action distinguishes your individual contribution from the team's work. S and T establish context; A covers your specific decisions and actions; R explains verifiable outcomes. Separate what you personally did from what the team accomplished."
   },
   {
     "id": "interview-results",
     "topic": "interviews",
-    "question": "Cuentas una migración a la nube en una entrevista. ¿Cuál resultado es más responsable comunicar?",
+    "question": "You describe a cloud migration in an interview. Which result is most responsible to communicate?",
     "options": [
-      "Un efecto comprobable de la migración, delimitando tu contribución",
-      "Una lista de decisiones del equipo atribuidas solo a tu iniciativa",
-      "Una estimación de impacto formulada como resultado confirmado",
-      "Una descripción de herramientas sin explicar consecuencias"
+      "Verifiable impact, clarifying your own contribution",
+      "Initial goal presented as though it had been achieved",
+      "Estimated impact without distinguishing it from observed impact",
+      "Team-wide outcome attributed solely to your leadership"
     ],
     "answer": 0,
-    "explanation": "Conviene mencionar el resultado real y verificable, sin inventar métricas ni adjudicarse el trabajo ajeno."
+    "explanation": "Mention genuine, verifiable outcomes without inventing metrics or claiming credit for other people's work. A verified stability, cost or time improvement is better than an invented percentage. For team projects, distinguish the decisions you made from the overall result."
   },
   {
     "id": "interview-seniority",
     "topic": "interviews",
-    "question": "¿Cuál señal comunica mejor seniority técnico?",
+    "question": "Which signal best communicates technical seniority?",
     "options": [
-      "Memorizar definiciones sin ejemplos",
-      "Mostrar decisiones, trade-offs, ownership y colaboración respaldados por casos",
-      "Usar la mayor cantidad posible de patrones en todo proyecto",
-      "Evitar mencionar dificultades"
+      "Show knowledge of many libraries in a short time",
+      "Explain decisions, trade-offs, ownership and teamwork",
+      "Choose elaborate architecture even for simple problems",
+      "Focus on years of experience and job titles"
     ],
     "answer": 1,
-    "explanation": "La seniority se refleja en el criterio para decidir, asumir responsabilidad, colaborar y gestionar riesgos, no solo en conocimientos aislados."
+    "explanation": "Seniority shows in judgment, accountability, collaboration, and risk management, not just isolated technical knowledge. Senior judgment shows in why you chose a solution, its trade-offs, and how you handled risks and communication. Memorizing patterns or accumulating years alone does not demonstrate it."
   },
   {
     "id": "interview-unknown-tech",
     "topic": "interviews",
-    "question": "Te preguntan por una herramienta que no usaste en producción. ¿Qué respuesta es mejor?",
+    "question": "You are asked about a tool you have never used in production. Which answer is best?",
     "options": [
-      "Presentar como experiencia laboral cualquier ejemplo que hayas leído",
-      "Responder únicamente con una definición de Wikipedia",
-      "Decir qué conoces, diferenciar práctica de producción y explicar cómo la abordarías",
-      "Evitar nombrar tecnologías que aún estés aprendiendo"
+      "Describe its architecture as if you had operated it",
+      "Rely on documentation without admitting uncertainty",
+      "Distinguish theory, hands-on practice and production work",
+      "Change topics and discuss only a familiar tool"
     ],
     "answer": 2,
-    "explanation": "La credibilidad aumenta si distingues conocimiento conceptual, práctica personal y experiencia productiva, sin atribuirte trabajo inexistente."
+    "explanation": "Credibility improves when you distinguish conceptual knowledge, personal practice, and production experience rather than claiming work you have not done. You can explain adjacent concepts, describe personal experiments, and outline how you would evaluate the tool. Passing off theoretical knowledge as production experience harms credibility."
   },
   {
     "id": "interview-compensation",
     "topic": "interviews",
-    "question": "Al hablar de pretensiones de renta en Chile, ¿qué detalle conviene aclarar?",
+    "question": "When stating salary expectations in Chile, what must you distinguish to understand take-home pay and the employment arrangement?",
     "options": [
-      "Si los servicios están desplegados en contenedores",
-      "Si utilizan entrevistas de live coding",
-      "Si la empresa utiliza un calendario de sprints",
-      "Si el rango es líquido o bruto y el tipo de contrato"
+      "Whether the range includes variable bonuses and benefits",
+      "Whether the figure is monthly or annual and in which currency",
+      "Whether there are semiannual salary reviews and conditional bonuses",
+      "Whether the range is net or gross and the contract type"
     ],
     "answer": 3,
-    "explanation": "Líquido versus bruto, contrato, moneda y beneficios cambian el significado de una oferta. Es mejor dar un rango fundamentado."
+    "explanation": "Net versus gross pay, contract type, currency, and benefits affect the meaning of an offer. A well-supported range is preferable. Gross compensation is not the same as net pay received after deductions and taxes. Employee versus contractor arrangements also differ in benefits, obligations and costs, so compare offers on a consistent basis."
   },
   {
     "id": "interview-ask-company",
     "topic": "interviews",
-    "question": "¿Qué pregunta aclara más directamente las expectativas de resultados de un puesto senior backend?",
+    "question": "Which question most directly clarifies expected outcomes for a senior backend position?",
     "options": [
-      "¿Qué esperan que logre durante los primeros 3 a 6 meses?",
-      "¿Con qué librería se escriben los tests?",
-      "¿Cuáles son los horarios habituales del equipo?",
-      "¿Qué versión de Node utiliza el equipo?"
+      "What outcomes do you expect in the first 3–6 months?",
+      "What technical challenges does the team currently face?",
+      "What does the code-review process look like?",
+      "How much autonomy does the team have over technical choices?"
     ],
     "answer": 0,
-    "explanation": "Preguntar por expectativas y resultados facilita entender el alcance real del rol. También son útiles preguntas de decisiones técnicas, despliegues y retos del equipo."
+    "explanation": "Asking about expectations and outcomes helps clarify the role's real scope. Questions about technical decisions, deployments, and team challenges are useful too. Asking about the first months translates a vague job description into deliverables and success criteria. Stack, team and process questions matter too, but focus more on context than expected outcomes."
   },
   {
     "id": "oop-encapsulation",
     "topic": "solid-patterns",
-    "question": "En una clase Wallet, ¿qué diseño ilustra encapsulación?",
+    "question": "In a Wallet class, which design illustrates encapsulation?",
     "options": [
-      "Permitir wallet.balance = -100 desde cualquier módulo",
-      "Ofrecer withdraw(amount) que verifica las reglas antes de cambiar el saldo",
-      "Guardar una variable global pública balance",
-      "Hacer que Wallet extienda de todas las clases"
+      "Expose balance through a mutable global variable",
+      "Provide withdraw(amount) with internal checks",
+      "Allow changing balance through an unrestricted setter",
+      "Compute balances outside Wallet without controlling it"
     ],
     "answer": 1,
-    "explanation": "Encapsular significa proteger el estado interno y exponer operaciones controladas que mantengan las invariantes del objeto."
+    "explanation": "Encapsulation means protecting internal state and exposing controlled operations that maintain the object's invariants. Encapsulation is more than marking a field private: the object should control state transitions. withdraw(amount) can prevent negative balances and preserve invariants, whereas an unrestricted setter can leave invalid state."
   },
   {
     "id": "oop-composition",
     "topic": "solid-patterns",
-    "question": "Para usuarios que pueden ganar o perder permisos dinámicamente, ¿por qué suele preferirse composición sobre herencia?",
+    "question": "For users whose permissions can change dynamically, why is composition often preferred over inheritance?",
     "options": [
-      "Porque la composición convierte métodos en funciones puras",
-      "Porque la composición garantiza cero dependencias entre módulos",
-      "Porque un objeto con permisos evita crear muchas subclases rígidas",
-      "Porque los objetos compuestos no necesitan validación de permisos"
+      "Because it automatically reduces object allocations",
+      "Because it replaces runtime authorization checks",
+      "Because it avoids rigid subclasses for changing permissions",
+      "Because it removes all coupling to permission types"
     ],
     "answer": 2,
-    "explanation": "La composición permite combinar capacidades sin una jerarquía creciente de clases, reduciendo acoplamiento."
+    "explanation": "Composition combines capabilities without a growing class hierarchy, reducing coupling. With AdminUser, ModeratorUser and ReadOnlyUser, combinations can multiply subclasses. A composed permission set lets a user gain capabilities without changing class or creating a new inheritance branch."
   },
   {
     "id": "solid-srp",
     "topic": "solid-patterns",
-    "question": "Un UserService valida usuarios, envía correos y construye consultas SQL. ¿Qué principio SOLID sugiere separar esas responsabilidades?",
+    "question": "A UserService validates users, sends emails, and builds SQL queries. Which SOLID principle suggests separating these responsibilities?",
     "options": [
       "Liskov Substitution",
       "Interface Segregation",
@@ -1215,157 +1182,134 @@
       "Single Responsibility"
     ],
     "answer": 3,
-    "explanation": "SRP busca una responsabilidad coherente o razón para cambiar por módulo. Las reglas de usuario, email y persistencia cambian por motivos distintos."
+    "explanation": "SRP aims for one coherent responsibility or reason to change per module. User rules, email delivery, and persistence change for different reasons. SRP is about one coherent reason to change, not one method per class. Email delivery, domain validation and persistence evolve for different reasons, so combining them creates avoidable coupling."
   },
   {
     "id": "solid-ocp-strategy",
     "topic": "solid-patterns",
-    "question": "checkout acepta PaymentMethod.pay(). Para agregar un proveedor nuevo, implementas PaymentMethod sin alterar checkout. ¿Qué principio se ejemplifica?",
+    "question": "checkout accepts PaymentMethod.pay(). To add a new provider, you implement PaymentMethod without changing checkout. Which principle does this illustrate?",
     "options": [
       "Open/Closed",
-      "Interface Segregation únicamente",
-      "Single Responsibility únicamente",
-      "Liskov únicamente"
+      "Interface Segregation",
+      "Single Responsibility",
+      "Liskov Substitution"
     ],
     "answer": 0,
-    "explanation": "Open/Closed favorece extender el comportamiento mediante nuevas implementaciones de un contrato, sin modificar el código consumidor estable."
+    "explanation": "Open/Closed favors extending behavior through new implementations of a contract without modifying stable consumer code. The consumer depends on PaymentMethod while variation lives in new implementations. A new provider can be added without another if branch in checkout; Open/Closed does not prohibit every modification to existing code."
   },
   {
     "id": "solid-liskov",
     "topic": "solid-patterns",
-    "question": "Una implementación ReadOnlyStorage de Storage.save() siempre lanza error, aunque los clientes del contrato esperan poder guardar. ¿Qué principio se viola?",
+    "question": "A ReadOnlyStorage implementation of Storage.save() always throws an error, even though clients of the contract expect saving to work. Which principle is violated?",
     "options": [
       "Single Responsibility",
       "Liskov Substitution",
       "Open/Closed",
-      "Dependency Injection"
+      "Dependency Inversion"
     ],
     "answer": 1,
-    "explanation": "Una implementación sustituible debe respetar el comportamiento esperado del contrato; aquí el contrato está mal segregado para una variante de solo lectura."
+    "explanation": "A substitutable implementation must honor the contract's expected behavior; here the contract is poorly separated for a read-only variant. Liskov requires substitutable implementations to honor the contract’s behavior. If Storage promises save, a variant that always fails violates that expectation; separate read and write interfaces may be more appropriate."
   },
   {
     "id": "patterns-adapter",
     "topic": "solid-patterns",
-    "question": "Debes convertir el JSON de un proveedor externo al contrato que consume tu dominio. ¿Qué patrón es especialmente adecuado?",
-    "options": [
-      "Observer",
-      "Singleton",
-      "Adapter",
-      "Factory"
-    ],
+    "question": "You need to convert an external provider's JSON into the contract used by your domain. Which pattern is especially suitable?",
+    "options": ["Observer", "Facade", "Adapter", "Factory"],
     "answer": 2,
-    "explanation": "Adapter traduce una interfaz o representación externa a la que espera el código propio, aislando cambios del proveedor."
+    "explanation": "Adapter translates an external interface or representation into what the application expects, isolating changes made by the provider. Adapter translates an external interface into the one your domain expects, such as externalUser.full_name into User.name. Factory decides what to construct, Observer notifies changes, and Facade simplifies a collection of operations."
   },
   {
     "id": "algo-complexity-nested",
     "topic": "algorithms",
-    "question": "Un algoritmo compara cada elemento de un array con todos los elementos de otro array de igual tamaño n mediante dos bucles anidados. ¿Cuál es su costo temporal?",
-    "options": [
-      "O(1)",
-      "O(log n)",
-      "O(n)",
-      "O(n²)"
-    ],
+    "question": "An algorithm compares every element of an array with every element of another array of the same size n using two nested loops. What is its time complexity?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
     "answer": 3,
-    "explanation": "Cada uno de los n elementos realiza n comparaciones; en total crece como n × n."
+    "explanation": "Each of the n elements requires n comparisons, so the total grows as n × n. If the outer loop iterates n times and the inner loop does n work per iteration, there are about n² comparisons. Big O describes asymptotic growth, not the exact runtime in milliseconds."
   },
   {
     "id": "algo-map-tradeoff",
     "topic": "algorithms",
-    "question": "Tienes n IDs y m usuarios. Construyes un Map de usuarios por ID y luego buscas cada ID. ¿Cuál costo promedio obtienes?",
+    "question": "You have n IDs and m users. You build a Map of users by ID and then look up each ID. What is the average complexity?",
     "options": [
-      "O(n + m) y memoria extra O(m)",
-      "O(log n) y memoria O(1)",
-      "O(n²) y memoria O(n²)",
-      "O(n × m) sin memoria extra"
+      "O(n + m) time and O(m) extra memory",
+      "O(n log m) time and O(1) extra memory",
+      "O(n × m) time and O(m) memory",
+      "O(m log n) time and O(n) memory"
     ],
     "answer": 0,
-    "explanation": "Crear el Map cuesta O(m) y buscar n claves O(n) en promedio. Cambia recorridos repetidos por almacenamiento adicional."
+    "explanation": "Building the Map costs O(m), and looking up n keys costs O(n) on average. It trades repeated scans for additional storage. Building a Map of m users takes O(m); looking up n IDs takes O(n) on average. Compared with users.find on each ID (O(nm)), you spend O(m) extra memory to avoid repeated scans."
   },
   {
     "id": "algo-stack-queue",
     "topic": "algorithms",
-    "question": "¿Qué estructura sigue el orden FIFO, útil para BFS?",
-    "options": [
-      "Stack",
-      "Queue",
-      "Heap máximo",
-      "Árbol binario balanceado"
-    ],
+    "question": "Which data structure follows FIFO order and is useful for BFS?",
+    "options": ["Stack", "Queue", "Min-heap", "Deque used only as a stack"],
     "answer": 1,
-    "explanation": "Una queue retira primero lo que entró primero; BFS procesa nodos por niveles. Stack es LIFO."
+    "explanation": "A queue removes the earliest inserted item first; BFS processes nodes level by level. A stack uses LIFO order. FIFO means First In, First Out: the earliest enqueued item is processed first. BFS uses that order to traverse levels; a stack is LIFO and is more natural for DFS."
   },
   {
     "id": "algo-binary-search",
     "topic": "algorithms",
-    "question": "¿Qué requisito es esencial para aplicar búsqueda binaria con costo O(log n)?",
+    "question": "What requirement is essential to perform binary search in O(log n) time?",
     "options": [
-      "Que tenga un número par de elementos",
-      "Que el array tenga duplicados",
-      "Que esté ordenado respecto al criterio de búsqueda",
-      "Que sea un Set"
+      "The array contains no duplicates",
+      "Its elements are stored contiguously",
+      "It is sorted by the comparison being used",
+      "Its length is a power of two"
     ],
     "answer": 2,
-    "explanation": "La búsqueda binaria descarta la mitad del rango usando el orden. En un array desordenado no puede justificar qué mitad descartar."
+    "explanation": "Binary search uses ordering to discard half the range. With an unsorted array, it cannot determine which half to discard. Binary search compares with the middle element and decides which half to discard. That decision requires consistent ordering; it does not require even length, powers of two or unique elements."
   },
   {
     "id": "algo-default-sort",
     "topic": "algorithms",
-    "question": "¿Qué salida produce sort() sin comparador sobre números en JavaScript?",
-    "options": [
-      "TypeError",
-      "[1, 9, 10]",
-      "[10, 9, 1]",
-      "[1, 10, 9]"
-    ],
+    "question": "What output does sort() produce without a comparator when used on numbers in JavaScript?",
+    "options": ["[9, 10, 1]", "[1, 9, 10]", "[10, 9, 1]", "[1, 10, 9]"],
     "answer": 3,
-    "explanation": "El sort por defecto compara representaciones como strings, de modo que \"10\" se ordena antes que \"9\".",
+    "explanation": "By default, sort compares string representations, so \"10\" sorts before \"9\". Array.sort() without a comparator compares string representations lexicographically. Therefore \"10\" precedes \"9\"; for ascending numbers use (a,b) => a-b.",
     "code": {
       "language": "javascript",
-      "lines": [
-        "const nums = [10, 9, 1];",
-        "console.log(nums.sort());"
-      ]
+      "lines": ["const nums = [10, 9, 1];", "console.log(nums.sort());"]
     }
   },
   {
     "id": "algo-two-pointers",
     "topic": "algorithms",
-    "question": "Con un array ascendente y un target, buscas si dos valores suman target. ¿Qué enfoque consigue O(n) sin memoria auxiliar significativa?",
+    "question": "Given an ascending array and a target sum, you want to find whether two values add up to the target. Which approach achieves O(n) time without significant extra memory?",
     "options": [
-      "Dos punteros desde ambos extremos",
-      "Ordenar cada vez que se mueve un puntero",
-      "Crear una matriz n × n de sumas",
-      "Probar todos los pares"
+      "Two pointers advancing inward from opposite ends",
+      "Two loops examining all pairs",
+      "Sort a new array for each candidate",
+      "Use find to seek the complement for each index"
     ],
     "answer": 0,
-    "explanation": "Con dos punteros, la suma determina qué extremo mover. Cada puntero avanza como máximo n posiciones."
+    "explanation": "With two pointers, their sum determines which end to move. Each pointer moves at most n positions. In a sorted array, if the end values sum too low you move the left pointer forward; if too high you move the right pointer backward. Each pointer moves at most n times: O(n) time and O(1) extra space."
   },
   {
     "id": "algo-live-coding",
     "topic": "algorithms",
-    "question": "Al recibir un problema de live coding ambiguo, ¿qué es más útil hacer primero?",
+    "question": "When given an ambiguous live-coding problem, what is most useful to do first?",
     "options": [
-      "Programar de inmediato sin hablar",
-      "Aclarar restricciones y probar un ejemplo pequeño",
-      "Buscar siempre una solución óptima sin explicarla",
-      "Descartar la fuerza bruta sin analizarla"
+      "Immediately choose an optimal data structure",
+      "Clarify constraints and walk through a small example",
+      "Implement the fastest version without stating assumptions",
+      "Write all tests before specifying the input"
     ],
     "answer": 1,
-    "explanation": "Aclarar entradas, casos borde y condiciones evita resolver el problema equivocado; luego se puede presentar fuerza bruta y optimizar."
+    "explanation": "Clarifying inputs, edge cases, and conditions prevents solving the wrong problem. You can then present a brute-force approach and optimize it. First clarify input types, empty cases, duplicates, limits and expected output. Walking through an example prevents misunderstandings; then explain a simple solution, its complexity and improvements as you code."
   },
   {
     "id": "react-state-updater",
     "topic": "react",
-    "question": "Quieres incrementar count dos veces seguidas en un handler. ¿Qué estrategia respeta mejor el batching?",
+    "question": "You want to increment count twice in a row in an event handler. Which strategy best handles React batching?",
     "options": [
-      "setCount(count) dos veces",
-      "setCount(count + 1) dos veces",
-      "setCount(c => c + 1) dos veces",
-      "count += 2 sin setCount"
+      "Call setCount(count) twice",
+      "Call setCount(count + 1) twice",
+      "Call setCount(c => c + 1) twice",
+      "Call setCount(count + 2), then setCount(count + 1)"
     ],
     "answer": 2,
-    "explanation": "La forma funcional recibe el último estado pendiente, de modo que ambos incrementos se acumulan incluso cuando React agrupa actualizaciones.",
+    "explanation": "The functional updater receives the latest pending state, so both increments accumulate even when React batches updates. React may batch state updates. Calling setCount(count+1) twice reads the same count snapshot from that render; the functional form receives each pending value and correctly accumulates both increments.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1377,171 +1321,166 @@
   {
     "id": "react-effect-cleanup",
     "topic": "react",
-    "question": "Un componente instala setInterval en useEffect. ¿Qué debe devolver el efecto para evitar un timer huérfano?",
+    "question": "A component starts a setInterval in useEffect. What should the effect return to avoid leaving an orphaned timer?",
     "options": [
-      "Un booleano true",
-      "El propio resultado de setInterval",
-      "Una cadena con el ID",
-      "Una función que llame a clearInterval(id)"
+      "A function that calls setInterval again",
+      "The ID returned by setInterval",
+      "A Promise resolved on unmount",
+      "A function calling clearInterval(id)"
     ],
     "answer": 3,
-    "explanation": "El cleanup se ejecuta antes de volver a sincronizar el efecto y al desmontar, permitiendo limpiar recursos externos."
+    "explanation": "Cleanup runs before an effect is resynchronized and when the component unmounts, allowing external resources to be released. An effect can run again when dependencies change and is also cleaned up during unmount. Returning a cleanup function cancels the previous interval and prevents duplicate timers or abandoned resources."
   },
   {
     "id": "react-effect-derived",
     "topic": "react",
-    "question": "Recibes tasks y solo quieres mostrar las completadas. ¿Qué opción evita estado derivado innecesario?",
+    "question": "You receive tasks and only want to show completed ones. Which option avoids unnecessary derived state?",
     "options": [
-      "Calcular tasks.filter(t => t.done) durante el render",
-      "Modificar tasks directamente",
-      "Guardar una copia global cada segundo",
-      "useEffect que llama setDone cada render"
+      "Compute tasks.filter(t => t.done) during render",
+      "Use an effect to copy tasks into separate state",
+      "Keep filtered tasks in separately synced global state",
+      "Mutate tasks to remove unfinished items"
     ],
     "answer": 0,
-    "explanation": "Si un valor puede derivarse de props o state, normalmente basta calcularlo al renderizar; crear otro state puede desincronizarlo."
+    "explanation": "If a value can be derived from props or state, computing it during render is usually sufficient. Keeping it in separate state can cause inconsistencies. If doneTasks depends solely on tasks, storing it separately creates two sources of truth. Deriving it during render keeps it in sync; memoize only when the calculation cost justifies doing so."
   },
   {
     "id": "react-key-reorder",
     "topic": "react",
-    "question": "Una lista de tareas tiene filas con estado local y se reordena. ¿Qué key ayuda a preservar correctamente cada fila?",
+    "question": "A task list has rows with local state and can be reordered. Which key helps preserve the correct state for each row?",
     "options": [
-      "Math.random() en cada render",
-      "Un ID estable de la tarea",
-      "La posición visual actual",
-      "El índice del array"
+      "A key generated with Math.random() on each render",
+      "A stable ID independent of list ordering",
+      "The task title, even if multiple tasks share it",
+      "The current array index on every render"
     ],
     "answer": 1,
-    "explanation": "React usa key para identificar elementos entre renders. Los IDs estables evitan mezclar el estado de filas que cambiaron de orden."
+    "explanation": "React uses keys to identify elements across renders. Stable IDs avoid mixing up row state after reordering. Keys are identities across renders, not visual labels. Index-based keys can associate one row’s local state with a different task after reordering; stable IDs preserve the correspondence."
   },
   {
     "id": "react-context",
     "topic": "react",
-    "question": "Varias pantallas necesitan conocer el tema de UI sin pasar props por muchos niveles. ¿Qué solución simple puede servir?",
+    "question": "Multiple screens need the UI theme without passing props through many component levels. Which simple solution can help?",
     "options": [
-      "Un efecto que modifica el DOM global manualmente",
-      "Un nuevo backend obligatorio",
-      "Context",
-      "Un cambio de índice en cada lista"
+      "useReducer separately inside each component",
+      "Duplicated local state on every screen",
+      "Context to distribute shared values",
+      "useMemo in the root without a Provider"
     ],
     "answer": 2,
-    "explanation": "Context distribuye datos comunes entre componentes consumidores y reduce prop drilling. No exige adoptar Redux para casos simples."
+    "explanation": "Context makes shared data available to consuming components and reduces prop drilling. Simple cases do not require Redux. Context lets descendants read shared values from a Provider, useful for theme or locale. It is not an automatic replacement for local state, and consumers can rerender when the provided value changes."
   },
   {
     "id": "react-usememo",
     "topic": "react",
-    "question": "¿Cuándo justifica mejor usar useMemo para filtrar una lista?",
+    "question": "When is useMemo most justified for filtering a list?",
     "options": [
-      "Cuando la función tenga un efecto secundario que debe repetirse",
-      "Cuando necesites sincronizar un timer con el navegador",
-      "En cada render que tenga cualquier operación sobre arrays",
-      "Cuando una operación medidamente costosa se recalcula por renders no relacionados"
+      "When side effects need to run during rendering",
+      "Every time filter() receives multiple elements",
+      "To prevent rerenders caused by any prop changes",
+      "When calculation is costly and dependencies change rarely"
     ],
     "answer": 3,
-    "explanation": "useMemo evita repetir cálculos mientras no cambien dependencias, pero agrega complejidad. Primero se mide si existe un problema."
+    "explanation": "useMemo avoids repeating calculations while dependencies remain unchanged, but adds complexity. First measure whether there is a problem. useMemo caches a calculation while dependencies remain equal; it is not for side effects and does not guarantee avoiding component rerenders. Use it for measured expensive computations, not every array operation."
   },
   {
     "id": "infra-docker",
     "topic": "infrastructure",
-    "question": "¿Cuál afirmación sobre Docker es correcta?",
+    "question": "Which statement about Docker is correct?",
     "options": [
-      "Una imagen define el artefacto; un contenedor es una instancia en ejecución",
-      "Los volúmenes reemplazan backups verificados",
-      "Compose solo funciona con un contenedor",
-      "Cada contenedor incluye un kernel completo distinto"
+      "An image is the artifact; a container runs it",
+      "Every image includes a complete Linux kernel",
+      "A container rebuilds itself for every request",
+      "An image shares mutable memory with every running instance"
     ],
     "answer": 0,
-    "explanation": "Las imágenes empaquetan lo necesario; los contenedores ejecutan esos paquetes y comparten el kernel del host. Compose coordina varios servicios."
+    "explanation": "Images package the required components; containers run those packages and share the host kernel. Compose coordinates multiple services. An image is an immutable layered artifact and configuration; a container is an isolated running instance. On Linux it normally shares the host kernel; volumes manage persistent data but do not replace backups."
   },
   {
     "id": "infra-horizontal-stateless",
     "topic": "infrastructure",
-    "question": "Escalas una API a cuatro instancias detrás de un load balancer y las sesiones están solo en memoria local. ¿Qué problema puede surgir?",
+    "question": "You scale an API to four instances behind a load balancer, but sessions are stored only in local memory. What problem can arise?",
     "options": [
-      "La cantidad de nodos obligará a regenerar el schema de la DB",
-      "La sesión puede no existir en la instancia que recibe la siguiente request",
-      "Todas las requests serán atendidas por la misma instancia automáticamente",
-      "El balanceador garantizará compartir cualquier objeto en memoria"
+      "The load balancer automatically synchronizes sessions",
+      "A later request may reach an instance with no session",
+      "Client cookies will change IDs on each instance",
+      "PostgreSQL rejects requests from multiple processes"
     ],
     "answer": 1,
-    "explanation": "Con múltiples instancias, el estado de sesión debe compartirse (DB/Redis) o diseñarse una estrategia compatible; la memoria local no es común."
+    "explanation": "With multiple instances, session state must be shared (DB/Redis) or managed using a compatible strategy. Local process memory is not shared. Each instance has its own memory. If login hits A and the next request hits B, B may not know that session. Shared session storage in Redis/DB or another compatible strategy removes the single-instance dependency."
   },
   {
     "id": "infra-monolith-vs-micro",
     "topic": "infrastructure",
-    "question": "¿Cuándo suele ser razonable separar un microservicio?",
+    "question": "When is splitting out a microservice usually reasonable?",
     "options": [
-      "Porque añade menos complejidad operativa que un monolito",
-      "Siempre desde el primer endpoint",
-      "Cuando existe una frontera de negocio y una necesidad real de escalado o despliegue independiente",
-      "Para evitar escribir tests"
+      "Whenever each team wants its own repository",
+      "When the whole application scales evenly",
+      "When a domain boundary needs independent operation",
+      "When a monolith has multiple domain folders"
     ],
     "answer": 2,
-    "explanation": "Separar servicios añade costos de red, contratos, observabilidad y coordinación. Se justifica por necesidades concretas, no por moda."
+    "explanation": "Separate services introduce network, contract, observability, and coordination costs. They should address actual needs, not trends. A microservice can deploy and scale independently, but adds network calls, distributed failures and harder observability. Before splitting, ask whether there is a stable business boundary and a concrete operational need."
   },
   {
     "id": "infra-queue-retry",
     "topic": "infrastructure",
-    "question": "Una cola entrega el mismo mensaje de notificación dos veces. ¿Qué característica necesita el consumidor para evitar efectos duplicados?",
+    "question": "A queue delivers the same notification message twice. What property does the consumer need to avoid duplicate effects?",
     "options": [
-      "Una variable global temporal sin persistencia",
-      "Cambiar cada mensaje a GET",
-      "Desactivar el logging",
-      "Idempotencia"
+      "Exactly-once delivery guaranteed by any queue",
+      "Unlimited retries with the same payload",
+      "Concurrent processing of every message",
+      "Idempotency based on operation identifiers"
     ],
     "answer": 3,
-    "explanation": "Las colas pueden reentregar por fallos y reintentos; un consumidor idempotente reconoce operaciones ya procesadas."
+    "explanation": "Queues can redeliver messages after failures and retries. An idempotent consumer recognizes operations already processed. Messaging systems commonly redeliver after failures. A consumer should recognize an already processed operation ID and avoid sending another email or duplicating a write when the same message arrives twice."
   },
   {
     "id": "infra-dead-letter",
     "topic": "infrastructure",
-    "question": "Tras varios reintentos, un trabajo sigue fallando por datos inválidos. ¿Dónde conviene enviarlo para inspección sin bloquear la cola principal?",
+    "question": "After several retries, a job keeps failing because of invalid data. Where should it be sent for inspection without blocking the main queue?",
     "options": [
       "Dead-letter queue (DLQ)",
-      "Pool de conexiones SQL",
-      "Caché del navegador",
-      "CDN"
+      "Retry queue with infinite retries",
+      "Priority queue with a shorter timeout",
+      "Main queue with the message left pending"
     ],
     "answer": 0,
-    "explanation": "Una DLQ guarda mensajes fallidos para diagnóstico y tratamiento posterior, evitando ciclos de reintento infinitos."
+    "explanation": "A DLQ stores failed messages for diagnosis and later handling, avoiding endless retry loops. A DLQ retains exhausted or unprocessable jobs so they can be inspected and possibly replayed after fixing the issue. Retrying permanently invalid messages wastes resources and can clog processing."
   },
   {
     "id": "infra-cdn-cache",
     "topic": "infrastructure",
-    "question": "¿Qué diseño evita que un precio viejo cacheado determine el cobro final?",
+    "question": "Which design prevents a stale cached price from determining the final charge?",
     "options": [
-      "Aplicar al precio la misma duración de caché de las imágenes",
-      "Validar el precio vigente en checkout contra la fuente autorizada",
-      "Confiar en el precio almacenado en el estado local del cliente",
-      "Aumentar la vida útil del caché para reducir inconsistencias"
+      "Trust the browser price when the ETag is valid",
+      "Recheck the authoritative price at checkout",
+      "Keep the cached price until checkout finishes",
+      "Refresh TTLs for all product images"
     ],
     "answer": 1,
-    "explanation": "La caché puede mostrar datos momentáneamente obsoletos. En una operación crítica se vuelve a verificar el valor autorizado."
+    "explanation": "A cache can temporarily show stale data. Critical operations should recheck the authoritative value. Caching speeds up display but can serve stale values after changes. When charging, obtain the current price from an authoritative system rather than trusting what the browser previously displayed."
   },
   {
     "id": "nest-components",
     "topic": "nestjs",
-    "question": "En NestJS, ¿qué componente suele declarar rutas HTTP?",
-    "options": [
-      "Guard",
-      "Module",
-      "Controller",
-      "Provider / Service"
-    ],
+    "question": "In NestJS, which component normally declares HTTP routes?",
+    "options": ["Guard", "Module", "Controller", "Provider / Service"],
     "answer": 2,
-    "explanation": "Los controllers exponen endpoints. Los modules organizan piezas y los providers implementan servicios que pueden inyectarse."
+    "explanation": "Controllers expose endpoints. Modules organize components, and providers implement injectable services. @Controller declares HTTP routes and handlers; @Injectable often marks providers containing logic. @Module organizes providers and controllers, while Guards decide access before the handler executes."
   },
   {
     "id": "nest-validationpipe",
     "topic": "nestjs",
-    "question": "Con ValidationPipe({ whitelist: true, transform: true }), ¿qué hace whitelist con campos del body no decorados para validación?",
+    "question": "With ValidationPipe({ whitelist: true, transform: true }), what does whitelist do with request-body fields that have no validation decorators?",
     "options": [
-      "Los cifra",
-      "Los inyecta como servicios",
-      "Los devuelve como respuesta",
-      "Los descarta"
+      "It keeps them as readonly properties",
+      "It automatically converts them into undefined values",
+      "It preserves them when transform is enabled",
+      "It strips them unless decorated for validation"
     ],
     "answer": 3,
-    "explanation": "whitelist elimina propiedades sin decoradores de validación; evita aceptar campos inesperados, mientras las reglas de dominio requieren comprobaciones aparte.",
+    "explanation": "whitelist removes properties without validation decorators, preventing unexpected fields from being accepted. Business rules still need separate checks. whitelist strips properties lacking recognized validation decorators; forbidNonWhitelisted, when enabled, can reject them instead. transform controls instantiation/conversion and does not replace business rules.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1554,157 +1493,152 @@
   {
     "id": "nest-di-interface-token",
     "topic": "nestjs",
-    "question": "Un constructor necesita IssueRepository, que es una interface de TypeScript. ¿Por qué se usa un token @Inject(ISSUE_REPOSITORY)?",
+    "question": "A constructor needs IssueRepository, a TypeScript interface. Why use an @Inject(ISSUE_REPOSITORY) token?",
     "options": [
-      "Porque las interfaces no existen en runtime y Nest necesita un identificador real",
-      "Porque todos los repositories tienen que ser singletons",
-      "Porque el token convierte PostgreSQL en MongoDB",
-      "Porque así no se necesita registrar un provider"
+      "The interface disappears and a runtime token is needed",
+      "A token allows injection without registering a provider",
+      "A token replaces the TS type with a Zod schema",
+      "Nest requires tokens for every concrete class"
     ],
     "answer": 0,
-    "explanation": "Las interfaces se eliminan al compilar; el token (por ejemplo Symbol o string) identifica el provider concreto en el contenedor de DI."
+    "explanation": "Interfaces are erased during compilation. A token (such as a Symbol or string) identifies the concrete provider in the DI container. A TypeScript interface exists only to the compiler, so Nest cannot use it as a runtime identifier. @Inject(TOKEN) and a provider registered under that token link the contract to a concrete implementation."
   },
   {
     "id": "nest-request-order",
     "topic": "nestjs",
-    "question": "¿Qué orden simplificado refleja mejor el procesamiento de una request NestJS exitosa?",
+    "question": "Which simplified order best represents the handling of a successful NestJS request?",
     "options": [
-      "Controller → Guards → Middleware → Pipes",
-      "Middleware → Guards → Interceptors (antes) → Pipes → Controller",
-      "Pipes → Controller → Middleware → Guards",
-      "Exception filters → Controller → Middleware"
+      "Guards → Middleware → Interceptors (before) → Pipes → Controller",
+      "Middleware → Guards → Interceptors (before) → Pipes → Controller",
+      "Middleware → Pipes → Guards → Controller",
+      "Middleware → Controller → Interceptors (before) → Pipes"
     ],
     "answer": 1,
-    "explanation": "Primero corre middleware y luego guards; interceptors envuelven la ejecución, pipes validan y transforman antes del handler del controller."
+    "explanation": "Middleware runs first, followed by guards. Interceptors wrap execution, and pipes validate and transform data before the controller handler. Middleware handles cross-cutting work first, then guards authorize. A pre-handler interceptor wraps execution; pipes validate/transform arguments before the controller. Exception filters handle thrown errors."
   },
   {
     "id": "nest-guard-pipe-service",
     "topic": "nestjs",
-    "question": "¿Dónde pondrías respectivamente la autenticación general, validación estructural del body y regla de proyecto archivado?",
+    "question": "Where would you place general authentication, structural request-body validation, and the rule that archived projects cannot be modified, respectively?",
     "options": [
-      "Service, Guard y Pipe",
-      "Repository, Middleware y DTO de salida",
-      "Guard, Pipe y Service",
-      "Pipe, Controller y Middleware"
+      "Guard, Service, Pipe",
+      "Middleware, Service, Repository",
+      "Guard, Pipe, Service",
+      "Pipe, Guard, Controller"
     ],
     "answer": 2,
-    "explanation": "El guard controla acceso a la ruta; el pipe valida datos entrantes; el service evalúa reglas dependientes del estado del negocio."
+    "explanation": "A guard controls access to the route, a pipe validates incoming data, and a service evaluates rules that depend on business state. The Guard determines route access, the Pipe validates/transforms the input DTO, and the Service checks project state. Resource-level authorization may require additional use-case logic."
   },
   {
     "id": "nest-exception-filter",
     "topic": "nestjs",
-    "question": "¿Qué pieza de NestJS traduce de manera centralizada un DomainError a una respuesta HTTP?",
-    "options": [
-      "ConfigModule",
-      "Un decorador @Inject únicamente",
-      "ValidationPipe",
-      "Exception Filter"
-    ],
+    "question": "Which NestJS component centrally translates a DomainError into an HTTP response?",
+    "options": ["Interceptor", "Guard", "ValidationPipe", "Exception Filter"],
     "answer": 3,
-    "explanation": "Un Exception Filter captura errores y crea la respuesta HTTP. El dominio puede seguir lanzando excepciones sin conocer status codes."
+    "explanation": "An Exception Filter catches errors and creates the HTTP response. The domain can continue throwing exceptions without knowing HTTP status codes. An Exception Filter intercepts exceptions and determines HTTP responses. Centralizing this mapping keeps domain classes independent of HttpException and makes reuse from other interfaces easier."
   },
   {
     "id": "nest-testing-provider",
     "topic": "nestjs",
-    "question": "En Test.createTestingModule, ¿cómo sustituyes un repository real por uno de pruebas?",
+    "question": "In Test.createTestingModule, how do you replace a real repository with a test implementation?",
     "options": [
-      "Registrando un provider con el mismo token y useValue del fake",
-      "Omitiendo la dependencia del constructor sin cambios",
-      "Desactivando toda la inyección de Nest",
-      "Modificando el código de producción en cada test"
+      "Register the same token with useValue pointing to the fake",
+      "Import the real module without overriding providers",
+      "Replace SQL calls with an HTTP interceptor",
+      "Construct the service without passing repo"
     ],
     "answer": 0,
-    "explanation": "Nest permite registrar la implementación de pruebas bajo el mismo token que espera el service, aislando la persistencia real."
+    "explanation": "Nest allows the test implementation to be registered under the same token expected by the service, isolating real persistence. The testing module configures the same DI pattern as production. Registering a fake under the expected token lets you test a service without PostgreSQL and control success, failure and permission scenarios."
   },
   {
     "id": "nest-request-scope",
     "topic": "nestjs",
-    "question": "¿Cuál es un motivo para no declarar todos los providers como Scope.REQUEST?",
+    "question": "Why might you avoid declaring every provider with Scope.REQUEST?",
     "options": [
-      "Porque dejan de tener constructor",
-      "Porque crea instancias por request y puede añadir costo innecesario",
-      "Porque TypeScript prohíbe scopes",
-      "Porque convierte cada provider en un controller HTTP"
+      "Because dependency injection becomes unavailable",
+      "Because it creates per-request instances with extra cost",
+      "Because request-scoped dependencies cannot be tested",
+      "Because it requires separate processes per request"
     ],
     "answer": 1,
-    "explanation": "Los providers singleton suelen ser suficientes. El scope por request añade trabajo y conviene solo cuando es necesario un ciclo de vida aislado."
+    "explanation": "Singleton providers are often sufficient. Request scope introduces additional work and is best reserved for cases requiring an isolated lifecycle. A singleton provider is generally created once and reused. Scope.REQUEST creates instances for each request, increasing CPU/memory costs and potentially propagating scope to dependents; use it when isolation is needed."
   },
   {
     "id": "ai-agent-vs-chat",
     "topic": "ai-assisted-development",
-    "question": "¿Qué distingue a un agente de programación con permisos de un chatbot que solo propone código?",
+    "question": "What distinguishes a coding agent with tool permissions from a chatbot that only suggests code?",
     "options": [
-      "El agente sustituye automáticamente la revisión de pull requests",
-      "El agente garantiza que un cambio es compatible con versiones previas",
-      "El agente puede explorar archivos, editar y ejecutar herramientas",
-      "El agente dispone de tipos TypeScript en tiempo de ejecución"
+      "It can make changes so reviewing diffs is unnecessary",
+      "It guarantees tests cover all new code",
+      "It can inspect and modify files and use tools",
+      "It only gives better answers because it has more context"
     ],
     "answer": 2,
-    "explanation": "Un agente puede actuar sobre el entorno de desarrollo, pero el equipo sigue siendo responsable de revisar diseño, seguridad y comportamiento."
+    "explanation": "An agent can act on the development environment, but the team remains responsible for reviewing design, security, and behavior. An agent with tools can inspect a repository, edit files and run commands subject to permissions. This supports iterative work, but its changes still need diff review, testing and security checks."
   },
   {
     "id": "ai-workflow",
     "topic": "ai-assisted-development",
-    "question": "¿Qué secuencia es más segura para cambiar una API existente con un agente?",
+    "question": "Which sequence is safest for changing an existing API with an agent?",
     "options": [
-      "Dejar todos los permisos habilitados sin límites",
-      "Pedir al agente que reemplace todo el repositorio",
-      "Editar cientos de archivos y mergear sin revisar",
-      "Definir criterios, revisar plan, cambiar en pequeño, inspeccionar diff y ejecutar tests"
+      "Request the full change and trust automatic execution",
+      "Grant wide permissions and review after merging",
+      "Validate only that the application compiles",
+      "Define scope, review the diff and run tests"
     ],
     "answer": 3,
-    "explanation": "Acotar el alcance y verificar cada cambio reduce errores y facilita distinguir decisiones del agente de requisitos comprobados."
+    "explanation": "Keeping the scope narrow and verifying each change reduces errors and separates agent decisions from validated requirements. Clear acceptance criteria and small changes make regressions easier to spot. Review the plan and diff, run tests, and inspect security and contracts; task completion by an agent is not proof of correctness."
   },
   {
     "id": "ai-claude-md",
     "topic": "ai-assisted-development",
-    "question": "¿Qué información es apropiada para un archivo CLAUDE.md del repositorio?",
+    "question": "What information belongs in a repository's CLAUDE.md file?",
     "options": [
-      "Arquitectura, convenciones, comandos de tests y límites del proyecto",
-      "Un historial de mensajes privados de los desarrolladores",
-      "Una copia de logs con tokens para facilitar la depuración",
-      "Variables de entorno reales con las claves de producción"
+      "Architecture, conventions and safe project commands",
+      "Test credentials reused in production",
+      "A full copy of .env with deployment instructions",
+      "Screenshots of private chats for additional context"
     ],
     "answer": 0,
-    "explanation": "Las instrucciones del repositorio deben orientar al agente de forma repetible sin exponer secretos ni información sensible."
+    "explanation": "Repository instructions should guide the agent consistently without exposing secrets or sensitive information. The file provides persistent agent context: repository layout, style, test commands and constraints. Real secrets must stay out of the repository rather than being embedded in instructions for convenience."
   },
   {
     "id": "ai-mcp",
     "topic": "ai-assisted-development",
-    "question": "¿Para qué sirve MCP en herramientas de desarrollo asistido por IA?",
+    "question": "What is MCP used for in AI-assisted development tools?",
     "options": [
-      "Garantizar que ninguna herramienta ejecuta comandos",
-      "Conectar herramientas y fuentes de datos mediante un protocolo",
-      "Reemplazar todas las validaciones de entrada",
-      "Compilar TypeScript a código nativo"
+      "Train a custom model on the repository",
+      "Standardize integrations between agents and tools",
+      "Turn TypeScript into a prompting language",
+      "Replace access permissions to external services"
     ],
     "answer": 1,
-    "explanation": "MCP permite integrar herramientas y contextos externos con agentes, según los permisos y las capacidades disponibles."
+    "explanation": "MCP enables agents to integrate external tools and context according to available permissions and capabilities. MCP standardizes how AI applications access tools and resources. It does not remove the need to authenticate services, scope permissions or scrutinize untrusted tool outputs."
   },
   {
     "id": "ai-bola-review",
     "topic": "ai-assisted-development",
-    "question": "Un agente genera GET /users/:id y todos los tests positivos pasan. ¿Cuál verificación de seguridad falta especialmente?",
+    "question": "An agent generates GET /users/:id, and all positive tests pass. Which security check is especially missing?",
     "options": [
-      "Que la respuesta tenga un campo de versión de contrato",
-      "Que la ruta tenga una prueba de tiempo de respuesta promedio",
-      "Que un usuario no pueda consultar perfiles ajenos cambiando id",
-      "Que los errores de base de datos se reintenten en todos los casos"
+      "Verify the JWT has a valid signature",
+      "Check that id is a correctly formatted UUID",
+      "Block access to other users’ profiles with object authorization",
+      "Add rate limiting to hinder profile enumeration"
     ],
     "answer": 2,
-    "explanation": "Los tests positivos pueden pasar incluso con BOLA. Debes probar autorización por recurso y casos negativos además del camino feliz."
+    "explanation": "Positive tests may pass even with a BOLA vulnerability. You must test resource-level authorization and negative cases, not just the happy path. Positive tests prove an authorized user can read a profile, not that other users are blocked. Change :id to someone else’s ID and ensure object-level authorization is enforced even with a valid JWT."
   },
   {
     "id": "ai-subagents",
     "topic": "ai-assisted-development",
-    "question": "¿Cuándo tiene más sentido delegar subtareas a subagentes?",
+    "question": "When does it make the most sense to delegate subtasks to subagents?",
     "options": [
-      "Para omitir los tests del agente principal",
-      "Siempre, incluso si aumenta la coordinación",
-      "Para cambiar una única línea sin contexto",
-      "Para tareas acotadas e independientes que se benefician de contextos separados"
+      "When all tasks modify the same files",
+      "When each task needs immediate user decisions",
+      "When the task is short but the available context is unusually large",
+      "When independent subtasks benefit from separate contexts"
     ],
     "answer": 3,
-    "explanation": "Los subagentes pueden dividir análisis o implementaciones acotadas, pero no son necesarios para tareas simples y añaden costo de coordinación."
+    "explanation": "Subagents can divide bounded analysis or implementation tasks, but simple tasks do not need them, and they add coordination overhead. Subagents can research separate modules or perform bounded tasks in parallel, keeping contexts focused. Without clear boundaries, they introduce edit conflicts, coordination costs and hard-to-integrate results."
   }
 ]
