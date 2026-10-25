@@ -32,14 +32,14 @@
 
 ## 5. UI and game flow
 
-- [ ] 5.1 Implement the state object and `render()` in `src/ui.js` / `src/main.js` with the start screen and a Start control that begins a round, and verify it manually in the browser
-- [ ] 5.2 Implement the question screen: progress ("n of total"), question text, options in the shuffled order, and `<pre><code>` rendering of `code.lines` via `textContent`; verify manually that a snippet keeps indentation and shows `<` and `&` literally
-- [ ] 5.3 Add `highlight.js` (core only), register JavaScript, TypeScript, CSS, and HTML (`xml`), call `highlightElement` only when `code.language` is a registered language, and add `hljs-*` token colors to `src/style.css` using the dark palette; verify manually that JavaScript, TypeScript, CSS, and HTML snippets are colored, that an unknown language (for example `cobol`) stays uncolored without errors, and that `<` and `&` still display literally
-- [ ] 5.4 Implement select-then-submit: options can be changed before submitting, Submit is disabled with no selection; verify manually
-- [ ] 5.5 Implement the feedback state after Submit: correct/incorrect message, correct option highlighted, explanation shown, options locked; verify manually that the answer cannot be changed or submitted twice
-- [ ] 5.6 Implement Next (and "See results" on the last question), then the results screen showing score out of the round size with a Play again control that starts a fresh round with a zero score; verify manually by playing a full round and replaying
-- [ ] 5.7 Verify with a bank smaller than `QUESTIONS_PER_ROUND` that the round uses all questions and the score is out of that count
-- [ ] 5.8 Replace the e2e smoke test with a happy-path e2e test in `e2e/` (start a round, pick an option, submit, see the feedback, go through to the results screen, and play again) and verify `npm run test:e2e` passes
+- [x] 5.1 Implement the state object and `render()` in `src/ui.js` / `src/main.js` with the start screen and a Start control that begins a round, and verify it manually in the browser
+- [x] 5.2 Implement the question screen: progress ("n of total"), question text, options in the shuffled order, and `<pre><code>` rendering of `code.lines` via `textContent`; verify manually that a snippet keeps indentation and shows `<` and `&` literally
+- [x] 5.3 Add `highlight.js` (core only), register JavaScript, TypeScript, CSS, and HTML (`xml`), call `highlightElement` only when `code.language` is a registered language, and add `hljs-*` token colors to `src/style.css` using the dark palette; verify manually that JavaScript, TypeScript, CSS, and HTML snippets are colored, that an unknown language (for example `cobol`) stays uncolored without errors, and that `<` and `&` still display literally
+- [x] 5.4 Implement select-then-submit: options can be changed before submitting, Submit is disabled with no selection; verify manually
+- [x] 5.5 Implement the feedback state after Submit: correct/incorrect message, correct option highlighted, explanation shown, options locked; verify manually that the answer cannot be changed or submitted twice
+- [x] 5.6 Implement Next (and "See results" on the last question), then the results screen showing score out of the round size with a Play again control that starts a fresh round with a zero score; verify manually by playing a full round and replaying
+- [x] 5.7 Verify with a bank smaller than `QUESTIONS_PER_ROUND` that the round uses all questions and the score is out of that count
+- [x] 5.8 Replace the e2e smoke test with a happy-path e2e test in `e2e/` (start a round, pick an option, submit, see the feedback, go through to the results screen, and play again) and verify `npm run test:e2e` passes
 
 ## 6. Startup validation in the app
 
