@@ -25,10 +25,10 @@
 
 ## 4. Round logic
 
-- [ ] 4.1 Implement `createRound(bank, size, random = Math.random)` in `src/round.js` selecting `min(size, bank.length)` distinct questions with a Fisher-Yates shuffle
-- [ ] 4.2 Shuffle each question's options in the round and track the correct option's new index from the original `answer`
-- [ ] 4.3 Implement score helpers (check a submitted index, count correct answers) and verify them in tests
-- [ ] 4.4 Write Vitest tests with an injected random source covering: bank larger than the round size, bank smaller than the round size, distinct questions, correct index tracking after shuffle (including duplicate option texts), and scoring; verify `npm test` passes
+- [x] 4.1 Implement `createRound(bank, size, random = Math.random)` in `src/round.js` selecting `min(size, bank.length)` distinct questions with a Fisher-Yates shuffle
+- [x] 4.2 Shuffle each question's options in the round and track the correct option's new index from the original `answer`
+- [x] 4.3 Implement score helpers (check a submitted index, count correct answers) and verify them in tests
+- [x] 4.4 Write Vitest tests with an injected random source covering: bank larger than the round size, bank smaller than the round size, distinct questions, correct index tracking after shuffle (including duplicate option texts), and scoring; verify `npm test` passes
 
 ## 5. UI and game flow
 
@@ -51,3 +51,4 @@
 - [ ] 7.1 Confirm all user-facing text is in English by walking through every screen
 - [ ] 7.2 Add a short README with the commands to install, run, and test (unit and e2e), and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
 - [ ] 7.3 Run `openspec validate quiz-game` and verify it passes
+- [ ] 7.4 Apply the `jsdoc-comments` skill to the remaining code files in `src/` (`validate.js`, `config.js`, `main.js`, `ui.js`; `round.js` is already done) and verify `npm test` and `npm run build` still pass
