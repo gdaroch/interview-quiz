@@ -51,8 +51,8 @@
 
 ## 7. Final checks
 
-- [ ] 7.1 Confirm all user-facing text is in English by walking through every screen
-- [ ] 7.2 Add a short README with the commands to install, run, and test (unit and e2e), and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
-- [ ] 7.3 Run `openspec validate quiz-game` and verify it passes
+- [x] 7.1 Confirm all user-facing text is in English by walking through every screen
+- [x] 7.2 Add a short README with the commands to install, run, and test (unit and e2e), and how to edit `questions.json` and `QUESTIONS_PER_ROUND`; verify the documented commands work as written on a clean install
+- [x] 7.3 Run `openspec validate quiz-game` and verify it passes
 - [x] 7.4 Apply the `jsdoc-comments` skill to the remaining code files in `src/` (`validate.js`, `config.js`, `main.js`, `ui.js`; `round.js` is already done) and verify `npm test` and `npm run build` still pass
 - [x] 7.5 Extend the README with a complete question example that includes the optional `code` field, and a note that a malformed JSON file is reported on the error screen
