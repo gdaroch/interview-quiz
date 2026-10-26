@@ -1,5 +1,5 @@
 import { QUESTIONS_PER_ROUND } from "./config.js";
-import { createRound, isCorrect, countCorrect } from "./round.js";
+import { createRound, filterByTopics, getTopics, isCorrect, countCorrect } from "./round.js";
 import { highlightCode } from "./highlight.js";
 
 /**
@@ -18,6 +18,7 @@ export const state = {
   selected: null,
   submitted: false,
   score: 0,
+  selectedTopics: new Set(),
 };
 
 let bank = [];
@@ -137,11 +138,52 @@ export function renderResults() {
 }
 
 /**
- * Draws the start screen with the number of questions a round will have.
+ * Selects every topic of the bank, so the start screen begins with all of them chosen.
+ * @returns {void}
+ */
+function resetTopics() {
+  state.selectedTopics = new Set(getTopics(bank));
+}
+
+/**
+ * Switches a topic between selected and not selected, then redraws the start screen keeping focus on that topic.
+ * @param {string} topic - The topic name.
+ * @returns {void}
+ */
+export function toggleTopic(topic) {
+  if (state.selectedTopics.has(topic)) state.selectedTopics.delete(topic);
+  else state.selectedTopics.add(topic);
+  renderStart();
+  // The buttons were rebuilt, so put keyboard focus back on the one that was toggled.
+  [...$("start-topics").children].find((button) => button.textContent === topic).focus();
+}
+
+/**
+ * Builds one toggle button for a topic.
+ * @param {string} topic - The topic name, also used as the label.
+ * @returns {HTMLButtonElement} The topic button.
+ */
+function buildTopicButton(topic) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "topic-btn";
+  button.textContent = topic;
+  const on = state.selectedTopics.has(topic);
+  button.setAttribute("aria-pressed", String(on));
+  button.classList.toggle("selected", on);
+  button.addEventListener("click", () => toggleTopic(topic));
+  return button;
+}
+
+/**
+ * Draws the start screen: topic buttons, the number of questions a round will have, and the Start state.
  * @returns {void}
  */
 function renderStart() {
-  $("start-count").textContent = Math.min(QUESTIONS_PER_ROUND, bank.length);
+  $("start-topics").replaceChildren(...getTopics(bank).map(buildTopicButton));
+  const pool = filterByTopics(bank, state.selectedTopics);
+  $("start-count").textContent = Math.min(QUESTIONS_PER_ROUND, pool.length);
+  $("btn-start").disabled = state.selectedTopics.size === 0;
 }
 
 /**
@@ -171,13 +213,23 @@ export function render() {
  * @returns {void}
  */
 export function startRound() {
-  state.round = createRound(bank, QUESTIONS_PER_ROUND);
+  state.round = createRound(filterByTopics(bank, state.selectedTopics), QUESTIONS_PER_ROUND);
   state.index = 0;
   state.selections = [];
   state.selected = null;
   state.submitted = false;
   state.score = 0;
   state.screen = "question";
+  render();
+}
+
+/**
+ * Goes back to the start screen with all topics selected again.
+ * @returns {void}
+ */
+export function showStart() {
+  resetTopics();
+  state.screen = "start";
   render();
 }
 
@@ -255,10 +307,9 @@ export function showErrors(errors) {
 export function initUI(questions) {
   bank = questions;
   $("btn-start").addEventListener("click", startRound);
-  $("btn-again").addEventListener("click", startRound);
+  $("btn-again").addEventListener("click", showStart);
   $("btn-submit").addEventListener("click", submitAnswer);
   $("btn-next").addEventListener("click", nextQuestion);
   $("q-options").addEventListener("change", (e) => selectOption(Number(e.target.value)));
-  state.screen = "start";
-  render();
+  showStart();
 }

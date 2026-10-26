@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shuffle, createRound, isCorrect, countCorrect } from './round.js';
+import { shuffle, createRound, getTopics, filterByTopics, isCorrect, countCorrect } from './round.js';
 
 // Fake random source for tests: gives the same numbers every time for the same seed.
 // Each call multiplies the previous number and wraps it, then scales it to 0..1.
@@ -55,6 +55,66 @@ describe('shuffle', () => {
   it('works without an injected random source', () => {
     const result = shuffle([1, 2, 3]);
     expect([...result].sort()).toEqual([1, 2, 3]);
+  });
+});
+
+describe('getTopics', () => {
+  it('lists distinct topics in order of first appearance', () => {
+    const bank = [
+      makeQuestion(1, { topic: 'React' }),
+      makeQuestion(2, { topic: 'AI' }),
+      makeQuestion(3, { topic: 'React' }),
+      makeQuestion(4, { topic: 'Node.js' }),
+      makeQuestion(5, { topic: 'AI' }),
+    ];
+    expect(getTopics(bank)).toEqual(['React', 'AI', 'Node.js']);
+  });
+
+  it('returns an empty list for an empty bank', () => {
+    expect(getTopics([])).toEqual([]);
+  });
+
+  it('does not mutate the bank', () => {
+    const bank = makeBank(3);
+    const snapshot = structuredClone(bank);
+    getTopics(bank);
+    expect(bank).toEqual(snapshot);
+  });
+});
+
+describe('filterByTopics', () => {
+  const bank = [
+    makeQuestion(1, { topic: 'JavaScript' }),
+    makeQuestion(2, { topic: 'TypeScript' }),
+    makeQuestion(3, { topic: 'JavaScript' }),
+    makeQuestion(4, { topic: 'React' }),
+  ];
+
+  it('keeps only the questions of one topic', () => {
+    expect(ids(filterByTopics(bank, new Set(['JavaScript'])))).toEqual(['q1', 'q3']);
+  });
+
+  it('keeps the questions of several topics, in bank order', () => {
+    expect(ids(filterByTopics(bank, new Set(['React', 'JavaScript'])))).toEqual(['q1', 'q3', 'q4']);
+  });
+
+  it('accepts an array of topics', () => {
+    expect(ids(filterByTopics(bank, ['TypeScript']))).toEqual(['q2']);
+  });
+
+  it('returns no questions for an empty selection', () => {
+    expect(filterByTopics(bank, new Set())).toEqual([]);
+  });
+
+  it('returns no questions for an unknown topic', () => {
+    expect(filterByTopics(bank, new Set(['Cobol']))).toEqual([]);
+  });
+
+  it('does not modify the input bank', () => {
+    const snapshot = structuredClone(bank);
+    const result = filterByTopics(bank, new Set(['JavaScript']));
+    expect(bank).toEqual(snapshot);
+    expect(result).not.toBe(bank);
   });
 });
 

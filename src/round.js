@@ -34,6 +34,27 @@ function shuffleOptions(question, random) {
 }
 
 /**
+ * Lists the distinct topics of a bank, in order of first appearance.
+ * @param {Array<{topic: string}>} bank - The questions to read the topics from.
+ * @returns {string[]} The topic names, without repeats.
+ */
+export function getTopics(bank) {
+  // A Set drops repeats and keeps the order in which values were added.
+  return [...new Set(bank.map((question) => question.topic))];
+}
+
+/**
+ * Keeps only the questions whose topic is one of the given topics.
+ * @param {Array<{topic: string}>} bank - The questions to filter.
+ * @param {Iterable<string>} topics - The topic names to keep.
+ * @returns {Array<object>} A new array with the matching questions; the bank is unchanged.
+ */
+export function filterByTopics(bank, topics) {
+  const wanted = new Set(topics);
+  return bank.filter((question) => wanted.has(question.topic));
+}
+
+/**
  * Builds a round of random questions, each with its options in random order.
  * @param {Array<object>} bank - All the questions to pick from.
  * @param {number} size - How many questions the round should have.

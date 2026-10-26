@@ -8,6 +8,6 @@ describe('setup', () => {
   });
 
   it('imports QUESTIONS_PER_ROUND from config', () => {
-    expect(QUESTIONS_PER_ROUND).toBe(15);
+    expect(QUESTIONS_PER_ROUND).toBe(10);
   });
 });

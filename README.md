@@ -32,7 +32,7 @@ Questions live in `src/questions.json`, a JSON array of question objects. Exampl
 [
   {
     "id": "js-typeof-null",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What does typeof null return?",
     "options": ["\"null\"", "\"object\"", "\"undefined\""],
     "answer": 1,
@@ -40,7 +40,7 @@ Questions live in `src/questions.json`, a JSON array of question objects. Exampl
   },
   {
     "id": "js-closure-counter",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What does the last line print?",
     "options": ["0", "1", "2", "undefined"],
     "answer": 2,
@@ -66,7 +66,7 @@ Fields of each question:
 | Field | Type | Required | Rules |
 | --- | --- | --- | --- |
 | `id` | string | yes | Unique in the whole file. |
-| `topic` | string | yes | Subject of the question. |
+| `topic` | string | yes | Name of the question's subject, shown to the player as-is on the question and on the topic buttons. Questions with the exact same value form one topic. |
 | `question` | string | yes | The question text. |
 | `options` | array of strings | yes | At least 2 entries; each one a non-empty string. |
 | `answer` | integer | yes | 0-based index of the correct option in the original `options` order (the game shuffles the options itself). |
@@ -79,7 +79,7 @@ The bank is validated at startup (`src/parse.js` checks that the file is valid J
 
 ## Round size
 
-`QUESTIONS_PER_ROUND` in `src/config.js` sets how many questions a round has (currently 15). If the bank has fewer questions, all of them are used.
+`QUESTIONS_PER_ROUND` in `src/config.js` sets how many questions a round has (currently 10). Before a round, the player picks which topics to draw from (all are selected by default); if those topics have fewer questions, all of them are used.
 
 ## Project structure
 

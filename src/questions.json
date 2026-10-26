@@ -1,7 +1,7 @@
 [
   {
     "id": "js-scope-shadow",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What does this code print?",
     "options": ["110 and 0.19", "119 and 0.19", "110 and 0.10", "119 and 0.10"],
     "answer": 0,
@@ -20,7 +20,7 @@
   },
   {
     "id": "js-tdz-shadow",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What happens when calculate is called?",
     "options": [
       "Prints undefined",
@@ -44,7 +44,7 @@
   },
   {
     "id": "js-closure-independent",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Which values are printed?",
     "options": ["3 and 1", "2 and 2", "2 and 1", "1 and 1"],
     "answer": 2,
@@ -65,7 +65,7 @@
   },
   {
     "id": "js-arrow-this",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "In a method named heal on a player object, which setTimeout callback preserves the this value of the enclosing method?",
     "options": [
       "function () { this.health += 10; }.bind({ health: 50 })",
@@ -78,7 +78,7 @@
   },
   {
     "id": "js-bind-method",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What happens when the final console.log executes?",
     "options": ["Prints 8", "Prints undefined", "Prints 5", "Throws TypeError"],
     "answer": 0,
@@ -97,7 +97,7 @@
   },
   {
     "id": "js-callback-sync",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Which statement correctly describes callbacks?",
     "options": [
       "I/O callbacks must be async functions",
@@ -110,7 +110,7 @@
   },
   {
     "id": "js-promise-all",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Two independent service requests take 200 ms and 300 ms. Which strategy generally reduces total waiting time?",
     "options": [
       "Use Promise.race and await its first result",
@@ -123,7 +123,7 @@
   },
   {
     "id": "js-promise-allsettled",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "You need to display both successful results and errors from three independent operations. Which method should you use?",
     "options": [
       "Promise.race",
@@ -136,7 +136,7 @@
   },
   {
     "id": "js-event-loop",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What is the guaranteed beginning of the output in Node.js for this top-level script?",
     "options": ["A, D, N, C", "A, D, C, N", "A, D, B, N", "A, N, D, C"],
     "answer": 0,
@@ -155,7 +155,7 @@
   },
   {
     "id": "js-async-foreach",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Why can the message \"listo\" appear before the saves finish?",
     "options": [
       "forEach only awaits the first Promise",
@@ -177,7 +177,7 @@
   },
   {
     "id": "js-concurrency-limit",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "You must send 10,000 emails through an API with a rate limit. Which implementation is most appropriate?",
     "options": [
       "Unbounded Promise.all for maximum throughput",
@@ -190,7 +190,7 @@
   },
   {
     "id": "js-react-immutability",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Which React state update avoids mutating the original object?",
     "options": [
       "setUser(Object.assign(user, { age: 31 }))",
@@ -203,7 +203,7 @@
   },
   {
     "id": "js-equality",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "What does this code print?",
     "options": [
       "true and false",
@@ -220,7 +220,7 @@
   },
   {
     "id": "js-purity",
-    "topic": "javascript",
+    "topic": "JavaScript",
     "question": "Which function is pure in this example?",
     "options": [
       "f1, because it only reads discount",
@@ -241,7 +241,7 @@
   },
   {
     "id": "ts-runtime-types",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What happens to TypeScript interfaces when the application receives JSON at runtime?",
     "options": [
       "The interface validates JSON when strict is enabled",
@@ -254,7 +254,7 @@
   },
   {
     "id": "ts-interface-extra",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "An existing variable has id, name, and role fields. Can it be assigned to an interface that only requires id and name?",
     "options": [
       "No, because the object has an extra role field",
@@ -275,7 +275,7 @@
   },
   {
     "id": "ts-optional-nullish",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What does displayName return when nickname is an empty string?",
     "options": ["\"\" (empty string)", "\"Ana\"", "null", "undefined"],
     "answer": 0,
@@ -291,7 +291,7 @@
   },
   {
     "id": "ts-exhaustive-never",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "Why assign event to never in the default branch of a switch over a discriminated union?",
     "options": [
       "Cast unknown values to never at runtime",
@@ -304,7 +304,7 @@
   },
   {
     "id": "ts-generic-first",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What advantage does first<T>(items: T[]): T | undefined have over first(items: any[]): any?",
     "options": [
       "It casts elements to T at runtime",
@@ -317,7 +317,7 @@
   },
   {
     "id": "ts-unknown-guard",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "An HTTP response is stored as unknown. What must you do before accessing payload.name?",
     "options": [
       "Cast the result to any before reading it",
@@ -337,7 +337,7 @@
   },
   {
     "id": "ts-zod-safeparse",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What is the main advantage of Zod's safeParse in an endpoint?",
     "options": [
       "It validates inputs and reports success or errors",
@@ -350,7 +350,7 @@
   },
   {
     "id": "ts-omit-runtime",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "Is Omit<User, \"passwordHash\"> enough to ensure passwordHash is not sent in an HTTP response?",
     "options": [
       "Yes, because Omit changes serialization too",
@@ -363,7 +363,7 @@
   },
   {
     "id": "ts-keyof",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What does keyof User represent?",
     "options": [
       "The values of every User property",
@@ -376,7 +376,7 @@
   },
   {
     "id": "ts-as-const",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What type results from using typeof ROLES[number]?",
     "options": [
       "string[]",
@@ -396,7 +396,7 @@
   },
   {
     "id": "ts-readonly",
-    "topic": "typescript",
+    "topic": "TypeScript",
     "question": "What does readonly guarantee for a TypeScript property?",
     "options": [
       "It prevents assignment through the type, not at runtime",
@@ -409,7 +409,7 @@
   },
   {
     "id": "node-io-cpu",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "An endpoint performs a synchronous calculation that takes five seconds. What is the effect in a typical Node.js instance?",
     "options": [
       "It delays only requests that share the computed variable",
@@ -422,7 +422,7 @@
   },
   {
     "id": "node-request-layer",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "In an API with controller, service, and repository layers, where should the rule \"do not create issues in archived projects\" live?",
     "options": [
       "In the authentication guard, since it identifies the user",
@@ -435,7 +435,7 @@
   },
   {
     "id": "http-methods-idempotent",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "Which HTTP method is expected to be idempotent when implemented correctly?",
     "options": [
       "PATCH that increments a counter by one",
@@ -448,7 +448,7 @@
   },
   {
     "id": "http-401-403",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "A request comes from an authenticated user who lacks permission to delete the resource. Which status code is normally appropriate?",
     "options": [
       "403",
@@ -461,7 +461,7 @@
   },
   {
     "id": "http-created-conflict",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "What response is normally appropriate after successfully creating a resource with POST?",
     "options": [
       "204 with the object in its body",
@@ -474,7 +474,7 @@
   },
   {
     "id": "http-cursor-pagination",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "A huge list changes constantly, and you want to avoid repeated records across pages. Which design helps most?",
     "options": [
       "Offset adjusted to the total rows on each call",
@@ -487,7 +487,7 @@
   },
   {
     "id": "http-idempotency-payment",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "A POST /payments was processed, but the response to the client was lost. How do you avoid a second charge when the client retries?",
     "options": [
       "Increase the timeout and retry without tracking the operation",
@@ -500,7 +500,7 @@
   },
   {
     "id": "http-cors-security",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "Which statement about CORS is correct?",
     "options": [
       "It controls cross-origin reads in browsers, not API permissions",
@@ -513,7 +513,7 @@
   },
   {
     "id": "node-stream-backpressure",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "You need to send a 2 GB CSV over HTTP to a slow client. Which approach is most appropriate?",
     "options": [
       "Compress the file after fully buffering it",
@@ -526,7 +526,7 @@
   },
   {
     "id": "node-connection-pool",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "You have 10 API instances, each with a pool of 20 connections to PostgreSQL. What is the theoretical maximum total number of connections in those pools?",
     "options": ["30", "100", "200", "20"],
     "answer": 2,
@@ -534,7 +534,7 @@
   },
   {
     "id": "http-etag",
-    "topic": "nodejs-http",
+    "topic": "Node.js",
     "question": "A browser sends If-None-Match with a previously received ETag, and the resource has not changed. Which response can avoid transferring the body?",
     "options": [
       "200 OK with the same body",
@@ -547,7 +547,7 @@
   },
   {
     "id": "sec-authn-authz",
-    "topic": "security",
+    "topic": "Security",
     "question": "A token is valid, but the user is not a member of the requested project. Which check is missing?",
     "options": [
       "Authorization on the specific resource",
@@ -560,7 +560,7 @@
   },
   {
     "id": "sec-bola",
-    "topic": "security",
+    "topic": "Security",
     "question": "For GET /invoices/:id, which change reduces a BOLA/IDOR vulnerability?",
     "options": [
       "Require a valid JWT on every route",
@@ -573,7 +573,7 @@
   },
   {
     "id": "sec-rbac-abac",
-    "topic": "security",
+    "topic": "Security",
     "question": "A member may edit issues only in projects they belong to. Which policy best expresses this rule?",
     "options": [
       "Allow every user with the member role",
@@ -586,7 +586,7 @@
   },
   {
     "id": "sec-jwt-payload",
-    "topic": "security",
+    "topic": "Security",
     "question": "Which statement about a typical signed JWT is correct?",
     "options": [
       "Its signature makes immediate revocation possible",
@@ -599,7 +599,7 @@
   },
   {
     "id": "sec-jwt-claims",
-    "topic": "security",
+    "topic": "Security",
     "question": "Besides verifying a JWT signature, which relevant checks must the backend perform?",
     "options": [
       "Validate expiration, issuer, audience and allowed algorithm",
@@ -612,7 +612,7 @@
   },
   {
     "id": "sec-session-refresh",
-    "topic": "security",
+    "topic": "Security",
     "question": "What is a common advantage of a server-side session with an opaque ID over a stateless JWT?",
     "options": [
       "It works without cookies or a session identifier",
@@ -625,7 +625,7 @@
   },
   {
     "id": "sec-oauth-oidc",
-    "topic": "security",
+    "topic": "Security",
     "question": "What does OpenID Connect add to OAuth2 to support federated login?",
     "options": [
       "A persistent HTTP session managed by the browser",
@@ -638,7 +638,7 @@
   },
   {
     "id": "sec-xss-cookie",
-    "topic": "security",
+    "topic": "Security",
     "question": "What does an HttpOnly cookie protect, and what does it NOT guarantee?",
     "options": [
       "It stops all requests made by third-party scripts",
@@ -651,7 +651,7 @@
   },
   {
     "id": "sec-password-hashing",
-    "topic": "security",
+    "topic": "Security",
     "question": "Which algorithm is appropriate for storing passwords?",
     "options": [
       "Argon2id with a salt and tuned work factor",
@@ -664,7 +664,7 @@
   },
   {
     "id": "sec-sql-injection",
-    "topic": "security",
+    "topic": "Security",
     "question": "Which option avoids directly interpolating external input into SQL?",
     "options": [
       "`SELECT ... WHERE email = ${input}`",
@@ -677,7 +677,7 @@
   },
   {
     "id": "arch-soc",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "If a business rule used by both HTTP and a worker changes, where should you implement it?",
     "options": [
       "Inside each controller to respect the transport",
@@ -690,7 +690,7 @@
   },
   {
     "id": "arch-thin-controller",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "What is the preferred responsibility of a thin controller?",
     "options": [
       "Coordinate SQL, domain rules and transactions directly",
@@ -703,7 +703,7 @@
   },
   {
     "id": "arch-dto-mapper",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "Why build an explicit ResponseDTO instead of directly serializing a persistence entity?",
     "options": [
       "Explicitly choose which fields the client receives",
@@ -716,7 +716,7 @@
   },
   {
     "id": "arch-validate-business",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "Which rule belongs in the domain rather than only in request-body format validation?",
     "options": [
       "assigneeId must be a valid UUID",
@@ -729,7 +729,7 @@
   },
   {
     "id": "arch-service-usecase",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "The CreateIssue flow must check permissions and save an issue. Which component should orchestrate it?",
     "options": [
       "A middleware that logs request events",
@@ -742,7 +742,7 @@
   },
   {
     "id": "arch-repository-purpose",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "Which statement best describes the purpose of the Repository Pattern?",
     "options": [
       "Duplicate every ORM method for consistency",
@@ -755,7 +755,7 @@
   },
   {
     "id": "arch-di-dip",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "What is the difference between Dependency Injection (DI) and the Dependency Inversion Principle (DIP)?",
     "options": [
       "DIP guides dependency direction; DI supplies implementations",
@@ -777,7 +777,7 @@
   },
   {
     "id": "arch-error-mapping",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "closeProject throws ProjectArchivedError. How should it be translated into HTTP 409?",
     "options": [
       "Catch the error in the repository and emit an HttpException",
@@ -790,7 +790,7 @@
   },
   {
     "id": "arch-observability",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "p95 latency has risen to 2 seconds. Which information helps determine whether PostgreSQL is the bottleneck?",
     "options": [
       "Count log records without measuring duration",
@@ -803,7 +803,7 @@
   },
   {
     "id": "arch-hexagonal",
-    "topic": "architecture",
+    "topic": "Architecture",
     "question": "In hexagonal architecture, what role does PaymentGateway usually play?",
     "options": [
       "The external provider’s concrete HTTP implementation",
@@ -816,7 +816,7 @@
   },
   {
     "id": "db-sql-nosql",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "You are designing orders with payments, inventory, and consistency constraints across multiple entities. What is a reasonable starting point?",
     "options": [
       "PostgreSQL for referential integrity and transactions",
@@ -829,7 +829,7 @@
   },
   {
     "id": "db-left-join",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "You want to list users even if they have no orders and show a count of zero. Which query fits best?",
     "options": [
       "INNER JOIN + COUNT(o.id)",
@@ -842,7 +842,7 @@
   },
   {
     "id": "db-where-having",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "What is the main difference between WHERE and HAVING in SQL?",
     "options": [
       "WHERE and HAVING both filter only before grouping",
@@ -855,7 +855,7 @@
   },
   {
     "id": "db-composite-index",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "Given a composite index on (user_id, created_at), which query best takes advantage of the index's column order?",
     "options": [
       "WHERE total > 100 ORDER BY user_id",
@@ -874,7 +874,7 @@
   },
   {
     "id": "db-index-cost",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "What is a trade-off of adding indexes to a table?",
     "options": [
       "It speeds up some reads but costs write time and storage",
@@ -887,7 +887,7 @@
   },
   {
     "id": "db-transaction-outbox",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "You need to save an order and publish an event to a broker. Which pattern helps avoid losing the event if the database commits but the broker fails?",
     "options": [
       "Publish to the broker before COMMIT without retries",
@@ -900,7 +900,7 @@
   },
   {
     "id": "db-atomic-stock",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "Two buyers compete for the last item in stock. Which query prevents stock from being decremented when it is already zero?",
     "options": [
       "SELECT stock, then UPDATE if the in-memory value was positive",
@@ -913,7 +913,7 @@
   },
   {
     "id": "db-optimistic-lock",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "To avoid overwriting concurrent changes to an issue with version = 4, which condition represents optimistic locking?",
     "options": [
       "Check version with SELECT but update without a condition",
@@ -926,7 +926,7 @@
   },
   {
     "id": "db-n-plus-one",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "A screen loads 100 users and then executes one query per user to fetch orders. What problem is this?",
     "options": [
       "N+1; batch the order reads",
@@ -939,7 +939,7 @@
   },
   {
     "id": "db-redis-cache-aside",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "You use cache-aside for products in Redis. What should you do after changing a price in PostgreSQL?",
     "options": [
       "Increase TTL so the product expires with others",
@@ -952,7 +952,7 @@
   },
   {
     "id": "db-cache-stampede",
-    "topic": "databases",
+    "topic": "Databases",
     "question": "A popular cache key expires and hundreds of requests recompute the same data simultaneously. What is this called, and how can you mitigate it?",
     "options": [
       "Hot-key eviction; perform uncoordinated cache warming",
@@ -965,7 +965,7 @@
   },
   {
     "id": "test-unit-integration-e2e",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "Which example is an integration test rather than a unit or E2E test?",
     "options": [
       "Test a route while mocking the DB and all its dependencies",
@@ -978,7 +978,7 @@
   },
   {
     "id": "test-aaa",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "In Arrange, Act, Assert, what does Assert represent?",
     "options": [
       "Verify that the observed result matches expectations",
@@ -991,7 +991,7 @@
   },
   {
     "id": "test-double-fake",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "An in-memory repository class implements the contract without connecting to PostgreSQL. What type of test double is it?",
     "options": [
       "Mock configured to expect specific calls",
@@ -1004,7 +1004,7 @@
   },
   {
     "id": "test-avoid-overmocking",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "What is the risk of mocking every internal method of a service?",
     "options": [
       "Mocks execute every internal helper’s real behavior",
@@ -1017,7 +1017,7 @@
   },
   {
     "id": "test-create-issue-negative",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "Which negative test is particularly important for CreateIssue?",
     "options": [
       "An empty title reaches the output mapper",
@@ -1030,7 +1030,7 @@
   },
   {
     "id": "test-async-rejects",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "You want to verify that a Promise returned by createIssue rejects when the database fails. Which testing approach is appropriate?",
     "options": [
       "await expect(createIssue()).rejects.toThrow(...)",
@@ -1043,7 +1043,7 @@
   },
   {
     "id": "test-tdd-cycle",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "Which sequence represents TDD?",
     "options": [
       "Write code, test it, then refactor",
@@ -1056,7 +1056,7 @@
   },
   {
     "id": "test-ai-assertions",
-    "topic": "testing",
+    "topic": "Testing",
     "question": "An AI generates passing tests for a new endpoint. What remains the developer's responsibility?",
     "options": [
       "Approve tests when coverage exceeds 90%, without reviewing scenarios",
@@ -1069,7 +1069,7 @@
   },
   {
     "id": "interview-star",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "In a behavioral interview answer using STAR, what does the A best describe?",
     "options": [
       "Analysis: how you compared the possible solutions",
@@ -1082,7 +1082,7 @@
   },
   {
     "id": "interview-results",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "You describe a cloud migration in an interview. Which result is most responsible to communicate?",
     "options": [
       "Verifiable impact, clarifying your own contribution",
@@ -1095,7 +1095,7 @@
   },
   {
     "id": "interview-seniority",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "Which signal best communicates technical seniority?",
     "options": [
       "Show knowledge of many libraries in a short time",
@@ -1108,7 +1108,7 @@
   },
   {
     "id": "interview-unknown-tech",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "You are asked about a tool you have never used in production. Which answer is best?",
     "options": [
       "Describe its architecture as if you had operated it",
@@ -1121,7 +1121,7 @@
   },
   {
     "id": "interview-compensation",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "When stating salary expectations in Chile, what must you distinguish to understand take-home pay and the employment arrangement?",
     "options": [
       "Whether the range includes variable bonuses and benefits",
@@ -1134,7 +1134,7 @@
   },
   {
     "id": "interview-ask-company",
-    "topic": "interviews",
+    "topic": "Interviews",
     "question": "Which question most directly clarifies expected outcomes for a senior backend position?",
     "options": [
       "What outcomes do you expect in the first 3–6 months?",
@@ -1147,7 +1147,7 @@
   },
   {
     "id": "oop-encapsulation",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "In a Wallet class, which design illustrates encapsulation?",
     "options": [
       "Expose balance through a mutable global variable",
@@ -1160,7 +1160,7 @@
   },
   {
     "id": "oop-composition",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "For users whose permissions can change dynamically, why is composition often preferred over inheritance?",
     "options": [
       "Because it automatically reduces object allocations",
@@ -1173,7 +1173,7 @@
   },
   {
     "id": "solid-srp",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "A UserService validates users, sends emails, and builds SQL queries. Which SOLID principle suggests separating these responsibilities?",
     "options": [
       "Liskov Substitution",
@@ -1186,7 +1186,7 @@
   },
   {
     "id": "solid-ocp-strategy",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "checkout accepts PaymentMethod.pay(). To add a new provider, you implement PaymentMethod without changing checkout. Which principle does this illustrate?",
     "options": [
       "Open/Closed",
@@ -1199,7 +1199,7 @@
   },
   {
     "id": "solid-liskov",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "A ReadOnlyStorage implementation of Storage.save() always throws an error, even though clients of the contract expect saving to work. Which principle is violated?",
     "options": [
       "Single Responsibility",
@@ -1212,7 +1212,7 @@
   },
   {
     "id": "patterns-adapter",
-    "topic": "solid-patterns",
+    "topic": "Patterns",
     "question": "You need to convert an external provider's JSON into the contract used by your domain. Which pattern is especially suitable?",
     "options": ["Observer", "Facade", "Adapter", "Factory"],
     "answer": 2,
@@ -1220,7 +1220,7 @@
   },
   {
     "id": "algo-complexity-nested",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "An algorithm compares every element of an array with every element of another array of the same size n using two nested loops. What is its time complexity?",
     "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
     "answer": 3,
@@ -1228,7 +1228,7 @@
   },
   {
     "id": "algo-map-tradeoff",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "You have n IDs and m users. You build a Map of users by ID and then look up each ID. What is the average complexity?",
     "options": [
       "O(n + m) time and O(m) extra memory",
@@ -1241,7 +1241,7 @@
   },
   {
     "id": "algo-stack-queue",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "Which data structure follows FIFO order and is useful for BFS?",
     "options": ["Stack", "Queue", "Min-heap", "Deque used only as a stack"],
     "answer": 1,
@@ -1249,7 +1249,7 @@
   },
   {
     "id": "algo-binary-search",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "What requirement is essential to perform binary search in O(log n) time?",
     "options": [
       "The array contains no duplicates",
@@ -1262,7 +1262,7 @@
   },
   {
     "id": "algo-default-sort",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "What output does sort() produce without a comparator when used on numbers in JavaScript?",
     "options": ["[9, 10, 1]", "[1, 9, 10]", "[10, 9, 1]", "[1, 10, 9]"],
     "answer": 3,
@@ -1274,7 +1274,7 @@
   },
   {
     "id": "algo-two-pointers",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "Given an ascending array and a target sum, you want to find whether two values add up to the target. Which approach achieves O(n) time without significant extra memory?",
     "options": [
       "Two pointers advancing inward from opposite ends",
@@ -1287,7 +1287,7 @@
   },
   {
     "id": "algo-live-coding",
-    "topic": "algorithms",
+    "topic": "Algorithms",
     "question": "When given an ambiguous live-coding problem, what is most useful to do first?",
     "options": [
       "Immediately choose an optimal data structure",
@@ -1300,7 +1300,7 @@
   },
   {
     "id": "react-state-updater",
-    "topic": "react",
+    "topic": "React",
     "question": "You want to increment count twice in a row in an event handler. Which strategy best handles React batching?",
     "options": [
       "Call setCount(count) twice",
@@ -1320,7 +1320,7 @@
   },
   {
     "id": "react-effect-cleanup",
-    "topic": "react",
+    "topic": "React",
     "question": "A component starts a setInterval in useEffect. What should the effect return to avoid leaving an orphaned timer?",
     "options": [
       "A function that calls setInterval again",
@@ -1333,7 +1333,7 @@
   },
   {
     "id": "react-effect-derived",
-    "topic": "react",
+    "topic": "React",
     "question": "You receive tasks and only want to show completed ones. Which option avoids unnecessary derived state?",
     "options": [
       "Compute tasks.filter(t => t.done) during render",
@@ -1346,7 +1346,7 @@
   },
   {
     "id": "react-key-reorder",
-    "topic": "react",
+    "topic": "React",
     "question": "A task list has rows with local state and can be reordered. Which key helps preserve the correct state for each row?",
     "options": [
       "A key generated with Math.random() on each render",
@@ -1359,7 +1359,7 @@
   },
   {
     "id": "react-context",
-    "topic": "react",
+    "topic": "React",
     "question": "Multiple screens need the UI theme without passing props through many component levels. Which simple solution can help?",
     "options": [
       "useReducer separately inside each component",
@@ -1372,7 +1372,7 @@
   },
   {
     "id": "react-usememo",
-    "topic": "react",
+    "topic": "React",
     "question": "When is useMemo most justified for filtering a list?",
     "options": [
       "When side effects need to run during rendering",
@@ -1385,7 +1385,7 @@
   },
   {
     "id": "infra-docker",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "Which statement about Docker is correct?",
     "options": [
       "An image is the artifact; a container runs it",
@@ -1398,7 +1398,7 @@
   },
   {
     "id": "infra-horizontal-stateless",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "You scale an API to four instances behind a load balancer, but sessions are stored only in local memory. What problem can arise?",
     "options": [
       "The load balancer automatically synchronizes sessions",
@@ -1411,7 +1411,7 @@
   },
   {
     "id": "infra-monolith-vs-micro",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "When is splitting out a microservice usually reasonable?",
     "options": [
       "Whenever each team wants its own repository",
@@ -1424,7 +1424,7 @@
   },
   {
     "id": "infra-queue-retry",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "A queue delivers the same notification message twice. What property does the consumer need to avoid duplicate effects?",
     "options": [
       "Exactly-once delivery guaranteed by any queue",
@@ -1437,7 +1437,7 @@
   },
   {
     "id": "infra-dead-letter",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "After several retries, a job keeps failing because of invalid data. Where should it be sent for inspection without blocking the main queue?",
     "options": [
       "Dead-letter queue (DLQ)",
@@ -1450,7 +1450,7 @@
   },
   {
     "id": "infra-cdn-cache",
-    "topic": "infrastructure",
+    "topic": "Infrastructure",
     "question": "Which design prevents a stale cached price from determining the final charge?",
     "options": [
       "Trust the browser price when the ETag is valid",
@@ -1463,7 +1463,7 @@
   },
   {
     "id": "nest-components",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "In NestJS, which component normally declares HTTP routes?",
     "options": ["Guard", "Module", "Controller", "Provider / Service"],
     "answer": 2,
@@ -1471,7 +1471,7 @@
   },
   {
     "id": "nest-validationpipe",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "With ValidationPipe({ whitelist: true, transform: true }), what does whitelist do with request-body fields that have no validation decorators?",
     "options": [
       "It keeps them as readonly properties",
@@ -1492,7 +1492,7 @@
   },
   {
     "id": "nest-di-interface-token",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "A constructor needs IssueRepository, a TypeScript interface. Why use an @Inject(ISSUE_REPOSITORY) token?",
     "options": [
       "The interface disappears and a runtime token is needed",
@@ -1505,7 +1505,7 @@
   },
   {
     "id": "nest-request-order",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "Which simplified order best represents the handling of a successful NestJS request?",
     "options": [
       "Guards → Middleware → Interceptors (before) → Pipes → Controller",
@@ -1518,7 +1518,7 @@
   },
   {
     "id": "nest-guard-pipe-service",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "Where would you place general authentication, structural request-body validation, and the rule that archived projects cannot be modified, respectively?",
     "options": [
       "Guard, Service, Pipe",
@@ -1531,7 +1531,7 @@
   },
   {
     "id": "nest-exception-filter",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "Which NestJS component centrally translates a DomainError into an HTTP response?",
     "options": ["Interceptor", "Guard", "ValidationPipe", "Exception Filter"],
     "answer": 3,
@@ -1539,7 +1539,7 @@
   },
   {
     "id": "nest-testing-provider",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "In Test.createTestingModule, how do you replace a real repository with a test implementation?",
     "options": [
       "Register the same token with useValue pointing to the fake",
@@ -1552,7 +1552,7 @@
   },
   {
     "id": "nest-request-scope",
-    "topic": "nestjs",
+    "topic": "NestJS",
     "question": "Why might you avoid declaring every provider with Scope.REQUEST?",
     "options": [
       "Because dependency injection becomes unavailable",
@@ -1565,7 +1565,7 @@
   },
   {
     "id": "ai-agent-vs-chat",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "What distinguishes a coding agent with tool permissions from a chatbot that only suggests code?",
     "options": [
       "It can make changes so reviewing diffs is unnecessary",
@@ -1578,7 +1578,7 @@
   },
   {
     "id": "ai-workflow",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "Which sequence is safest for changing an existing API with an agent?",
     "options": [
       "Request the full change and trust automatic execution",
@@ -1591,7 +1591,7 @@
   },
   {
     "id": "ai-claude-md",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "What information belongs in a repository's CLAUDE.md file?",
     "options": [
       "Architecture, conventions and safe project commands",
@@ -1604,7 +1604,7 @@
   },
   {
     "id": "ai-mcp",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "What is MCP used for in AI-assisted development tools?",
     "options": [
       "Train a custom model on the repository",
@@ -1617,7 +1617,7 @@
   },
   {
     "id": "ai-bola-review",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "An agent generates GET /users/:id, and all positive tests pass. Which security check is especially missing?",
     "options": [
       "Verify the JWT has a valid signature",
@@ -1630,7 +1630,7 @@
   },
   {
     "id": "ai-subagents",
-    "topic": "ai-assisted-development",
+    "topic": "AI",
     "question": "When does it make the most sense to delegate subtasks to subagents?",
     "options": [
       "When all tasks modify the same files",
