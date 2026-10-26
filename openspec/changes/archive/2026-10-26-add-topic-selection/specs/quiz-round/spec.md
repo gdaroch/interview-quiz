@@ -34,3 +34,14 @@ If the questions of the selected topics are fewer than the round size, the round
 #### Scenario: Short bank
 - **WHEN** the selected topics have 8 questions and the round size is 10
 - **THEN** the round contains all 8 questions and the score is out of 8
+
+### Requirement: Play again
+The results screen SHALL offer a way to play another round, which returns to the start screen so the user can choose topics and start a new round with a fresh selection of questions and a score of zero.
+
+#### Scenario: Replay
+- **WHEN** the user activates Play again
+- **THEN** the start screen is shown with all topics selected
+
+#### Scenario: New round after replay
+- **WHEN** the user starts a round from the start screen after Play again
+- **THEN** the round begins from its first question and the previous score does not carry over
