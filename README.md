@@ -72,7 +72,7 @@ Fields of each question:
 | `answer` | integer | yes | 0-based index of the correct option in the original `options` order (the game shuffles the options itself). |
 | `explanation` | string | yes | Shown after the player answers. |
 | `code` | object | no | Code snippet shown with the question. |
-| `code.language` | string | if `code` is present | Non-empty. Highlighted languages: `javascript`, `typescript`, `css`, `html`. Any other language is shown as plain text. |
+| `code.language` | string | if `code` is present | Non-empty. Highlighted languages: `javascript`, `typescript`, `css`, `html`, `sql`. Any other language is shown as plain text. |
 | `code.lines` | array of strings | if `code` is present | Non-empty; one string per line of code. |
 
 The bank is validated at startup (`src/parse.js` checks that the file is valid JSON, `src/validate.js` checks the questions). If the file is not valid JSON, or any question is invalid, the game does not start: an error screen lists every problem found, not just the first one.

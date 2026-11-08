@@ -112,7 +112,7 @@ pre.code {
 }
 pre.code code { font: inherit; white-space: pre; }
 
-/* Token colors: class names emitted by highlight.js (JavaScript, TypeScript, CSS, HTML) */
+/* Token colors: class names emitted by highlight.js (JavaScript, TypeScript, CSS, HTML, SQL) */
 .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-meta { color: #c58bff; }
 .hljs-string, .hljs-attr-value, .hljs-regexp { color: #3ddc97; }
 .hljs-number, .hljs-symbol { color: #ffb86b; }

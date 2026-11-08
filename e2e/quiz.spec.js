@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const SELECTED = ['Interviews', 'React'];
+const SELECTED = ['JavaScript', 'Security'];
 
 test('chooses topics, plays a full round and returns to the start screen', async ({ page }) => {
   await page.goto('/');
@@ -67,4 +67,35 @@ test('chooses topics, plays a full round and returns to the start screen', async
   await expect(page.locator('#start-topics button')).toHaveCount(topicCount);
   await expect(page.locator('#start-topics button[aria-pressed="true"]')).toHaveCount(topicCount);
   await expect(page.locator('#btn-start')).toBeEnabled();
+});
+
+test('shows colored tokens in the code block of a SQL question', async ({ page }) => {
+  // Math.random just below 1 makes every shuffle keep the bank order, so a round is
+  // the first questions of the chosen topic and its SQL questions are always included
+  await page.addInitScript(() => {
+    Math.random = () => 0.999999;
+  });
+  await page.goto('/');
+
+  // Databases holds the SQL questions; keep only that topic
+  const topics = page.locator('#start-topics');
+  const names = await topics.locator('button').allTextContents();
+  for (const name of names.filter((n) => n !== 'Databases')) {
+    await topics.getByRole('button', { name, exact: true }).click();
+  }
+  await expect(page.locator('#start-topics button[aria-pressed="true"]')).toHaveCount(1);
+  await page.locator('#btn-start').click();
+
+  // Answer questions until the SQL one appears (the third one of the round)
+  const code = page.locator('#q-code-body');
+  for (let n = 1; n <= 10; n++) {
+    if (await code.evaluate((el) => el.classList.contains('language-sql'))) break;
+    await page.locator('#q-options').getByRole('radio').first().check();
+    await page.locator('#btn-submit').click();
+    await page.locator('#btn-next').click();
+  }
+
+  await expect(code).toHaveClass(/language-sql/);
+  await expect(page.locator('#q-code')).toBeVisible();
+  await expect(code.locator('[class*="hljs-"]').first()).toBeVisible();
 });
