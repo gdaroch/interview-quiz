@@ -6,7 +6,7 @@
     "options": [
       "Variables are looked up in global scope first, then locally",
       "A function sees variables based on where it is called",
-      "Only var declarations create a new scope inside blocks",
+      "A block {} can only see the variables declared inside it",
       "A function sees variables based on where it is written"
     ],
     "answer": 3,
@@ -302,13 +302,13 @@
     "topic": "JavaScript",
     "question": "What is printed first?",
     "options": [
-      "It depends on the file's size",
+      "Either one; the order varies between runs",
       "'The read was already requested'",
-      "The error, if the file is missing",
+      "The error, if config.json is missing",
       "The content of config.json"
     ],
     "answer": 1,
-    "explanation": "readFile only starts the read and returns. The last console.log runs immediately; the callback runs later, once the file has been read (or failed).",
+    "explanation": "readFile only starts the read and returns. The last console.log runs immediately; the callback runs later, once the file has been read (or failed). The order is always the same.",
     "code": {
       "language": "javascript",
       "lines": [
@@ -369,11 +369,11 @@
     "options": [
       "Only the async function that contains it",
       "The whole thread until the Promise settles",
-      "Every async function currently running",
+      "The function and every function that called it",
       "The event loop until the Promise resolves"
     ],
     "answer": 0,
-    "explanation": "await pauses only its own async function. The thread keeps running other code, which is why Node can serve other requests while one of them awaits a database query."
+    "explanation": "await pauses only its own async function. Its caller receives a pending Promise and keeps running, and the thread keeps serving other work, which is why Node can handle other requests while one awaits a database query."
   },
   {
     "id": "js-fetch-404",
@@ -382,7 +382,7 @@
     "options": [
       "It fulfills; you must check response.ok",
       "It rejects only if the body is not JSON",
-      "It stays pending until a timeout occurs",
+      "It fulfills for 4xx, but rejects for 5xx",
       "It rejects with an HTTP error object"
     ],
     "answer": 0,
@@ -419,13 +419,13 @@
     "topic": "JavaScript",
     "question": "You use Promise.race to compete a request against a 5-second timeout, and the timeout wins. What happens to the request?",
     "options": [
-      "It rejects with a timeout error too",
-      "It pauses until race is called again",
+      "It keeps running, but its .then callbacks are skipped",
+      "It rejects with the same timeout error",
       "It keeps running; race does not cancel it",
       "race cancels it automatically when the timeout wins"
     ],
     "answer": 2,
-    "explanation": "Promise.race only decides which result to adopt. The other operations keep running in the background; cancelling them needs a separate mechanism."
+    "explanation": "Promise.race only decides which result to adopt. The other operations keep running in the background, and their own callbacks still run; cancelling them needs a separate mechanism, like an AbortController."
   },
   {
     "id": "js-promise-all-reject",
@@ -468,13 +468,13 @@
     "topic": "JavaScript",
     "question": "When does the Event Loop move a pending task to the Call Stack?",
     "options": [
-      "When the running function hits a loop",
-      "Every few milliseconds, pausing code",
+      "When the running function reaches an await",
+      "Between any two lines of synchronous code",
       "As soon as the task's timer expires",
       "Only when the Call Stack is empty"
     ],
     "answer": 3,
-    "explanation": "The Event Loop never interrupts running code. A task (even an expired timer) waits until the Call Stack is empty before it is executed."
+    "explanation": "The Event Loop never interrupts running code. A task (even an expired timer) waits until the Call Stack is empty. An await only frees the stack if nothing else synchronous is still running."
   },
   {
     "id": "js-settimeout-zero",
@@ -599,32 +599,43 @@
   {
     "id": "js-batches-drawback",
     "topic": "JavaScript",
-    "question": "Compared with p-limit, what is the drawback of sending in batches of 50 with Promise.all?",
+    "question": "You send 10,000 emails in batches of 50: each batch uses await Promise.all before the next one starts. What is the main drawback?",
     "options": [
-      "Batches still start all operations at once",
-      "Errors inside a batch cannot be caught",
-      "Batches lose the order of the original ids",
-      "Each batch waits for its slowest operation"
+      "All 10,000 emails still start at once",
+      "The emails inside a batch are sent in order",
+      "Each batch needs its own connection pool",
+      "Each batch waits for its slowest email"
     ],
     "answer": 3,
-    "explanation": "A batch only finishes when all 50 finish: if one takes 10 s, the whole batch takes 10 s. p-limit keeps N operations running and starts a new one as soon as any finishes."
+    "explanation": "A batch only finishes when all 50 finish: if one takes 10 s, the whole batch takes 10 s while the other slots sit idle. A concurrency limiter that starts a new email as soon as any finishes avoids that.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "for (let i = 0; i < ids.length; i += 50) {",
+        "  const batch = ids.slice(i, i + 50);",
+        "  await Promise.all(batch.map(id => sendEmail(id)));",
+        "}"
+      ]
+    }
   },
   {
     "id": "js-plimit-function",
     "topic": "JavaScript",
-    "question": "Why does limit() receive a function instead of the promise from sendEmail(id)?",
+    "question": "p-limit is an npm library that keeps at most N operations running at once. Why does limit() receive a function instead of the promise from sendEmail(id)?",
     "options": [
       "Because p-limit only accepts synchronous functions",
       "So p-limit decides when to start each operation",
       "So the result is cached if the same id repeats",
-      "Because promises cannot be stored inside arrays"
+      "So errors are retried with exponential backoff"
     ],
     "answer": 1,
     "explanation": "Calling sendEmail(id) would start the request immediately. Passing a function lets p-limit call it only when one of the N slots is free.",
     "code": {
       "language": "javascript",
       "lines": [
-        "const limit = pLimit(50); // import pLimit from 'p-limit'",
+        "import pLimit from 'p-limit';",
+        "",
+        "const limit = pLimit(50);",
         "await Promise.all(ids.map(id => limit(() => sendEmail(id))));"
       ]
     }
@@ -635,7 +646,7 @@
     "question": "Why might React skip the re-render here?",
     "options": [
       "The state keeps the same object reference",
-      "React ignores changes to numeric fields",
+      "setUser was called outside an event handler",
       "setUser only accepts an updater function",
       "The update is batched and then discarded"
     ],
@@ -704,10 +715,10 @@
     "topic": "JavaScript",
     "question": "Why is impure not a pure function?",
     "options": [
+      "It returns NaN when price is undefined",
       "It modifies the price argument it receives",
-      "It returns a different type than it receives",
       "It depends on discount, defined outside it",
-      "It is an arrow function instead of a declaration"
+      "It uses floating-point multiplication"
     ],
     "answer": 2,
     "explanation": "A pure function depends only on its arguments. impure reads the external discount, so the same price can give different results if discount changes.",
@@ -723,15 +734,15 @@
   {
     "id": "js-side-effect",
     "topic": "JavaScript",
-    "question": "Which of these is a side effect?",
+    "question": "Which of these functions has a side effect?",
     "options": [
-      "Returning a new object built from the input",
-      "Computing a total from the arguments",
-      "Creating a local array inside the function",
-      "Writing a line to a log file"
+      "One that declares a local array and returns it",
+      "One that returns a new array built with spread",
+      "One that calls Math.max on its own arguments",
+      "One that pushes an item into an array it received"
     ],
     "answer": 3,
-    "explanation": "A side effect changes something outside the function: writing a file, modifying an external variable or making a request. Local variables and return values are not side effects."
+    "explanation": "A side effect changes something outside the function: writing a file, making a request, or mutating an object the caller owns. Creating and returning new values is not a side effect."
   },
   {
     "id": "js-coercion-equals",
@@ -756,15 +767,15 @@
   {
     "id": "js-coercion-params",
     "topic": "JavaScript",
-    "question": "req.params.id arrives as the string '15'. What is the recommended way to compare it with the number 15?",
+    "question": "req.params.id arrives as the string '15'. Which comparison with the number 15 is the recommended one?",
     "options": [
       "15 == req.params.id",
       "15 === Number(req.params.id)",
-      "String(15) == Number(req.params.id)",
+      "Object.is(15, req.params.id)",
       "15 === req.params.id"
     ],
     "answer": 1,
-    "explanation": "Prefer === with an explicit conversion. == hides the conversion, and === without converting is always false. Validating the input also avoids NaN surprises."
+    "explanation": "Prefer === with an explicit conversion. == works but hides the conversion, while === and Object.is without converting are always false for a number and a string. Validating the input also avoids NaN surprises."
   },
   {
     "id": "js-prototype-push",
@@ -810,13 +821,13 @@
     "topic": "JavaScript",
     "question": "When does Node treat a .js file as an ES module?",
     "options": [
-      "Always, since Node 22 dropped CommonJS",
-      "When package.json has \"type\": \"module\"",
       "When another ES module imports the file",
-      "When the file is inside the src folder"
+      "When package.json has \"type\": \"module\"",
+      "When the file contains an import statement",
+      "When the file name ends in .cjs"
     ],
     "answer": 1,
-    "explanation": "Node uses ESM for .mjs files, or for .js files when the nearest package.json has \"type\": \"module\". Otherwise it uses CommonJS."
+    "explanation": "Node uses ESM for .mjs files, or for .js files when the nearest package.json has \"type\": \"module\". Otherwise it uses CommonJS. The .cjs extension forces CommonJS."
   },
   {
     "id": "js-esm-load-time",
@@ -975,13 +986,13 @@
     "topic": "JavaScript",
     "question": "What is the usual difference between null and undefined?",
     "options": [
-      "undefined is an object; null is a primitive value",
-      "They are equal with both == and ===, so they match",
+      "undefined: only for missing properties; null: for variables",
+      "null: only in objects; undefined: only in primitives",
       "null: no value assigned; undefined: intentional absence",
       "undefined: no value assigned; null: intentional absence"
     ],
     "answer": 3,
-    "explanation": "undefined means no value has been assigned. null is set on purpose to say 'no value here'. (null == undefined is true, but null === undefined is false.)"
+    "explanation": "undefined means no value has been assigned (variables, missing properties, missing arguments). null is set on purpose to say 'no value here'."
   },
   {
     "id": "ts-runtime-erased",
@@ -1129,10 +1140,10 @@
       "number | undefined",
       "unknown",
       "number",
-      "any"
+      "10 | 20 | undefined"
     ],
     "answer": 0,
-    "explanation": "T is inferred as number from the array. The return type is T | undefined because the list could be empty.",
+    "explanation": "T is inferred as number from the array (not the literals 10 and 20). The return type is T | undefined because the list could be empty.",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1241,7 +1252,7 @@
   {
     "id": "ts-zod-infer",
     "topic": "TypeScript",
-    "question": "What does z.infer<typeof CreateIssueSchema> produce?",
+    "question": "What does z.infer<typeof UserSchema> produce?",
     "options": [
       "A JSON Schema document for the API",
       "A schema instance with default values",
@@ -1249,7 +1260,19 @@
       "The TypeScript type the schema describes"
     ],
     "answer": 3,
-    "explanation": "z.infer extracts a compile-time type from the schema, so you do not maintain a separate DTO type by hand."
+    "explanation": "z.infer extracts a compile-time type from the schema, so you do not maintain a separate type by hand.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "import { z } from 'zod';",
+        "",
+        "const UserSchema = z.object({",
+        "  name: z.string().min(1),",
+        "  email: z.string().email()",
+        "});",
+        "type User = z.infer<typeof UserSchema>;"
+      ]
+    }
   },
   {
     "id": "ts-partial",
@@ -1399,7 +1422,7 @@
   {
     "id": "node-layer-business-rule",
     "topic": "Node.js & HTTP",
-    "question": "Where does the rule 'tasks cannot be created in closed projects' belong?",
+    "question": "An API is split into route, middleware, controller, service and repository layers. Where does the rule 'tasks cannot be created in closed projects' belong?",
     "options": [
       "In the controller",
       "In the repository",
@@ -1425,10 +1448,10 @@
   {
     "id": "node-layer-middleware",
     "topic": "Node.js & HTTP",
-    "question": "Which layer usually authenticates the token and validates the body before the controller runs?",
+    "question": "In an Express API, which piece usually authenticates the token and validates the body before the controller runs?",
     "options": [
       "Service",
-      "Mapper",
+      "Response mapper",
       "Repository",
       "Middleware"
     ],
@@ -1534,10 +1557,10 @@
       "404 Not Found",
       "422 Unprocessable Content",
       "409 Conflict",
-      "500 Internal Server Error"
+      "412 Precondition Failed"
     ],
     "answer": 1,
-    "explanation": "422 means correct format, but the data breaks a rule. Some APIs use 400 for both malformed requests and this case."
+    "explanation": "422 means correct format, but the data breaks a rule. Some APIs use 400 for both malformed requests and this case. 412 is for failed conditional headers like If-Match."
   },
   {
     "id": "node-status-429",
@@ -1607,13 +1630,13 @@
     "topic": "Node.js & HTTP",
     "question": "How does Express recognize an error-handling middleware?",
     "options": [
-      "It is the last middleware registered",
+      "It throws instead of calling next()",
       "It is registered with app.error()",
       "It declares exactly 4 parameters",
-      "Its function name ends in Handler"
+      "It is registered after all the routes"
     ],
     "answer": 2,
-    "explanation": "Express detects error handlers by their signature (err, req, res, next). With only 3 parameters, it is treated as a normal middleware."
+    "explanation": "Express detects error handlers by their signature (err, req, res, next). With only 3 parameters, it is treated as a normal middleware. It is usually registered after the routes, but that is not how Express identifies it."
   },
   {
     "id": "node-middleware-factory",
@@ -1651,11 +1674,11 @@
     "options": [
       "When the response was a 4xx error",
       "When the operation is idempotent",
-      "When the timeout was longer than 5 s",
+      "When the server answered with a 500",
       "When the request was sent over HTTPS"
     ],
     "answer": 1,
-    "explanation": "Retrying an idempotent operation cannot duplicate effects. For non-idempotent operations, like a payment, you need an idempotency key."
+    "explanation": "Retrying an idempotent operation cannot duplicate effects. A 500 does not tell you whether the operation was applied, so non-idempotent operations, like a payment, need an idempotency key."
   },
   {
     "id": "node-exponential-backoff",
@@ -2174,9 +2197,9 @@
   {
     "id": "sec-jwt-short-lived",
     "topic": "Security",
-    "question": "Why do access tokens (JWT) usually last only a few minutes?",
+    "question": "Why do JWT access tokens usually last only a few minutes?",
     "options": [
-      "Servers must re-check passwords every 15 min",
+      "Short-lived tokens are cheaper to verify",
       "JWTs are hard to revoke before they expire",
       "The signature becomes weaker over time",
       "Short lifetimes make the payload smaller"
@@ -2359,12 +2382,12 @@
     "question": "Which algorithm is preferred for storing passwords?",
     "options": [
       "AES-256",
-      "SHA-256",
-      "MD5",
+      "SHA-512",
+      "HMAC-SHA256",
       "Argon2id"
     ],
     "answer": 3,
-    "explanation": "Argon2id (or scrypt and bcrypt) is slow on purpose and uses a salt. SHA-256 and MD5 are too fast, and AES is encryption, which can be reversed."
+    "explanation": "Argon2id (or scrypt and bcrypt) is slow on purpose and uses a salt. SHA-512 and HMAC-SHA256 are too fast for passwords, and AES is encryption, which can be reversed."
   },
   {
     "id": "sec-salt",
@@ -2485,28 +2508,28 @@
   {
     "id": "arch-dto-mapper",
     "topic": "Architecture",
-    "question": "What is the relationship between a DTO and a mapper?",
+    "question": "What is a DTO (Data Transfer Object)?",
     "options": [
-      "The mapper defines the shape; the DTO fills it",
-      "Both define the columns of the database tables",
-      "The DTO validates input; the mapper saves it",
-      "The DTO defines the shape; the mapper fills it"
+      "A class that wraps the queries to one database table",
+      "An object that maps HTTP routes to their controllers",
+      "A class that holds the business rules of one entity",
+      "The shape of the data an operation receives or returns"
     ],
     "answer": 3,
-    "explanation": "The DTO is the contract of the data going in or out. The mapper converts the database or domain object into that contract."
+    "explanation": "A DTO is the contract of the data going in or out of an operation. A mapper function then converts database or domain objects into that contract."
   },
   {
     "id": "arch-mapper-leak",
     "topic": "Architecture",
-    "question": "Why build the response with a mapper instead of res.json(user)?",
+    "question": "user is the object loaded from the database. Why build the response with a mapper instead of res.json(user)?",
     "options": [
       "So the response is checked at compile time",
       "So the user object is cached for later",
       "So Express can generate an ETag for it",
-      "So fields like password_hash are never sent"
+      "So fields like passwordHash are never sent"
     ],
     "answer": 3,
-    "explanation": "The mapper only copies allowed fields, so an internal or storage detail never becomes part of the public contract by accident."
+    "explanation": "The mapper only copies allowed fields, so an internal or storage detail never becomes part of the public API by accident."
   },
   {
     "id": "arch-dto-type-validation",
@@ -2550,15 +2573,15 @@
   {
     "id": "arch-service-vs-usecase",
     "topic": "Architecture",
-    "question": "What is the difference between a service and a use case?",
+    "question": "How is a use case class usually different from a service class?",
     "options": [
-      "Service: business rules; use case: HTTP handling",
-      "Service: many operations; use case: one action",
-      "Service: one action; use case: many operations",
-      "Service: read operations; use case: write ones"
+      "Use case: handles HTTP; service: holds business rules",
+      "Use case: one business action; service: many operations",
+      "Use case: many operations; service: one business action",
+      "Use case: reads data; service: writes data"
     ],
     "answer": 1,
-    "explanation": "A service groups an area's operations (IssueService with create, close, assign). A use case is one class per business action, like CreateIssue with execute()."
+    "explanation": "A service groups the operations of one area (IssueService with create, close and assign). A use case is one class per business action, like CreateIssue with a single execute() method."
   },
   {
     "id": "arch-usecase-http",
@@ -2644,7 +2667,7 @@
     "topic": "Architecture",
     "question": "When can a repository layer be redundant?",
     "options": [
-      "When the database is PostgreSQL",
+      "When the app uses several databases",
       "When the project has unit tests",
       "In a simple CRUD over an ORM",
       "When the service has business rules"
@@ -2655,15 +2678,15 @@
   {
     "id": "arch-request-flow",
     "topic": "Architecture",
-    "question": "In what order does a request go through the layers?",
+    "question": "In a typical layered Express API, in which order does a request reach these pieces?",
     "options": [
-      "Controller → Middleware → Service → Mapper",
-      "Middleware → Controller → Service → Mapper",
-      "Middleware → Service → Controller → Mapper",
-      "Middleware → Controller → Mapper → Service"
+      "Controller → Middleware → Service → Repository",
+      "Middleware → Controller → Service → Repository",
+      "Middleware → Service → Controller → Repository",
+      "Middleware → Controller → Repository → Service"
     ],
     "answer": 1,
-    "explanation": "Middleware authenticates and validates format, the controller builds the input DTO and calls the service, the service coordinates repository and domain, and the mapper builds the response DTO."
+    "explanation": "Middlewares authenticate and validate first, the controller translates HTTP and calls the service, and the service applies the rules and uses the repository for data access."
   },
   {
     "id": "arch-worker-entry",
@@ -2720,7 +2743,7 @@
   {
     "id": "arch-error-mapping",
     "topic": "Architecture",
-    "question": "Where is ProjectArchivedError translated into a 409 status?",
+    "question": "The domain throws ProjectArchivedError. Where should it be translated into an HTTP 409?",
     "options": [
       "In the repository, after the query",
       "In a central error mapper",
@@ -2728,7 +2751,7 @@
       "In every controller's catch block"
     ],
     "answer": 1,
-    "explanation": "The domain throws errors that know nothing about HTTP. One function, called from the error handler, maps each domain error to a status code."
+    "explanation": "Domain errors know nothing about HTTP. One function, called from the error-handling middleware, maps each domain error to a status code, so the mapping is not repeated."
   },
   {
     "id": "arch-error-no-http",
@@ -2751,10 +2774,10 @@
       "400, with the stack trace",
       "500, without internal details",
       "500, with the full stack trace",
-      "409, the most common case"
+      "503, so the client retries later"
     ],
     "answer": 1,
-    "explanation": "Unknown errors are unexpected server errors. Respond 500 and never expose internal details; log them instead."
+    "explanation": "Unknown errors are unexpected server errors. Respond 500 and never expose internal details; log them instead. 503 means a temporary unavailability, not a bug."
   },
   {
     "id": "arch-p95",
@@ -2811,15 +2834,15 @@
   {
     "id": "arch-microservices-when",
     "topic": "Architecture",
-    "question": "When do microservices make sense?",
+    "question": "When do microservices usually make sense?",
     "options": [
-      "When you want debugging to be simpler",
-      "When you want to avoid calls over the network",
-      "When the product is new and the team is small",
+      "When the app needs a second database",
+      "When the app needs async messaging",
+      "When the codebase passes 100k lines",
       "When teams block each other's deploys"
     ],
     "answer": 3,
-    "explanation": "Microservices solve organizational and scaling problems: teams that block each other, or parts that scale very differently. For a small team or a new product, a monolith is usually better."
+    "explanation": "Microservices solve organizational and scaling problems: teams that block each other, or parts that must scale very differently. Code size, a second database or a queue can all live inside a monolith."
   },
   {
     "id": "arch-microservices-cost",
@@ -2837,28 +2860,28 @@
   {
     "id": "arch-modular-monolith",
     "topic": "Architecture",
-    "question": "In a modular monolith, how should the orders module use payments?",
+    "question": "In a modular monolith, how should one module use another?",
     "options": [
-      "By importing payments/stripe.ts",
-      "Only through payments' public interface",
-      "Through HTTP calls between the modules",
-      "By reading the payments tables directly"
+      "By importing whichever internal file it needs",
+      "Only through the other module's public interface",
+      "Only through HTTP calls between the modules",
+      "By reading the other module's tables directly"
     ],
     "answer": 1,
-    "explanation": "Each module exposes a public interface (like chargeOrder() in index.ts); everything else is internal. That keeps boundaries clear in a single deploy."
+    "explanation": "Each module exposes a public interface (for example, the functions exported from its index file); everything else is internal. That keeps boundaries clear while keeping a single deploy."
   },
   {
     "id": "arch-modular-extract",
     "topic": "Architecture",
-    "question": "payments is extracted into a microservice. What has to change in orders?",
+    "question": "In a modular monolith, the payments module is extracted into a microservice. The other modules only used its public interface. What changes for them?",
     "options": [
-      "Its controllers, to call the payments API",
-      "Its database tables that store payments",
-      "Its imports, to point at the new service's URL",
-      "Nothing; only chargeOrder()'s internals change"
+      "Their controllers, to call the payments API",
+      "Their database tables that store payment data",
+      "Their imports, to point at the new service's URL",
+      "Little: only what is behind that interface changes"
     ],
     "answer": 3,
-    "explanation": "Because orders only used the public interface, the extraction only changes the implementation behind chargeOrder() (for example, an HTTP request)."
+    "explanation": "Because the other modules only used the public interface, the extraction only changes its implementation (for example, a function that now makes an HTTP request)."
   },
   {
     "id": "arch-clean-dependency-rule",
@@ -2889,15 +2912,15 @@
   {
     "id": "arch-system-vs-app",
     "topic": "Architecture",
-    "question": "What kind of architectures are 'monolith' and 'Clean Architecture'?",
+    "question": "A team deploys a monolith whose code is organized with Clean Architecture. Is that a contradiction?",
     "options": [
-      "Monolith: system; Clean: application",
-      "Both are application architectures",
-      "Monolith: application; Clean: system",
-      "Both are system architectures"
+      "No: one is about deploys, the other about code",
+      "No, but only if the monolith is also modular",
+      "Yes: Clean Architecture requires microservices",
+      "Yes: Clean Architecture needs one DB per layer"
     ],
     "answer": 0,
-    "explanation": "System architectures decide how many applications you deploy. Application architectures (Clean, Hexagonal, DDD) organize code inside one application. They combine, for example a monolith with Clean Architecture."
+    "explanation": "Monolith vs microservices decides how many applications you deploy. Clean, Hexagonal and DDD organize code inside one application. They are commonly combined."
   },
   {
     "id": "arch-hex-port",
@@ -2977,7 +3000,7 @@
   {
     "id": "arch-ddd-aggregate",
     "topic": "Architecture",
-    "question": "Why is the second line wrong in DDD?",
+    "question": "Order is an aggregate root. Why is the second line wrong in DDD?",
     "options": [
       "items is private, so it does not compile",
       "It mixes two different bounded contexts",
@@ -3060,38 +3083,25 @@
     "explanation": "EventEmitter works inside one process. In EDA, events travel over the network between services, through a broker like RabbitMQ or Kafka."
   },
   {
-    "id": "arch-compare-eda",
-    "topic": "Architecture",
-    "question": "Which question does event-driven architecture answer?",
-    "options": [
-      "How many applications do I deploy?",
-      "How do the parts communicate?",
-      "How do I model the business in code?",
-      "How do I isolate logic from technology?"
-    ],
-    "answer": 1,
-    "explanation": "Each architecture answers a different question, which is why they are combined: monolith vs microservices (deploys), EDA (communication), Clean/Hexagonal (isolation), DDD (modeling)."
-  },
-  {
     "id": "arch-compare-combine",
     "topic": "Architecture",
     "question": "Can a modular monolith use Hexagonal Architecture inside each module?",
     "options": [
       "No; Hexagonal requires microservices",
-      "Only after the modules become services",
+      "Yes; they solve different problems",
       "No; both decide how the app is deployed",
-      "Yes; they answer different questions"
+      "Only once the modules become services"
     ],
-    "answer": 3,
-    "explanation": "A system architecture (modular monolith) and an application architecture (Hexagonal) solve different problems and are commonly combined."
+    "answer": 1,
+    "explanation": "A modular monolith decides how the system is deployed and split by business area. Hexagonal organizes the code inside each module. They are commonly combined."
   },
   {
     "id": "arch-api-gateway",
     "topic": "Architecture",
     "question": "What does an API Gateway centralize?",
     "options": [
-      "The compensations of every saga",
       "The business rules of every service behind it",
+      "The compensations of every saga",
       "A shared database used by all the services",
       "Routing and concerns like authentication"
     ],
@@ -3103,8 +3113,8 @@
     "topic": "Architecture",
     "question": "Why use a saga for an operation that spans several microservices?",
     "options": [
-      "Transactions are too slow for payments",
       "Brokers do not support transactions",
+      "Transactions are too slow for payments",
       "Sagas lock every service until done",
       "No transaction spans several databases"
     ],
@@ -3116,12 +3126,12 @@
     "topic": "Architecture",
     "question": "A saga creates an order, charges the payment, and then reserving stock fails. What happens next?",
     "options": [
-      "Refund the payment and cancel the order",
       "Roll back every database in one transaction",
       "Leave the order paid and alert support",
-      "Retry the stock step until it succeeds"
+      "Retry the stock step until it succeeds",
+      "Refund the payment and cancel the order"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "Compensating actions undo the previous steps, in reverse order."
   },
   {
@@ -3129,12 +3139,12 @@
     "topic": "Architecture",
     "question": "In a saga, each service reacts to the previous service's event, with no central coordinator. What is this called?",
     "options": [
-      "Projection",
-      "Orchestration",
       "Choreography",
+      "Orchestration",
+      "Projection",
       "Compensation"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "In choreography, services react to events. In orchestration, a central service tells each one what to do."
   },
   {
@@ -3143,11 +3153,11 @@
     "question": "A circuit breaker is open. What happens to new calls?",
     "options": [
       "They pass, and failures are counted",
-      "They retry with exponential backoff",
       "They queue until the service recovers",
-      "They fail at once or use a fallback"
+      "They fail at once or use a fallback",
+      "They retry with exponential backoff"
     ],
-    "answer": 3,
+    "answer": 2,
     "explanation": "Open means the breaker stopped calling the failing service for a while. Calls fail fast instead of waiting for timeouts. Counting failures while calls pass is the closed state."
   },
   {
@@ -3168,12 +3178,12 @@
     "topic": "Architecture",
     "question": "Why can waiting on timeouts from a failing service bring down your own service?",
     "options": [
-      "Timeouts restart your service's process",
-      "Waiting calls hold connections and memory",
+      "Waiting calls bypass the circuit breaker",
       "Timeouts cancel requests in other services",
-      "Waiting calls bypass the circuit breaker"
+      "Timeouts restart your service's process",
+      "Waiting calls hold connections and memory"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "Each waiting call ties up resources. When they pile up, your service fails too, and then the services that depend on it: a cascading failure."
   },
   {
@@ -3181,12 +3191,12 @@
     "topic": "Architecture",
     "question": "What does CQRS separate?",
     "options": [
-      "The domain from the infrastructure",
       "Each service from its own database",
       "Writes (commands) from reads (queries)",
+      "The domain from the infrastructure",
       "Events from the services consuming them"
     ],
-    "answer": 2,
+    "answer": 1,
     "explanation": "CQRS splits write code and data from read code and data, sometimes in different databases kept in sync by events."
   },
   {
@@ -3194,12 +3204,12 @@
     "topic": "Architecture",
     "question": "In CQRS, what keeps the read database up to date?",
     "options": [
-      "A projection that listens to events",
       "A nightly batch copy of the tables",
       "The query handler, on every read",
+      "A projection that listens to events",
       "The query that reads the summary"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "A projection consumes events like 'order created' and updates the read database. Reads can be slightly stale because of eventual consistency."
   },
   {
@@ -3207,12 +3217,12 @@
     "topic": "Architecture",
     "question": "What does Event Sourcing store?",
     "options": [
-      "Events only until they are consumed",
       "All events; state comes from replaying them",
+      "Snapshots of the read model every hour",
       "Only the current state, plus an audit log",
-      "Snapshots of the read model every hour"
+      "Events only until they are consumed"
     ],
-    "answer": 1,
+    "answer": 0,
     "explanation": "Instead of the current state, you store every event that produced it. For example, an account balance is the sum of its deposits and withdrawals."
   },
   {
@@ -3221,11 +3231,11 @@
     "question": "Which problem does the Outbox Pattern solve?",
     "options": [
       "The broker delivering messages in the wrong order",
-      "Slow queries on the orders table under heavy load",
+      "Losing events when publishing fails after saving",
       "Consumers processing the same event twice",
-      "Losing events when publishing fails after saving"
+      "Slow queries on the orders table under heavy load"
     ],
-    "answer": 3,
+    "answer": 1,
     "explanation": "Saving to the database and publishing to the broker cannot share a transaction. The event is saved in an outbox table in the same transaction, and a relay publishes it later."
   },
   {
@@ -3233,12 +3243,12 @@
     "topic": "Architecture",
     "question": "With the Outbox Pattern, why must consumers still be idempotent?",
     "options": [
-      "The relay may publish an event twice",
-      "The transaction can commit twice",
       "The broker drops events under load",
-      "The outbox table deletes old events"
+      "The transaction can commit twice",
+      "The outbox table deletes old events",
+      "The relay may publish an event twice"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "If the relay publishes but fails before marking sent = true, it will publish again. Consumers must handle repeats without duplicating effects."
   },
   {
@@ -3246,12 +3256,12 @@
     "topic": "Architecture",
     "question": "In serverless, what is a cold start?",
     "options": [
-      "A run that was triggered by a schedule",
-      "The first deploy of a brand-new function",
       "A slower first run after the function sat idle",
-      "A function that hits the 15-minute time limit"
+      "A function that hits the 15-minute time limit",
+      "A run that was triggered by a schedule",
+      "The first deploy of a brand-new function"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "If the function has not been used for a while, the provider must prepare it again, so the first execution takes longer."
   },
   {
@@ -3272,12 +3282,12 @@
     "topic": "OOP & Patterns",
     "question": "What is the difference between encapsulation and abstraction?",
     "options": [
-      "Encapsulation protects state; abstraction hides how",
-      "Encapsulation uses extends; abstraction uses interfaces",
       "Both mean making every field of a class private",
-      "Abstraction protects state; encapsulation hides how"
+      "Abstraction protects state; encapsulation hides how",
+      "Encapsulation protects state; abstraction hides how",
+      "Encapsulation uses extends; abstraction uses interfaces"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Encapsulation keeps state private and changes it only through methods that validate. Abstraction lets callers know what a class does without depending on how."
   },
   {
@@ -3286,9 +3296,9 @@
     "question": "account.deposit(-50) leaves the balance unchanged. Which OOP pillar does this show?",
     "options": [
       "Encapsulation",
+      "Inheritance",
       "Abstraction",
-      "Polymorphism",
-      "Inheritance"
+      "Polymorphism"
     ],
     "answer": 0,
     "explanation": "balance is private and only changes through deposit(), which rejects invalid amounts. That prevents invalid states.",
@@ -3307,12 +3317,12 @@
     "topic": "OOP & Patterns",
     "question": "What does the last line print?",
     "options": [
-      "[1000, 1000]",
+      "[1000, 0]",
       "[0, 1000]",
-      "[0, 0]",
-      "[1000, 0]"
+      "[1000, 1000]",
+      "[0, 0]"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "Polymorphism: the same call, fee(), runs a different implementation depending on the object's class. Premium overrides it.",
     "code": {
       "language": "typescript",
@@ -3333,9 +3343,9 @@
     "topic": "OOP & Patterns",
     "question": "Why does this Report use composition instead of inheritance?",
     "options": [
-      "It makes Report faster to instantiate",
       "It lets Report inherit from two classes",
       "It hides Report's methods from callers",
+      "It makes Report faster to instantiate",
       "It avoids a subclass for every combination"
     ],
     "answer": 3,
@@ -3356,12 +3366,12 @@
     "topic": "OOP & Patterns",
     "question": "Which is a reasonable use of inheritance?",
     "options": [
-      "class EmailedPdfReport extends PdfReport",
-      "class NotFoundError extends Error",
       "class CsvEmailReport extends EmailReport",
-      "class UserService extends PostgresClient"
+      "class EmailedPdfReport extends PdfReport",
+      "class UserService extends PostgresClient",
+      "class NotFoundError extends Error"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "Inheritance still works for simple cases like custom errors. Report variants are better combined with composition, and a service inheriting from a DB client mixes responsibilities."
   },
   {
@@ -3369,12 +3379,12 @@
     "topic": "OOP & Patterns",
     "question": "UserService also builds email bodies and writes raw SQL. Which SOLID principle does it break?",
     "options": [
-      "Single Responsibility",
       "Open/Closed",
+      "Single Responsibility",
       "Interface Segregation",
       "Liskov Substitution"
     ],
-    "answer": 0,
+    "answer": 1,
     "explanation": "A class should have one reason to change. Emails belong in a Mailer and SQL in the repository."
   },
   {
@@ -3382,12 +3392,12 @@
     "topic": "OOP & Patterns",
     "question": "To accept Apple Pay, you add a new class that implements PaymentMethod, and checkout() does not change. Which principle is this?",
     "options": [
+      "Open/Closed",
       "Single Responsibility",
       "Liskov Substitution",
-      "Open/Closed",
       "Interface Segregation"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "Open/Closed: add behavior without modifying existing code."
   },
   {
@@ -3395,10 +3405,10 @@
     "topic": "OOP & Patterns",
     "question": "ReadOnlyStorage implements Storage, but throws an error in save(). Which principle does it break?",
     "options": [
-      "Dependency Inversion",
       "Open/Closed",
+      "Single Responsibility",
       "Liskov Substitution",
-      "Single Responsibility"
+      "Dependency Inversion"
     ],
     "answer": 2,
     "explanation": "An implementation must work wherever the original is expected. Code that receives a Storage expects save() to save, so this one breaks it."
@@ -3408,12 +3418,12 @@
     "topic": "OOP & Patterns",
     "question": "A component that only reads orders receives an interface that also includes deleteAll(). Which principle is broken?",
     "options": [
-      "Interface Segregation",
-      "Single Responsibility",
       "Dependency Inversion",
-      "Liskov Substitution"
+      "Liskov Substitution",
+      "Interface Segregation",
+      "Single Responsibility"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Interfaces should be small and fit their users. A reader should receive something like OrderReader, without deleteAll()."
   },
   {
@@ -3422,9 +3432,9 @@
     "question": "Beyond matching method signatures, what does Liskov Substitution require?",
     "options": [
       "Respecting the behavior callers expect",
-      "Declaring the same private fields",
       "Using the same constructor parameters",
-      "Extending a class, not an interface"
+      "Extending a class, not an interface",
+      "Declaring the same private fields"
     ],
     "answer": 0,
     "explanation": "Liskov is not only about types: an implementation must also behave as the code using it expects."
@@ -3449,8 +3459,8 @@
     "options": [
       "Only the Notifier interface",
       "That it is an EmailNotifier",
-      "The constructor of each class",
-      "That it is an SmsNotifier"
+      "That it is an SmsNotifier",
+      "The constructor of each class"
     ],
     "answer": 0,
     "explanation": "The factory decides which concrete class to create. Callers depend only on the interface, and adding a channel only touches the factory.",
@@ -3470,8 +3480,8 @@
     "question": "Why is Singleton often called an anti-pattern?",
     "options": [
       "It is global state and a hidden dependency",
-      "It creates a new instance on each call",
       "It makes the class impossible to extend",
+      "It creates a new instance on each call",
       "It cannot be used for a database pool"
     ],
     "answer": 0,
@@ -3482,12 +3492,12 @@
     "topic": "OOP & Patterns",
     "question": "You need one shared database pool in the whole app. What is the recommended alternative to a Singleton?",
     "options": [
-      "Import it from a module everywhere",
-      "Create a new pool in each service",
       "Create one instance and inject it",
-      "Store it on the global object"
+      "Import it from a module everywhere",
+      "Store it on the global object",
+      "Create a new pool in each service"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "Create a single instance and pass it through constructors, like Nest does. The dependency stays visible and easy to replace."
   },
   {
@@ -3495,10 +3505,10 @@
     "topic": "OOP & Patterns",
     "question": "placeOrder() charges the card, updates stock and sends a notification, and callers only see that one function. Which pattern is it?",
     "options": [
-      "Adapter",
       "Observer",
+      "Strategy",
       "Facade",
-      "Strategy"
+      "Adapter"
     ],
     "answer": 2,
     "explanation": "A Facade offers a simple interface that coordinates several steps. Callers do not know each step."
@@ -3508,10 +3518,10 @@
     "topic": "OOP & Patterns",
     "question": "Which pattern does this class implement?",
     "options": [
-      "Strategy",
+      "Facade",
       "Factory",
       "Adapter",
-      "Facade"
+      "Strategy"
     ],
     "answer": 2,
     "explanation": "It translates an external API's format into the interface your code expects. If the provider changes, only the adapter changes.",
@@ -3533,12 +3543,12 @@
     "topic": "OOP & Patterns",
     "question": "What is the difference between Adapter and Facade?",
     "options": [
-      "Adapter translates an interface; Facade hides steps",
-      "Facade translates an interface; Adapter hides steps",
+      "Adapter creates objects; Facade combines classes",
       "Both are the same pattern with different names",
-      "Adapter creates objects; Facade combines classes"
+      "Adapter translates an interface; Facade hides steps",
+      "Facade translates an interface; Adapter hides steps"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Adapter converts one interface into the one your code expects. Facade hides several steps behind a single simple operation."
   },
   {
@@ -3546,12 +3556,12 @@
     "topic": "OOP & Patterns",
     "question": "Which pattern does this code use?",
     "options": [
-      "Facade",
+      "Strategy",
       "Observer",
       "Singleton",
-      "Strategy"
+      "Facade"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "Several classes implement the same interface (StripePayment, WebpayPayment), and the code receives one without knowing which. Adding another does not touch checkout().",
     "code": {
       "language": "typescript",
@@ -3569,11 +3579,11 @@
     "question": "How are Factory and Strategy usually combined?",
     "options": [
       "Both create objects, so only one of them is needed",
-      "The factory picks the strategy; the code just uses it",
+      "The strategy picks the factory; the code just uses it",
       "The factory notifies every strategy of each change",
-      "The strategy picks the factory; the code just uses it"
+      "The factory picks the strategy; the code just uses it"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "A factory decides which strategy to create from some data (like the user's choice). The rest of the code uses it through the shared interface."
   },
   {
@@ -3581,12 +3591,12 @@
     "topic": "OOP & Patterns",
     "question": "What is the difference between Observer and Pub/Sub?",
     "options": [
-      "Pub/Sub is in-process; Observer uses a broker",
-      "Observer is synchronous only; Pub/Sub only async",
+      "Observer allows one listener; Pub/Sub allows many",
       "Observer is in-process; Pub/Sub uses a broker",
-      "Observer allows one listener; Pub/Sub allows many"
+      "Observer is synchronous only; Pub/Sub only async",
+      "Pub/Sub is in-process; Observer uses a broker"
     ],
-    "answer": 2,
+    "answer": 1,
     "explanation": "In Observer, the object notifies its subscribers directly in the same process (like EventEmitter). In Pub/Sub, publishers and subscribers do not know each other and communicate through a broker."
   },
   {
@@ -3608,11 +3618,11 @@
     "question": "User profiles with very different preference fields are always read whole. Which kind of database fits well?",
     "options": [
       "Relational, like PostgreSQL",
-      "Document, like MongoDB",
       "A columnar data warehouse",
+      "Document, like MongoDB",
       "In-memory, like Redis"
     ],
-    "answer": 1,
+    "answer": 2,
     "explanation": "Document databases store JSON-like records with flexible shape, useful for variable data read as a whole. The choice depends on access patterns."
   },
   {
@@ -3621,11 +3631,11 @@
     "question": "Why is the COUNT condition in HAVING and not in WHERE?",
     "options": [
       "HAVING runs before WHERE, so it is faster for counts",
-      "WHERE can only compare columns from a single table",
       "WHERE runs before grouping, so it can't use COUNT",
-      "HAVING is required whenever a query uses a JOIN"
+      "HAVING is required whenever a query uses a JOIN",
+      "WHERE can only compare columns from a single table"
     ],
-    "answer": 2,
+    "answer": 1,
     "explanation": "WHERE filters rows (orders) before GROUP BY. HAVING filters the groups (users) after the counts are calculated. If a condition uses an aggregate function, it goes in HAVING.",
     "code": {
       "language": "sql",
@@ -3645,12 +3655,12 @@
     "topic": "Databases",
     "question": "You need every user with their number of orders, including users who have no orders. Which join do you use?",
     "options": [
-      "LEFT JOIN orders",
-      "CROSS JOIN orders",
       "INNER JOIN orders",
-      "JOIN orders with HAVING"
+      "JOIN orders with HAVING",
+      "LEFT JOIN orders",
+      "CROSS JOIN orders"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "INNER JOIN (or JOIN) only keeps users with matching orders. LEFT JOIN keeps all users; those without orders get COUNT(o.id) = 0."
   },
   {
@@ -3658,12 +3668,12 @@
     "topic": "Databases",
     "question": "What is the cost of adding an index?",
     "options": [
-      "A table lock on every SELECT",
       "More storage and slower writes",
+      "A rebuild after every query",
       "Slower reads on that column",
-      "A rebuild after every query"
+      "A table lock on every SELECT"
     ],
-    "answer": 1,
+    "answer": 0,
     "explanation": "An index speeds up finding rows, but it takes space and must be updated on every insert, update and delete."
   },
   {
@@ -3671,12 +3681,12 @@
     "topic": "Databases",
     "question": "With this index, which query can NOT use it efficiently?",
     "options": [
-      "WHERE user_id = 42 AND created_at > '2026-01-01'",
       "WHERE user_id = 42 ORDER BY created_at",
+      "WHERE created_at > '2026-01-01'",
       "WHERE user_id = 42",
-      "WHERE created_at > '2026-01-01'"
+      "WHERE user_id = 42 AND created_at > '2026-01-01'"
     ],
-    "answer": 3,
+    "answer": 1,
     "explanation": "A composite index helps when the query uses its columns from left to right. Filtering only by created_at skips the first column, user_id.",
     "code": {
       "language": "sql",
@@ -3690,9 +3700,9 @@
     "topic": "Databases",
     "question": "How do you check whether PostgreSQL used an index and how long each step took?",
     "options": [
+      "Check the index size in the schema",
       "Add LIMIT 1 and time the response",
       "Count the rows in pg_stat_activity",
-      "Check the index size in the schema",
       "Run the query with EXPLAIN ANALYZE"
     ],
     "answer": 3,
@@ -3703,12 +3713,12 @@
     "topic": "Databases",
     "question": "Which ACID property means a transaction does not see another one's half-done changes?",
     "options": [
-      "Atomicity",
       "Consistency",
-      "Isolation",
-      "Durability"
+      "Atomicity",
+      "Durability",
+      "Isolation"
     ],
-    "answer": 2,
+    "answer": 3,
     "explanation": "Isolation keeps concurrent transactions from seeing each other's unfinished changes."
   },
   {
@@ -3716,10 +3726,10 @@
     "topic": "Databases",
     "question": "Which ACID property means data confirmed with COMMIT survives a crash?",
     "options": [
+      "Atomicity",
       "Consistency",
-      "Isolation",
       "Durability",
-      "Atomicity"
+      "Isolation"
     ],
     "answer": 2,
     "explanation": "Durability guarantees that once a transaction commits, its changes are not lost, even if the server crashes."
@@ -3729,12 +3739,12 @@
     "topic": "Databases",
     "question": "In ACID, what does Consistency mean?",
     "options": [
-      "All replicas show the same data at the same time",
       "Either every operation runs or none of them do",
       "Reads always return the most recent committed data",
-      "Constraints like UNIQUE and CHECK hold after commit"
+      "Constraints like UNIQUE and CHECK hold after commit",
+      "All replicas show the same data at the same time"
     ],
-    "answer": 3,
+    "answer": 2,
     "explanation": "In ACID, consistency means the database's constraints (UNIQUE, CHECK, foreign keys) are satisfied when the transaction ends. 'All or nothing' is atomicity."
   },
   {
@@ -3743,11 +3753,11 @@
     "question": "Can a database transaction also cover publishing a message to a broker?",
     "options": [
       "Yes, with a long enough timeout",
-      "No; use the Outbox Pattern",
       "Yes, if the broker uses PostgreSQL",
-      "Only inside a BEGIN/COMMIT block"
+      "Only inside a BEGIN/COMMIT block",
+      "No; use the Outbox Pattern"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "ACID covers changes inside one database, not external services. For those, use Outbox, idempotency and compensations (sagas)."
   },
   {
@@ -3755,12 +3765,12 @@
     "topic": "Databases",
     "question": "One product has stock = 1 and two buyers run this at the same time. What happens?",
     "options": [
+      "Both succeed and the stock ends at -1",
       "One succeeds; the other affects 0 rows",
       "Both wait, and then both succeed",
-      "Both succeed and the stock ends at -1",
       "PostgreSQL raises a deadlock error"
     ],
-    "answer": 0,
+    "answer": 1,
     "explanation": "The check and the decrement happen in one query. The second update finds stock = 0, so the WHERE matches no rows: 0 rows affected means no stock.",
     "code": {
       "language": "sql",
@@ -3776,9 +3786,9 @@
     "question": "Two buyers each run 'read stock, then update it' inside a transaction. Does the transaction alone prevent overselling?",
     "options": [
       "No; both can still read stock = 1",
+      "Yes, because of ACID's consistency",
       "Yes; transactions run one at a time",
-      "Only if the table has an index",
-      "Yes, because of ACID's consistency"
+      "Only if the table has an index"
     ],
     "answer": 0,
     "explanation": "Both can read the same value before either writes. A transaction alone does not prevent this race condition; use an atomic update, locking or a constraint."
@@ -3788,12 +3798,12 @@
     "topic": "Databases",
     "question": "What kind of locking is SELECT ... FOR UPDATE inside a transaction?",
     "options": [
-      "Optimistic locking",
       "Pessimistic locking",
+      "Optimistic locking",
       "A CHECK constraint",
       "An atomic update"
     ],
-    "answer": 1,
+    "answer": 0,
     "explanation": "It reads the row and locks it until the transaction ends, so a concurrent purchase waits."
   },
   {
@@ -3802,11 +3812,11 @@
     "question": "With optimistic locking, an UPDATE that requires the same version affects 0 rows. What does that mean?",
     "options": [
       "The row was locked by another transaction",
-      "The row was deleted by a database trigger",
+      "Someone changed it first; reload and retry",
       "The version column is missing an index",
-      "Someone changed it first; reload and retry"
+      "The row was deleted by a database trigger"
     ],
-    "answer": 3,
+    "answer": 1,
     "explanation": "Optimistic locking does not block; it detects conflicts. 0 rows affected means the version changed since you read it, so you reload and retry."
   },
   {
@@ -3815,11 +3825,11 @@
     "question": "Which mechanism makes the database itself reject stock going below zero, no matter which code writes?",
     "options": [
       "SELECT ... FOR UPDATE on reads",
-      "CHECK (stock >= 0) on the table",
+      "A version column on each row",
       "An index on the stock column",
-      "A version column on each row"
+      "CHECK (stock >= 0) on the table"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "A constraint is a rule in the table definition. The database rejects any change that breaks it, which backs up every other strategy."
   },
   {
@@ -3827,12 +3837,12 @@
     "topic": "Databases",
     "question": "With 100 users, how many queries does this code run?",
     "options": [
-      "1",
-      "2",
+      "100",
       "101",
-      "100"
+      "1",
+      "2"
     ],
-    "answer": 2,
+    "answer": 1,
     "explanation": "One query loads the users, then one more runs for each user: 1 + N. That is the N+1 problem.",
     "code": {
       "language": "javascript",
@@ -3849,12 +3859,12 @@
     "topic": "Databases",
     "question": "How do you fix an N+1 query problem?",
     "options": [
-      "Add an index on users.id",
-      "Cache each user's orders in Redis",
       "Run the N queries with Promise.all",
-      "Load the related data in one batch"
+      "Cache each user's orders in Redis",
+      "Load the related data in one batch",
+      "Add an index on users.id"
     ],
-    "answer": 3,
+    "answer": 2,
     "explanation": "Use a JOIN, WHERE user_id IN (...), or the ORM's eager loading (include: { orders: true } in Prisma). Promise.all still runs N queries."
   },
   {
@@ -3862,12 +3872,12 @@
     "topic": "Databases",
     "question": "You must rename a column in production without downtime. What is the first step?",
     "options": [
-      "Add the new column",
-      "Drop the old column",
       "Rename it in a single migration",
-      "Stop the app, then rename it"
+      "Drop the old column",
+      "Stop the app, then rename it",
+      "Add the new column"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "Expand/contract keeps changes backwards compatible: add the new column, write to both, migrate data, read from the new one, and only then drop the old one."
   },
   {
@@ -3875,12 +3885,12 @@
     "topic": "Databases",
     "question": "With cache-aside, product:42 is not in Redis. What does the app do?",
     "options": [
-      "Return 404 until a background job warms the cache",
-      "Read it from PostgreSQL without caching it",
       "Read it from PostgreSQL and cache it with a TTL",
-      "Wait for a background job to fill Redis"
+      "Wait for a background job to fill Redis",
+      "Return 404 until a background job warms the cache",
+      "Read it from PostgreSQL without caching it"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "Cache-aside: look in Redis; on a miss, read from the database and store it with a TTL so it expires. On updates, invalidate the key."
   },
   {
@@ -3888,12 +3898,12 @@
     "topic": "Databases",
     "question": "A product's price is updated. What should happen to its key in Redis?",
     "options": [
-      "Delete it (invalidate)",
       "Wait for its TTL to expire",
       "Nothing; Redis notices",
+      "Delete it (invalidate)",
       "Increase its TTL"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Deleting the key forces the next read to load fresh data. Waiting for the TTL means users can see the old price until then."
   },
   {
@@ -3901,26 +3911,26 @@
     "topic": "Databases",
     "question": "A very popular key expires and hundreds of requests hit the database at once. What is this called?",
     "options": [
-      "Stale data",
-      "N+1 queries",
       "Cache stampede",
-      "Race condition"
+      "Stale data",
+      "Race condition",
+      "N+1 queries"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "It is mitigated by letting only one request recompute the value (with a lock) while the rest wait or use the old one."
   },
   {
     "id": "db-stale-price",
     "topic": "Databases",
-    "question": "Why should the real price be checked in the database during checkout, even with a cache?",
+    "question": "Product prices are cached in Redis with a 60-second TTL. Why check the real price in the database at checkout?",
     "options": [
-      "Redis rounds decimal numbers",
+      "Redis loses writes from the last second",
+      "Reads from Redis are not transactional",
       "The cached value may be stale",
-      "Redis cannot store prices as numbers",
-      "Redis keys expire during checkout"
+      "Redis TTLs can expire a few seconds late"
     ],
-    "answer": 1,
-    "explanation": "Until the key expires or is invalidated, Redis can return an outdated value. For something like the price you charge, verify the real value."
+    "answer": 2,
+    "explanation": "Until the key expires or is invalidated, Redis can return an outdated value. For the price you actually charge, verify the real value."
   },
   {
     "id": "db-redis-down",
@@ -3928,11 +3938,11 @@
     "question": "Redis goes down in a cache-aside setup. What should happen?",
     "options": [
       "The app returns 503 until Redis is back",
-      "The app serves the last values it cached",
       "The app reads from the database, more slowly",
-      "The app blocks writes until Redis returns"
+      "The app blocks writes until Redis returns",
+      "The app serves the last values it cached"
     ],
-    "answer": 2,
+    "answer": 1,
     "explanation": "In cache-aside, the cache is an optimization. If it fails, the app keeps working against the database, just slower."
   },
   {
@@ -3940,25 +3950,25 @@
     "topic": "Algorithms",
     "question": "What does Big O describe?",
     "options": [
-      "The memory taken by the source code",
+      "The exact running time in seconds",
+      "The average time measured over many runs",
       "How cost grows as the input size grows",
-      "The number of lines in the algorithm",
-      "The exact running time in seconds"
+      "The memory used by the program in bytes"
     ],
-    "answer": 1,
-    "explanation": "Big O describes the growth of time or memory as n increases. It does not measure exact seconds."
+    "answer": 2,
+    "explanation": "Big O describes the growth of time or memory as n increases. It does not measure exact seconds or bytes."
   },
   {
     "id": "algo-nested-loops",
     "topic": "Algorithms",
     "question": "What is the time complexity?",
     "options": [
-      "O(n)",
       "O(n log n)",
+      "O(n²)",
       "O(2^n)",
-      "O(n²)"
+      "O(n)"
     ],
-    "answer": 3,
+    "answer": 1,
     "explanation": "For each element, the inner loop goes over all elements again: n × n comparisons.",
     "code": {
       "language": "javascript",
@@ -3976,12 +3986,12 @@
     "topic": "Algorithms",
     "question": "What is the usual time complexity of Array.prototype.sort?",
     "options": [
-      "O(n log n)",
       "O(n)",
+      "O(n²)",
       "O(log n)",
-      "O(n²)"
+      "O(n log n)"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "Efficient sorting algorithms like merge sort, and JavaScript's sort, are O(n log n)."
   },
   {
@@ -3989,12 +3999,12 @@
     "topic": "Algorithms",
     "question": "What is the cost of reading arr[5] versus finding a value in an unsorted array?",
     "options": [
-      "O(1) for both operations",
-      "O(n) to read; O(1) to find",
       "O(1) to read; O(n) to find",
-      "O(log n) for both operations"
+      "O(n) to read; O(1) to find",
+      "O(log n) for both operations",
+      "O(1) for both operations"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "Index access goes directly to the position. Finding a value requires going through the array."
   },
   {
@@ -4002,12 +4012,12 @@
     "topic": "Algorithms",
     "question": "Why is looking up a key in a Map O(1) on average?",
     "options": [
-      "A hash function turns the key into a position",
+      "Map stores its entries in a linked list",
       "Map keeps its keys sorted for binary search",
-      "Map caches the most recently read key",
-      "Map stores its entries in a linked list"
+      "A hash function turns the key into a position",
+      "Map caches the most recently read key"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Map and Set are hash tables: the key is converted into the position of its value, so there is no need to go through the entries."
   },
   {
@@ -4028,12 +4038,12 @@
     "topic": "Algorithms",
     "question": "An editor's undo feature removes the most recent action first. Which structure fits?",
     "options": [
-      "Queue (FIFO)",
-      "Set",
       "Stack (LIFO)",
-      "Map"
+      "Queue (FIFO)",
+      "Map",
+      "Set"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "A stack returns the last item added first, like a pile of plates."
   },
   {
@@ -4041,12 +4051,12 @@
     "topic": "Algorithms",
     "question": "Jobs must be processed in the order they arrived. Which structure fits?",
     "options": [
-      "Queue (FIFO)",
       "Stack (LIFO)",
       "Set",
+      "Queue (FIFO)",
       "Map"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "A queue returns the first item added first, like a line at the bank."
   },
   {
@@ -4054,12 +4064,12 @@
     "topic": "Algorithms",
     "question": "In a linked list, what does inserting right after a node you already have cost?",
     "options": [
-      "O(n)",
-      "O(n²)",
       "O(1)",
-      "O(log n)"
+      "O(n)",
+      "O(log n)",
+      "O(n²)"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "You only change which node the references point to. In an array it would be O(n), because the following elements must move. Reaching position i, however, is O(n)."
   },
   {
@@ -4067,12 +4077,12 @@
     "topic": "Algorithms",
     "question": "What does this return?",
     "options": [
+      "[1, 9, 10]",
       "[9, 10, 1]",
       "[1, 10, 9]",
-      "[10, 9, 1]",
-      "[1, 9, 10]"
+      "[10, 9, 1]"
     ],
-    "answer": 1,
+    "answer": 2,
     "explanation": "Without a comparator, sort converts numbers to text. '10' comes before '9' because it starts with '1'.",
     "code": {
       "language": "javascript",
@@ -4086,10 +4096,10 @@
     "topic": "Algorithms",
     "question": "Which comparator sorts numbers from smallest to largest?",
     "options": [
-      "(a, b) => b - a",
-      "(a, b) => a - b",
       "(a, b) => a < b",
-      "(a, b) => a > b"
+      "(a, b) => a - b",
+      "(a, b) => a > b",
+      "(a, b) => b - a"
     ],
     "answer": 1,
     "explanation": "A negative result puts a first; a positive one puts b first. b - a sorts descending, and a boolean result does not give sort the negative/zero/positive values it needs."
@@ -4099,12 +4109,12 @@
     "topic": "Algorithms",
     "question": "What is the complexity of bubble sort?",
     "options": [
+      "O(n log n)",
       "O(n²)",
-      "O(n)",
       "O(log n)",
-      "O(n log n)"
+      "O(n)"
     ],
-    "answer": 0,
+    "answer": 1,
     "explanation": "It compares neighbors and swaps them, repeating up to n passes of n comparisons. It is mainly used for teaching."
   },
   {
@@ -4112,12 +4122,12 @@
     "topic": "Algorithms",
     "question": "A recursive function has no base case. What happens?",
     "options": [
-      "It returns undefined after 1,000 calls",
-      "It loops forever without throwing any error",
       "The call stack fills up and an error is thrown",
-      "JavaScript turns it into a loop automatically"
+      "JavaScript turns it into a loop automatically",
+      "It returns undefined after 1,000 calls",
+      "It loops forever without throwing any error"
     ],
-    "answer": 2,
+    "answer": 0,
     "explanation": "Each call stays on the Call Stack until it finishes. Without a base case, the stack overflows and JavaScript throws an error."
   },
   {
@@ -4125,10 +4135,10 @@
     "topic": "Algorithms",
     "question": "What does binary search require?",
     "options": [
-      "The array length must be a power of 2",
+      "The data must be stored in a Map",
       "The data must contain no duplicates",
       "The data must be sorted",
-      "The data must be stored in a Map"
+      "The array length must be a power of 2"
     ],
     "answer": 2,
     "explanation": "Binary search discards half of the range based on the middle element, which only works if the data is ordered."
@@ -4138,12 +4148,12 @@
     "topic": "Algorithms",
     "question": "About how many steps does binary search need in 1,000,000 sorted elements?",
     "options": [
-      "About 20",
-      "About 100",
+      "About 500,000",
       "About 1,000",
-      "About 500,000"
+      "About 20",
+      "About 100"
     ],
-    "answer": 0,
+    "answer": 2,
     "explanation": "Each step halves the range: 2^20 is roughly one million, so about 20 steps. That is O(log n)."
   },
   {
@@ -4151,12 +4161,12 @@
     "topic": "Algorithms",
     "question": "What does binarySearch([1, 3, 5, 8, 11], 8) return?",
     "options": [
-      "4",
       "3",
       "-1",
+      "4",
       "2"
     ],
-    "answer": 1,
+    "answer": 0,
     "explanation": "The middle (index 2, value 5) is less than 8, so left moves to 3. The new middle is index 3, value 8: found at position 3.",
     "code": {
       "language": "javascript",
@@ -4179,12 +4189,12 @@
     "topic": "Algorithms",
     "question": "With n ids and m users, what is the complexity of the fast version?",
     "options": [
+      "O(n × m)",
       "O(n + m)",
-      "O(n log m)",
       "O(m)",
-      "O(n × m)"
+      "O(n log m)"
     ],
-    "answer": 0,
+    "answer": 1,
     "explanation": "Building the Map costs O(m), and each of the n lookups is O(1). The slow version runs find (O(m)) for each id: O(n × m).",
     "code": {
       "language": "javascript",
@@ -4205,8 +4215,8 @@
     "options": [
       "Extra memory for less time",
       "Correctness for extra speed",
-      "Extra time for less memory",
-      "Readability for less memory"
+      "Readability for less memory",
+      "Extra time for less memory"
     ],
     "answer": 0,
     "explanation": "The Map takes extra memory, but each lookup becomes O(1) instead of going through the list."
@@ -4216,12 +4226,12 @@
     "topic": "Algorithms",
     "question": "Which pattern fits checking whether two words are anagrams?",
     "options": [
+      "A frequency counter with a Map",
       "A sliding window of size k",
-      "Binary search on the letters",
       "Two pointers from the ends",
-      "A frequency counter with a Map"
+      "Binary search on the letters"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "Count how many times each letter appears in both words and compare the counts. That is O(n) instead of comparing every letter with every other."
   },
   {
@@ -4229,12 +4239,12 @@
     "topic": "Algorithms",
     "question": "In this function, why does left++ run when sum < target?",
     "options": [
-      "Moving left gives a bigger number",
+      "It skips duplicates in the array",
       "It restarts the search from zero",
       "Moving left gives a smaller number",
-      "It skips duplicates in the array"
+      "Moving left gives a bigger number"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "The array is sorted, so to the right there are always bigger numbers. If the sum is too small, the left pointer moves to a bigger value; if too big, the right pointer moves to a smaller one.",
     "code": {
       "language": "javascript",
@@ -4257,12 +4267,12 @@
     "topic": "Algorithms",
     "question": "In a sorted array, you need to know if two numbers add up to a target. Which pattern solves it in O(n)?",
     "options": [
-      "Binary search",
+      "Two pointers",
       "Frequency counter",
       "Sliding window",
-      "Two pointers"
+      "Binary search"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "Two pointers start at both ends and move toward each other based on the sum, avoiding testing every pair (O(n²))."
   },
   {
@@ -4271,11 +4281,11 @@
     "question": "What does maxSumOfK([2, 1, 5, 1, 3, 2], 3) return?",
     "options": [
       "7",
-      "9",
+      "11",
       "8",
-      "11"
+      "9"
     ],
-    "answer": 1,
+    "answer": 3,
     "explanation": "The windows are 2+1+5=8, 1+5+1=7, 5+1+3=9 and 1+3+2=6. The largest is 9.",
     "code": {
       "language": "javascript",
@@ -4297,38 +4307,38 @@
     "topic": "Algorithms",
     "question": "Why is a sliding window O(n) instead of O(n × k)?",
     "options": [
-      "Each step adds one element and removes one",
-      "It only looks at every k-th element of the array",
       "Windows are summed in parallel with Promise.all",
-      "Each window is sorted before being summed"
+      "Each step adds one element and removes one",
+      "Each window is sorted before being summed",
+      "It only looks at every k-th element of the array"
     ],
-    "answer": 0,
+    "answer": 1,
     "explanation": "Two consecutive windows share all elements except the one that leaves and the one that enters, so each window is updated in O(1) instead of summed from scratch."
   },
   {
     "id": "algo-takehome-tests",
     "topic": "Algorithms",
-    "question": "In a take-home exercise, which tests add the most value?",
+    "question": "In a take-home exercise (a task API with login), which tests add the most value?",
     "options": [
       "Tests for the important business rules",
-      "Many trivial tests written to reach 100% coverage",
+      "Snapshot tests for every JSON response returned",
       "Only end-to-end tests that cover the full API",
-      "Snapshot tests for every JSON response returned"
+      "Many trivial tests written to reach 100% coverage"
     ],
     "answer": 0,
-    "explanation": "Tests for the important business rules show judgment. High coverage made of trivial tests says little."
+    "explanation": "Tests for key rules, like 'a user cannot see other users' tasks', show judgment. High coverage made of trivial tests says little."
   },
   {
     "id": "algo-takehome-readme",
     "topic": "Algorithms",
     "question": "What should a take-home's README include?",
     "options": [
-      "A full copy of the original exercise statement",
+      "Setup, key decisions and what you'd add",
       "Only the commands needed to run the project",
-      "The list of libraries and their exact versions",
-      "Setup, key decisions and what you'd add"
+      "A full copy of the original exercise statement",
+      "The list of libraries and their exact versions"
     ],
-    "answer": 3,
+    "answer": 0,
     "explanation": "The reviewer should run it without asking you. Explaining decisions and what you left out shows judgment even if you did not finish everything."
   },
   {
@@ -4336,12 +4346,12 @@
     "topic": "Algorithms",
     "question": "For a small take-home (a task API with login and tests), how is splitting it into microservices usually read?",
     "options": [
-      "As lack of judgment: it is overdesigned",
       "As a requirement for any backend role",
+      "As proof of senior-level experience",
       "As neutral; reviewers ignore structure",
-      "As proof of senior-level experience"
+      "As lack of judgment: it is overdesigned"
     ],
-    "answer": 0,
+    "answer": 3,
     "explanation": "A simple, well-tested solution is better. Microservices or many layers in a small exercise read as overdesign."
   },
   {
@@ -4349,12 +4359,1358 @@
     "topic": "Algorithms",
     "question": "Why prefer small commits in a take-home over one commit with everything?",
     "options": [
-      "Reviewers can only read small diffs",
-      "Git rejects very large single commits",
       "They show how you progress step by step",
-      "Small commits make the tests run faster"
+      "They make the final build smaller",
+      "They hide the parts that were rewritten",
+      "They let reviewers skip the tests"
+    ],
+    "answer": 0,
+    "explanation": "A history of small commits shows your process. A single commit with everything says nothing about how you worked."
+  },
+  {
+    "id": "test-unit",
+    "topic": "Testing",
+    "question": "Which of these is a unit test?",
+    "options": [
+      "Sending POST /orders to the app with a test DB",
+      "Logging in through a browser and placing an order",
+      "Calling a discount function with plain values",
+      "Running a query against PostgreSQL in Docker"
     ],
     "answer": 2,
-    "explanation": "A history of small commits shows your process. A single commit with everything says nothing about how you worked."
+    "explanation": "A unit test checks one function or class in isolation, with no database or network. The others use real dependencies."
+  },
+  {
+    "id": "test-integration",
+    "topic": "Testing",
+    "question": "A test sends POST /orders to the app and checks that it returns 201 and the order is saved in a test PostgreSQL database. What kind of test is it?",
+    "options": [
+      "Snapshot",
+      "Integration",
+      "End-to-end",
+      "Unit"
+    ],
+    "answer": 1,
+    "explanation": "It tests several real pieces together (HTTP, service, database), but without a browser or the full deployed system. That is an integration test."
+  },
+  {
+    "id": "test-e2e",
+    "topic": "Testing",
+    "question": "A test opens a browser, logs in, creates a task and checks that it appears in the list. What kind of test is it?",
+    "options": [
+      "Integration",
+      "End-to-end",
+      "Contract",
+      "Unit"
+    ],
+    "answer": 1,
+    "explanation": "End-to-end tests run a complete user flow with the whole system running. A contract test only checks that two services agree on an API's shape."
+  },
+  {
+    "id": "test-pyramid",
+    "topic": "Testing",
+    "question": "What does the test pyramid recommend?",
+    "options": [
+      "Many end-to-end, some integration, few unit",
+      "The same number of tests of each kind",
+      "Many unit, some integration, few end-to-end",
+      "Many integration, few unit, no end-to-end"
+    ],
+    "answer": 2,
+    "explanation": "Unit tests are fast and cheap, so you write many. End-to-end tests are slow and brittle, so you keep only a few for critical flows."
+  },
+  {
+    "id": "test-e2e-few",
+    "topic": "Testing",
+    "question": "Why does the test pyramid keep end-to-end tests to a few?",
+    "options": [
+      "They rarely find real bugs",
+      "They need a mock for each service",
+      "They cannot run in CI",
+      "They are slow and brittle"
+    ],
+    "answer": 3,
+    "explanation": "E2E tests run the whole system, so they take long and break for reasons unrelated to the change (timing, UI tweaks). They run fine in CI and do find bugs, but they cost more."
+  },
+  {
+    "id": "test-supertest",
+    "topic": "Testing",
+    "question": "In a Node project, what is Supertest used for?",
+    "options": [
+      "Sending HTTP requests to the app from a test",
+      "Starting a PostgreSQL container for each test",
+      "Generating mocks from TypeScript interfaces",
+      "Running test files in parallel across workers"
+    ],
+    "answer": 0,
+    "explanation": "Supertest receives your Express app and sends requests to it, so you can assert on status codes and bodies without deploying anything."
+  },
+  {
+    "id": "test-testcontainers",
+    "topic": "Testing",
+    "question": "What does Testcontainers do?",
+    "options": [
+      "Starts real services, like PostgreSQL, in Docker",
+      "Builds the app's Docker image before the tests",
+      "Simulates the database in memory with mocks",
+      "Runs each test file inside its own virtual machine"
+    ],
+    "answer": 0,
+    "explanation": "Testcontainers starts disposable Docker containers (a real database, a broker) for integration tests, and removes them afterwards."
+  },
+  {
+    "id": "test-tools-runner",
+    "topic": "Testing",
+    "question": "Which tools run the tests and provide it and expect?",
+    "options": [
+      "ESLint or Prettier",
+      "Supertest or Testcontainers",
+      "Jest or Vitest",
+      "Docker or Compose"
+    ],
+    "answer": 2,
+    "explanation": "Jest and Vitest are test runners: they find test files, run them and provide functions like it, expect and mocks. Supertest and Testcontainers are helpers used inside those tests."
+  },
+  {
+    "id": "test-aaa-act",
+    "topic": "Testing",
+    "question": "Following Arrange, Act, Assert, which line is the Act step?",
+    "options": [
+      "expect(result).toBe(0);",
+      "const result = applyDiscount(price, 120);",
+      "it('does not go below zero', () => {",
+      "const price = 100;"
+    ],
+    "answer": 1,
+    "explanation": "Arrange prepares the data (price), Act runs the code under test once, and Assert checks the result.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "it('does not go below zero', () => {",
+        "  const price = 100;",
+        "  const result = applyDiscount(price, 120);",
+        "  expect(result).toBe(0);",
+        "});"
+      ]
+    }
+  },
+  {
+    "id": "test-expected-value",
+    "topic": "Testing",
+    "question": "applyDiscount(100, 120) returns -20 today. The requirement says the final price can never go below 0. What should the test expect?",
+    "options": [
+      "20",
+      "100",
+      "0",
+      "-20"
+    ],
+    "answer": 2,
+    "explanation": "The expected value comes from the requirement, not from what the code returns now. Copying -20 into the test would only confirm the bug."
+  },
+  {
+    "id": "test-aaa-act-count",
+    "topic": "Testing",
+    "question": "In the Arrange, Act, Assert structure, how many actions should the Act step run?",
+    "options": [
+      "One",
+      "One per dependency",
+      "One per assertion",
+      "As many as the flow needs"
+    ],
+    "answer": 0,
+    "explanation": "A single action per test makes it clear what is being tested and why it fails. Several actions usually mean several tests."
+  },
+  {
+    "id": "test-stub",
+    "topic": "Testing",
+    "question": "A test replaces the payment gateway with an object that always answers 'approved'. What kind of test double is it?",
+    "options": [
+      "Spy",
+      "Fake",
+      "Mock",
+      "Stub"
+    ],
+    "answer": 3,
+    "explanation": "A stub returns fixed answers so the code under test can move forward. It does not record or verify calls."
+  },
+  {
+    "id": "test-mock",
+    "topic": "Testing",
+    "question": "A test checks that sendEmail was called exactly once with the user's address. What kind of test double is sendEmail?",
+    "options": [
+      "Fake",
+      "Stub",
+      "Mock",
+      "Dummy"
+    ],
+    "answer": 2,
+    "explanation": "A mock records how it was called so the test can verify it afterwards. A dummy is only passed to fill a parameter and is never used."
+  },
+  {
+    "id": "test-fake",
+    "topic": "Testing",
+    "question": "A test uses a repository that stores orders in an array instead of a database. What kind of test double is it?",
+    "options": [
+      "Fake",
+      "Mock",
+      "Stub",
+      "Dummy"
+    ],
+    "answer": 0,
+    "explanation": "A fake is a real, simplified implementation. Unlike a stub, it has working behavior: what you save, you can read back."
+  },
+  {
+    "id": "test-vi-fn",
+    "topic": "Testing",
+    "question": "What does vi.fn() create in this test?",
+    "options": [
+      "A function that records its calls",
+      "A real mailer using a test SMTP server",
+      "A spy wrapping the real sendEmail",
+      "A stub that throws when it is called"
+    ],
+    "answer": 0,
+    "explanation": "vi.fn() (jest.fn() in Jest) creates a standalone fake function that records every call. vi.spyOn would wrap an existing real method instead.",
+    "code": {
+      "language": "typescript",
+      "lines": [
+        "const mailer = { sendEmail: vi.fn() };",
+        "const users = new UserService(mailer);",
+        "await users.register('ana@mail.com');",
+        "expect(mailer.sendEmail).toHaveBeenCalledTimes(1);"
+      ]
+    }
+  },
+  {
+    "id": "test-mock-overuse",
+    "topic": "Testing",
+    "question": "Why is it risky to verify every internal call with mocks?",
+    "options": [
+      "Mocks only work with classes, not plain functions",
+      "Refactors break tests even if behavior is the same",
+      "Mocks cannot verify how many times they were called",
+      "Mocks make tests slower than real database calls"
+    ],
+    "answer": 1,
+    "explanation": "Verifying internal calls ties the test to the implementation. Use a mock when the call itself is the result, like sending an email."
+  },
+  {
+    "id": "test-cases-count",
+    "topic": "Testing",
+    "question": "CreateOrder saves an order if the user is not blocked and there is stock. How do you decide which unit tests to write?",
+    "options": [
+      "One test per dependency",
+      "One test per line of code",
+      "One test per possible outcome",
+      "One test per public method"
+    ],
+    "answer": 2,
+    "explanation": "List the outcomes: success, blocked user, no stock, and a failing repository. Each one gets its own test."
+  },
+  {
+    "id": "test-blocked-user",
+    "topic": "Testing",
+    "question": "CreateOrder is a use case that saves an order only if the user is not blocked. In its unit test, a stub returns a blocked user. What should the test check?",
+    "options": [
+      "It returns null and logs a warning",
+      "It saves the order as blocked",
+      "It returns a 403 status code",
+      "It throws and no order is saved"
+    ],
+    "answer": 3,
+    "explanation": "The use case rejects the operation and nothing is persisted. It should not know about HTTP status codes; mapping errors to 403 happens in the HTTP layer."
+  },
+  {
+    "id": "test-repo-fails",
+    "topic": "Testing",
+    "question": "In a unit test of a use case that saves orders, the repository stub throws a database error. What should the use case do?",
+    "options": [
+      "It retries until the save succeeds",
+      "It lets the error propagate",
+      "It returns an empty order object",
+      "It logs the error and returns true"
+    ],
+    "answer": 1,
+    "explanation": "Swallowing the error would make the caller think the order was saved. The use case lets it propagate, so the error handler can respond properly."
+  },
+  {
+    "id": "test-integration-case",
+    "topic": "Testing",
+    "question": "POST /orders calls the CreateOrder use case, which checks blocked users and stock. Which check belongs in an integration test of the endpoint rather than in a unit test of CreateOrder?",
+    "options": [
+      "A blocked user makes CreateOrder throw",
+      "With stock at 0, CreateOrder throws",
+      "Without a token, the endpoint returns 401",
+      "The total includes the applied discount"
+    ],
+    "answer": 2,
+    "explanation": "Authentication and status codes live in the HTTP layer, so they need a test that goes through the endpoint. Business outcomes are covered faster with unit tests."
+  },
+  {
+    "id": "test-tdd-cycle",
+    "topic": "Testing",
+    "question": "What is the order of the TDD cycle?",
+    "options": [
+      "Red → Refactor → Green",
+      "Green → Red → Refactor",
+      "Red → Green → Refactor",
+      "Refactor → Red → Green"
+    ],
+    "answer": 2,
+    "explanation": "Write a failing test (red), write the minimum code to make it pass (green), then improve the code with the test as a safety net (refactor)."
+  },
+  {
+    "id": "test-tdd-red",
+    "topic": "Testing",
+    "question": "In TDD, why should the new test fail before you write the code?",
+    "options": [
+      "It makes CI skip the test until it is green",
+      "It is how the test runner registers a new test",
+      "It shows how long the new code will take to run",
+      "It proves the test can detect the missing behavior"
+    ],
+    "answer": 3,
+    "explanation": "If a new test passes before the behavior exists, it is not testing what you think. Seeing it fail first confirms it checks the right thing."
+  },
+  {
+    "id": "test-tdd-green",
+    "topic": "Testing",
+    "question": "In the green step of TDD, how much code do you write?",
+    "options": [
+      "The full feature, including edge cases",
+      "The final, clean version of the code",
+      "Enough to also pass the next planned test",
+      "The minimum needed to pass the test"
+    ],
+    "answer": 3,
+    "explanation": "Green is about passing the current test with the least code. Cleaning it up comes in the refactor step, and new cases come with new tests."
+  },
+  {
+    "id": "test-ci",
+    "topic": "Testing",
+    "question": "What does Continuous Integration (CI) typically do on every push or pull request?",
+    "options": [
+      "Deploys the change to production",
+      "Builds, lints and runs the tests",
+      "Reviews and approves the code",
+      "Merges the branch if tests pass"
+    ],
+    "answer": 1,
+    "explanation": "CI checks each change automatically, so a broken build or failing test shows up before merging. Deploying automatically is Continuous Deployment (CD)."
+  },
+  {
+    "id": "test-linter",
+    "topic": "Testing",
+    "question": "What does a linter like ESLint do?",
+    "options": [
+      "Checks the types of values while the app runs",
+      "Minifies the code before it goes to production",
+      "Runs the unit tests every time a file is saved",
+      "Flags errors without running the code"
+    ],
+    "answer": 3,
+    "explanation": "A linter analyzes the source code statically, for example an unused variable or a missing await. It does not run the code."
+  },
+  {
+    "id": "test-ai-risk",
+    "topic": "Testing",
+    "question": "What is the main risk of tests generated with AI?",
+    "options": [
+      "They may lock in an existing bug",
+      "They cannot run in a CI pipeline",
+      "They need a special test runner",
+      "They always produce low coverage"
+    ],
+    "answer": 0,
+    "explanation": "A generated test often derives its expected values from the current code, so a bug becomes the expected behavior. Review them like any other code."
+  },
+  {
+    "id": "test-tdd-when",
+    "topic": "Testing",
+    "question": "Where does TDD usually pay off the most?",
+    "options": [
+      "Code that mostly wires libraries together",
+      "Prototypes that will be thrown away soon",
+      "UI layouts that are still being explored",
+      "Business rules with clear requirements"
+    ],
+    "answer": 3,
+    "explanation": "When the expected behavior is clear, the test can define it before the code exists. When requirements are still changing, tests written first are often rewritten."
+  },
+  {
+    "id": "react-props-readonly",
+    "topic": "React",
+    "question": "Can a component modify the props it receives?",
+    "options": [
+      "No; props are read-only data from the parent",
+      "Yes, and the parent re-renders with the change",
+      "Only inside a useEffect callback",
+      "Yes, but only if the prop is an object"
+    ],
+    "answer": 0,
+    "explanation": "Props flow from parent to child and must not be changed by the child. If the child needs to change something, the parent passes a function that updates its own state."
+  },
+  {
+    "id": "react-rerender-when",
+    "topic": "React",
+    "question": "When does React re-run a function component?",
+    "options": [
+      "Only when one of its props changes value",
+      "On every repaint the browser performs",
+      "Only when its own state is updated",
+      "On state change or parent re-render"
+    ],
+    "answer": 3,
+    "explanation": "A state update re-renders the component, and by default a parent's render re-renders all its children, even if their props did not change (unless they are memoized)."
+  },
+  {
+    "id": "react-virtual-dom",
+    "topic": "React",
+    "question": "After a component re-runs, how does React update the page?",
+    "options": [
+      "It changes only the DOM nodes that differ",
+      "It re-runs every component in the app",
+      "It reloads the HTML of the current page",
+      "It replaces the component's whole DOM subtree"
+    ],
+    "answer": 0,
+    "explanation": "React compares the new result with the previous one (the Virtual DOM) and applies only the differences to the real page."
+  },
+  {
+    "id": "react-mutate-state",
+    "topic": "React",
+    "question": "What does the button show after a click?",
+    "options": [
+      "An empty string",
+      "Still 'Ana'",
+      "A TypeError, since user is const",
+      "'Bea'"
+    ],
+    "answer": 1,
+    "explanation": "Mutating the object does not call the setter, so React does not know anything changed and does not re-render. Use setUser({ ...user, name: 'Bea' }).",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "function Profile() {",
+        "  const [user, setUser] = useState({ name: 'Ana' });",
+        "  return (",
+        "    <button onClick={() => { user.name = 'Bea'; }}>",
+        "      {user.name}",
+        "    </button>",
+        "  );",
+        "}"
+      ]
+    }
+  },
+  {
+    "id": "react-stale-set",
+    "topic": "React",
+    "question": "count is 0. What is count after the click?",
+    "options": [
+      "2",
+      "0",
+      "1",
+      "It depends on the timing"
+    ],
+    "answer": 2,
+    "explanation": "Inside a render, count is a fixed value (0). Both calls ask for 0 + 1, and React batches them into one render, so the result is 1.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "<button onClick={() => {",
+        "  setCount(count + 1);",
+        "  setCount(count + 1);",
+        "}}>+2</button>"
+      ]
+    }
+  },
+  {
+    "id": "react-functional-set",
+    "topic": "React",
+    "question": "count is 0. What is count after the click?",
+    "options": [
+      "0",
+      "1",
+      "2",
+      "It depends on the timing"
+    ],
+    "answer": 2,
+    "explanation": "The functional form receives the most recent value, so the second call starts from 1. Use it whenever the new value depends on the previous one.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "<button onClick={() => {",
+        "  setCount(c => c + 1);",
+        "  setCount(c => c + 1);",
+        "}}>+2</button>"
+      ]
+    }
+  },
+  {
+    "id": "react-effect-empty",
+    "topic": "React",
+    "question": "When does useEffect(fn, []) run?",
+    "options": [
+      "Before the first render",
+      "After every render",
+      "Only when the component unmounts",
+      "Once, after the first render"
+    ],
+    "answer": 3,
+    "explanation": "An empty dependency array means the effect never re-runs after the first time. (In development, StrictMode may run it twice to check the cleanup.)"
+  },
+  {
+    "id": "react-effect-no-array",
+    "topic": "React",
+    "question": "When does useEffect(fn) run, with no dependency array?",
+    "options": [
+      "Only when props change",
+      "Only when state changes",
+      "Once, after the first render",
+      "After every render"
+    ],
+    "answer": 3,
+    "explanation": "Without an array, React runs the effect after every render, whatever caused it."
+  },
+  {
+    "id": "react-effect-deps",
+    "topic": "React",
+    "question": "When does useEffect(fn, [count]) run?",
+    "options": [
+      "Once, and later only if the component remounts",
+      "After the first render and whenever count changes",
+      "Only when count changes, not after the first render",
+      "Before each render in which count has changed"
+    ],
+    "answer": 1,
+    "explanation": "Effects always run after the first render. After that, React re-runs this one only when count is different from the previous render."
+  },
+  {
+    "id": "react-cleanup",
+    "topic": "React",
+    "question": "When does React call the function returned by this effect?",
+    "options": [
+      "On unmount, and before the effect re-runs",
+      "Every time the interval callback fires",
+      "Only when the whole browser tab is closed",
+      "Right after the effect itself finishes running"
+    ],
+    "answer": 0,
+    "explanation": "The cleanup stops what the effect started. React calls it before running the effect again and when the component is removed.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "useEffect(() => {",
+        "  const id = setInterval(refresh, 5000);",
+        "  return () => clearInterval(id);",
+        "}, []);"
+      ]
+    }
+  },
+  {
+    "id": "react-cleanup-missing",
+    "topic": "React",
+    "question": "An effect starts a setInterval but returns no cleanup. What happens when the component unmounts?",
+    "options": [
+      "The interval pauses until remount",
+      "React throws an error",
+      "The interval keeps running",
+      "React stops the interval"
+    ],
+    "answer": 2,
+    "explanation": "React does not know about timers or subscriptions you start. Without a cleanup they keep running, which wastes work and can leak memory."
+  },
+  {
+    "id": "react-controlled",
+    "topic": "React",
+    "question": "In a controlled input, where does the current value live?",
+    "options": [
+      "In the form's FormData",
+      "In the DOM input",
+      "In a ref",
+      "In React state"
+    ],
+    "answer": 3,
+    "explanation": "A controlled input receives value from state and updates it with onChange on every keystroke, so React always knows the value.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const [email, setEmail] = useState('');",
+        "<input value={email} onChange={e => setEmail(e.target.value)} />"
+      ]
+    }
+  },
+  {
+    "id": "react-controlled-when",
+    "topic": "React",
+    "question": "The submit button must be enabled only while the email is valid, as the user types. Which input fits best?",
+    "options": [
+      "An input with only a defaultValue",
+      "A controlled input",
+      "An input read with FormData on submit",
+      "An uncontrolled input read with a ref"
+    ],
+    "answer": 1,
+    "explanation": "To react on every change, React needs the value in state. Uncontrolled inputs are only read when needed, usually on submit."
+  },
+  {
+    "id": "react-uncontrolled",
+    "topic": "React",
+    "question": "How do you usually read the value of an uncontrolled input?",
+    "options": [
+      "With a ref, when the form is submitted",
+      "From the props the input receives",
+      "From a useEffect that runs on change",
+      "From state, updated on every keystroke"
+    ],
+    "answer": 0,
+    "explanation": "In an uncontrolled input the browser keeps the value. You read it when needed, for example with useRef on submit."
+  },
+  {
+    "id": "react-key-index",
+    "topic": "React",
+    "question": "A list can be reordered and filtered. Why avoid using the array index as key?",
+    "options": [
+      "Index keys force React to re-mount every row",
+      "An item's state can stick to the wrong row",
+      "React throws a duplicate key error on reorder",
+      "Index keys are ignored in production builds"
+    ],
+    "answer": 1,
+    "explanation": "When items move, each index ends up pointing to a different item. React keeps state by key, so a checked checkbox can appear on another task."
+  },
+  {
+    "id": "react-key-best",
+    "topic": "React",
+    "question": "Tasks come from an API. Which key is the best choice?",
+    "options": [
+      "Math.random()",
+      "task.id",
+      "The array index",
+      "task.title"
+    ],
+    "answer": 1,
+    "explanation": "A key must be unique and stable between renders. Math.random() changes every render, titles can repeat, and the index changes when the list is reordered."
+  },
+  {
+    "id": "react-lifting-state",
+    "topic": "React",
+    "question": "Two sibling components need the same value. What is the simplest option?",
+    "options": [
+      "Sync two copies with useEffect",
+      "Store it with Redux Toolkit",
+      "Share it through Context",
+      "Keep the state in their parent"
+    ],
+    "answer": 3,
+    "explanation": "Lifting state up to the closest common parent and passing it down by props is the simplest solution. Context or a global store are for wider sharing."
+  },
+  {
+    "id": "react-context-problem",
+    "topic": "React",
+    "question": "Which problem does React Context mainly solve?",
+    "options": [
+      "Passing data through many levels of props",
+      "Rendering large lists without slowdowns",
+      "Validating forms while the user types",
+      "Caching data fetched from the server"
+    ],
+    "answer": 0,
+    "explanation": "Context delivers a value to every component inside its Provider, without passing it level by level (prop drilling). Typical uses are the logged-in user or the theme."
+  },
+  {
+    "id": "react-context-scope",
+    "topic": "React",
+    "question": "Which components can read user with useContext(UserContext)?",
+    "options": [
+      "Any component rendered inside the Provider",
+      "Only components that receive user as a prop",
+      "Only the direct children of the Provider",
+      "Any component in the app, even outside it"
+    ],
+    "answer": 0,
+    "explanation": "Every component below the Provider, at any depth, can read the value. Outside the Provider, useContext returns the default value passed to createContext (null here).",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const UserContext = createContext(null);",
+        "",
+        "<UserContext.Provider value={user}>",
+        "  <App />",
+        "</UserContext.Provider>"
+      ]
+    }
+  },
+  {
+    "id": "react-global-store",
+    "topic": "React",
+    "question": "When is a state library like Zustand or Redux Toolkit worth adding?",
+    "options": [
+      "When many parts of the app read and update it",
+      "To give every component the logged-in user",
+      "To avoid using useState in components",
+      "Whenever two components share the same value"
+    ],
+    "answer": 0,
+    "explanation": "Start with local state, lift it when siblings share it, and use Context for simple global data. A store pays off when shared state is large and changes from many places."
+  },
+  {
+    "id": "react-usememo",
+    "topic": "React",
+    "question": "What does useMemo return?",
+    "options": [
+      "The result of a side effect run after the render",
+      "A cached function that keeps the same reference",
+      "A ref that holds the value of the previous render",
+      "A cached value, recomputed when deps change"
+    ],
+    "answer": 3,
+    "explanation": "useMemo remembers the result of a calculation between renders. useCallback is the one that remembers a function."
+  },
+  {
+    "id": "react-usecallback",
+    "topic": "React",
+    "question": "What does useCallback keep between renders?",
+    "options": [
+      "The same function reference",
+      "The value the function returns",
+      "A debounced copy of the function",
+      "The arguments of the last call"
+    ],
+    "answer": 0,
+    "explanation": "useCallback returns the same function object until its dependencies change, instead of creating a new function on every render."
+  },
+  {
+    "id": "react-usememo-vs-effect",
+    "topic": "React",
+    "question": "What is the difference between useMemo and useEffect?",
+    "options": [
+      "useMemo is for objects; useEffect is for primitive values",
+      "useEffect gives a value during render; useMemo acts after it",
+      "useMemo gives a value during render; useEffect acts after it",
+      "useMemo runs once; useEffect runs on every single render"
+    ],
+    "answer": 2,
+    "explanation": "useMemo returns a value you use while rendering. useEffect runs an action (outside React) after the render and returns nothing to it."
+  },
+  {
+    "id": "react-usememo-empty",
+    "topic": "React",
+    "question": "tasks changes later. What happens to visible?",
+    "options": [
+      "It updates, since tasks is used inside",
+      "It is recomputed on every render",
+      "It keeps the old filtered list",
+      "React throws a missing dependency error"
+    ],
+    "answer": 2,
+    "explanation": "With [], the value is computed once and never again. The dependency array must include everything the calculation uses: [tasks, search].",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const visible = useMemo(",
+        "  () => tasks.filter(t => t.title.includes(search)),",
+        "  []",
+        ");"
+      ]
+    }
+  },
+  {
+    "id": "react-compiler",
+    "topic": "React",
+    "question": "What does React Compiler do?",
+    "options": [
+      "It turns components into server components",
+      "It memoizes automatically at build time",
+      "It compiles JSX into native mobile code",
+      "It removes unused state from components"
+    ],
+    "answer": 1,
+    "explanation": "React Compiler analyzes components when the app is built and memoizes them automatically, so manual useMemo and useCallback are only needed for fine control."
+  },
+  {
+    "id": "react-derived-effect",
+    "topic": "React",
+    "question": "What is the problem with this code?",
+    "options": [
+      "The effect runs in an infinite loop",
+      "setDone cannot be called inside an effect",
+      "An extra render, and the first one is stale",
+      "done is never updated after the first render"
+    ],
+    "answer": 2,
+    "explanation": "Values derived from props or state should be computed during render: const done = tasks.filter(t => t.done). The effect sets done after the render, so React renders twice and the first render shows the old value.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "const [done, setDone] = useState([]);",
+        "useEffect(() => {",
+        "  setDone(tasks.filter(t => t.done));",
+        "}, [tasks]);"
+      ]
+    }
+  },
+  {
+    "id": "react-strictmode",
+    "topic": "React",
+    "question": "In development, an effect runs twice when the component mounts. Why?",
+    "options": [
+      "The dependency array has a duplicated value",
+      "StrictMode does it to reveal missing cleanups",
+      "The component was mounted in two places",
+      "React always runs effects twice, also in production"
+    ],
+    "answer": 1,
+    "explanation": "In development, StrictMode mounts, unmounts and mounts again to check that the effect's cleanup undoes what it started. It does not happen in production."
+  },
+  {
+    "id": "react-memo-callback",
+    "topic": "React",
+    "question": "Row is wrapped in React.memo, but it re-renders every time the parent renders. Why?",
+    "options": [
+      "React.memo only compares primitive props",
+      "item is compared by value, not by reference",
+      "React.memo does not work with lists",
+      "onSelect is a new function on every render"
+    ],
+    "answer": 3,
+    "explanation": "React.memo skips the render only if all props are equal by reference. A new arrow function each render counts as a new prop; wrap it with useCallback.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "function List({ items }) {",
+        "  return items.map(item => (",
+        "    <Row key={item.id} item={item} onSelect={() => select(item.id)} />",
+        "  ));",
+        "}"
+      ]
+    }
+  },
+  {
+    "id": "react-await-stale",
+    "topic": "React",
+    "question": "count is 0 when the user clicks. What does setCount(count + 1) set after the await, if count changed to 5 meanwhile?",
+    "options": [
+      "It depends on the timing",
+      "1",
+      "6",
+      "5"
+    ],
+    "answer": 1,
+    "explanation": "The handler captured count = 0 when it ran. After the await it still sees that old value. setCount(c => c + 1) would use the latest value.",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "async function handleClick() {",
+        "  await saveDraft();",
+        "  setCount(count + 1);",
+        "}"
+      ]
+    }
+  },
+  {
+    "id": "react-next-routing",
+    "topic": "React",
+    "question": "In Next.js with the App Router, which file defines the page at /tasks?",
+    "options": [
+      "app/tasks.tsx",
+      "app/tasks/page.tsx",
+      "app/routes/tasks.tsx",
+      "app/tasks/index.tsx"
+    ],
+    "answer": 1,
+    "explanation": "With file-based routing, the folder path defines the URL and the page.tsx file inside it is the page."
+  },
+  {
+    "id": "react-use-client",
+    "topic": "React",
+    "question": "In the Next.js App Router, when do you add 'use client' at the top of a file?",
+    "options": [
+      "When the component imports a CSS file",
+      "When the component should render on the server",
+      "When the component fetches data from a database",
+      "When the component uses state, effects or events"
+    ],
+    "answer": 3,
+    "explanation": "Components are Server Components by default. 'use client' is needed for interactivity, like useState, useEffect or onClick."
+  },
+  {
+    "id": "react-ssr-benefit",
+    "topic": "React",
+    "question": "What is a benefit of rendering React pages on the server?",
+    "options": [
+      "No JavaScript needed for clicks",
+      "State survives full page reloads",
+      "Faster first load and better SEO",
+      "The API is no longer necessary"
+    ],
+    "answer": 2,
+    "explanation": "The browser receives ready HTML, so the first view appears sooner and search engines read the content more easily. Interactivity still needs JavaScript."
+  },
+  {
+    "id": "infra-image-container",
+    "topic": "Infra & System Design",
+    "question": "What is the difference between a Docker image and a container?",
+    "options": [
+      "Image: read-only package; container: a running instance",
+      "Image: holds the app's data; container: holds its code",
+      "Image: for Linux hosts; container: for any OS",
+      "Container: read-only package; image: a running instance"
+    ],
+    "answer": 0,
+    "explanation": "An image is built from a Dockerfile and does not change. A container is an image in execution, and several containers can run from the same image."
+  },
+  {
+    "id": "infra-volume",
+    "topic": "Infra & System Design",
+    "question": "A PostgreSQL container is deleted and recreated. What keeps its data?",
+    "options": [
+      "A restart policy",
+      "A larger image",
+      "A volume",
+      "A RUN step"
+    ],
+    "answer": 2,
+    "explanation": "A volume stores data outside the container's own filesystem, so it survives when the container is removed."
+  },
+  {
+    "id": "infra-dockerfile-cache",
+    "topic": "Infra & System Design",
+    "question": "Why does this Dockerfile copy package*.json and run npm ci before copying the rest?",
+    "options": [
+      "Docker reuses the cached install if deps didn't change",
+      "Copying files in two steps makes the image smaller",
+      "npm ci fails when the folder contains source files",
+      "Copying everything first would delete node_modules"
+    ],
+    "answer": 0,
+    "explanation": "Each instruction is a cached layer. If package.json did not change, Docker skips npm ci and only re-copies your code, which makes builds much faster.",
+    "code": {
+      "language": "dockerfile",
+      "lines": [
+        "FROM node:22-alpine",
+        "WORKDIR /app",
+        "COPY package*.json ./",
+        "RUN npm ci",
+        "COPY . .",
+        "CMD [\"node\", \"dist/main.js\"]"
+      ]
+    }
+  },
+  {
+    "id": "infra-cmd-vs-run",
+    "topic": "Infra & System Design",
+    "question": "In a Dockerfile, what is the difference between RUN and CMD?",
+    "options": [
+      "RUN: as root; CMD: as the app's own user",
+      "RUN: shell commands; CMD: only Node scripts",
+      "CMD: while building; RUN: when the container starts",
+      "RUN: while building; CMD: when the container starts"
+    ],
+    "answer": 3,
+    "explanation": "RUN executes during the build and its result is saved in the image (like npm ci). CMD is the command the container runs when it starts."
+  },
+  {
+    "id": "infra-container-vs-vm",
+    "topic": "Infra & System Design",
+    "question": "Why does a container usually start faster and weigh less than a virtual machine?",
+    "options": [
+      "It compiles the app to native machine code",
+      "It skips the network stack of the host",
+      "It shares the host's operating system kernel",
+      "It runs the app without any operating system"
+    ],
+    "answer": 2,
+    "explanation": "A VM boots a full operating system. A container shares the host's kernel and only isolates the process, so it starts in seconds."
+  },
+  {
+    "id": "infra-compose-host",
+    "topic": "Infra & System Design",
+    "question": "In Docker Compose, the api service must connect to PostgreSQL, defined as a service named db. Which host does it use?",
+    "options": [
+      "postgres",
+      "localhost",
+      "db",
+      "127.0.0.1"
+    ],
+    "answer": 2,
+    "explanation": "Compose services find each other by service name. Inside the api container, localhost is the api container itself."
+  },
+  {
+    "id": "infra-compose-ports",
+    "topic": "Infra & System Design",
+    "question": "In a Compose file, a service has ports: [\"8080:3000\"]. Which is the container's port?",
+    "options": [
+      "Both are ports of the container",
+      "3000; 8080 is for internal traffic",
+      "8080; 3000 is on your machine",
+      "3000; 8080 is on your machine"
+    ],
+    "answer": 3,
+    "explanation": "The format is host:container. Your machine's port 8080 forwards to port 3000 inside the container."
+  },
+  {
+    "id": "infra-depends-on",
+    "topic": "Infra & System Design",
+    "question": "What does depends_on: [db] guarantee in Docker Compose?",
+    "options": [
+      "db is started before api",
+      "api restarts whenever db restarts",
+      "api waits until db accepts connections",
+      "api and db share the same container"
+    ],
+    "answer": 0,
+    "explanation": "depends_on controls start order. By itself it does not wait for PostgreSQL to be ready; that needs a healthcheck condition or a retry in the app."
+  },
+  {
+    "id": "infra-compose-use",
+    "topic": "Infra & System Design",
+    "question": "What is Docker Compose typically used for?",
+    "options": [
+      "Running a local environment with one command",
+      "Running containers across many production servers",
+      "Building and publishing images to a registry",
+      "Scaling containers automatically with the load"
+    ],
+    "answer": 0,
+    "explanation": "Compose starts several containers together (API, database, cache) on one machine, mostly for development and tests. Orchestrating production across machines is Kubernetes' job."
+  },
+  {
+    "id": "infra-k8s-vs-docker",
+    "topic": "Infra & System Design",
+    "question": "What does Kubernetes do that Docker alone does not?",
+    "options": [
+      "Builds and tags images from a Dockerfile",
+      "Isolates the app's processes from the host OS",
+      "Packages the app with all of its dependencies",
+      "Keeps N replicas running across machines"
+    ],
+    "answer": 3,
+    "explanation": "Docker packages and runs containers. Kubernetes orchestrates them: you declare the desired state ('3 copies of the API') and it restarts, scales and redeploys to keep it."
+  },
+  {
+    "id": "infra-k8s-pod",
+    "topic": "Infra & System Design",
+    "question": "What is the smallest unit Kubernetes deploys and schedules?",
+    "options": [
+      "Deployment",
+      "Container",
+      "Pod",
+      "Service"
+    ],
+    "answer": 2,
+    "explanation": "A pod wraps one or more containers that run together. Each copy of the API is usually one pod."
+  },
+  {
+    "id": "infra-k8s-deployment",
+    "topic": "Infra & System Design",
+    "question": "Which Kubernetes object defines the image and number of replicas, and recreates a pod that dies?",
+    "options": [
+      "ConfigMap",
+      "Deployment",
+      "Pod",
+      "Service"
+    ],
+    "answer": 1,
+    "explanation": "A Deployment declares which image to run and how many replicas to keep. If a pod fails, it creates a new one."
+  },
+  {
+    "id": "infra-k8s-service",
+    "topic": "Infra & System Design",
+    "question": "Why put a Kubernetes Service in front of the API pods?",
+    "options": [
+      "Pods come and go; it gives a stable address",
+      "Pods cannot open ports without a Service",
+      "It restarts pods that fail health checks",
+      "It stores the secrets the pods need"
+    ],
+    "answer": 0,
+    "explanation": "Pods are created and destroyed all the time and change IPs. A Service gives one fixed address and spreads requests among the current pods."
+  },
+  {
+    "id": "infra-rolling-update",
+    "topic": "Infra & System Design",
+    "question": "During a rolling update, Kubernetes sends SIGTERM to each old pod. Why does graceful shutdown matter?",
+    "options": [
+      "So the new image is downloaded faster",
+      "So Kubernetes keeps the old pod as backup",
+      "So requests in progress can finish",
+      "So the database migration runs first"
+    ],
+    "answer": 2,
+    "explanation": "Pods are replaced gradually. Handling SIGTERM (stop accepting requests, finish the current ones, close the pool) avoids cutting users off during the deploy."
+  },
+  {
+    "id": "infra-vertical-drawbacks",
+    "topic": "Infra & System Design",
+    "question": "What are the main drawbacks of vertical scaling?",
+    "options": [
+      "It requires a load balancer in front of it",
+      "It requires the app to be fully stateless",
+      "Each copy opens its own database pool",
+      "A hardware ceiling and one point of failure"
+    ],
+    "answer": 3,
+    "explanation": "Vertical scaling means a bigger machine. It is simple, but machines have a limit, and if that one machine falls, everything falls. The other options are concerns of horizontal scaling."
+  },
+  {
+    "id": "infra-stateless",
+    "topic": "Infra & System Design",
+    "question": "What must an app be to scale horizontally behind a load balancer?",
+    "options": [
+      "Single-threaded",
+      "Event-driven",
+      "Stateless",
+      "Containerized"
+    ],
+    "answer": 2,
+    "explanation": "Any request can reach any copy, so nothing that must last between requests can live in one copy's memory."
+  },
+  {
+    "id": "infra-session-memory",
+    "topic": "Infra & System Design",
+    "question": "Copy A of the API stores sessions in its memory. A user logs in through A, and the next request reaches copy B and gets 401. What is the usual fix?",
+    "options": [
+      "Send the session ID in a header instead",
+      "Store sessions in Redis or the database",
+      "Make the session cookie expire later",
+      "Copy all sessions to each copy on startup"
+    ],
+    "answer": 1,
+    "explanation": "Moving session state to a shared store makes every copy able to read it, which keeps the API stateless."
+  },
+  {
+    "id": "infra-pool-copies",
+    "topic": "Infra & System Design",
+    "question": "You scale the API from 2 to 20 copies, and each one opens a pool of up to 10 database connections. What can happen?",
+    "options": [
+      "The database may hit its connection limit",
+      "The load balancer queues the extra queries",
+      "The pools are merged into one pool of 10",
+      "Each copy's pool shrinks to 1 connection"
+    ],
+    "answer": 0,
+    "explanation": "Each copy has its own pool, so 20 copies can open up to 200 connections. Adding copies can move the bottleneck to the database."
+  },
+  {
+    "id": "infra-db-bottleneck",
+    "topic": "Infra & System Design",
+    "question": "Metrics show slow database queries are the bottleneck. Will adding more API copies help?",
+    "options": [
+      "Yes; each copy gets its own database",
+      "No; it adds load to the same database",
+      "Yes; the queries are split between copies",
+      "Only if the copies share one pool"
+    ],
+    "answer": 1,
+    "explanation": "More API copies send more queries to the same database. Fix the queries and indexes, or scale the database, instead."
+  },
+  {
+    "id": "infra-202",
+    "topic": "Infra & System Design",
+    "question": "POST /export queues a job that will generate a CSV in a few minutes. Which status should the API return right away?",
+    "options": [
+      "201 Created",
+      "202 Accepted",
+      "200 OK",
+      "204 No Content"
+    ],
+    "answer": 1,
+    "explanation": "202 means 'request received, it will be processed later'. The client then checks the result (for example GET /export/123) or receives a notification."
+  },
+  {
+    "id": "infra-at-least-once",
+    "topic": "Infra & System Design",
+    "question": "Most queues deliver messages at least once. What does that require from the worker?",
+    "options": [
+      "Being idempotent",
+      "Being single-threaded",
+      "Acknowledging before processing",
+      "Processing in strict FIFO order"
+    ],
+    "answer": 0,
+    "explanation": "A message can arrive more than once, so processing it again must not duplicate effects, like sending the same invoice twice."
+  },
+  {
+    "id": "infra-queue-why",
+    "topic": "Infra & System Design",
+    "question": "Why move a slow report generation out of the request and into a queue?",
+    "options": [
+      "The client gets the report in the same response",
+      "The report is generated faster by the worker",
+      "The API responds fast and absorbs traffic spikes",
+      "The queue removes the need for retries"
+    ],
+    "answer": 2,
+    "explanation": "The API only enqueues and answers, so users are not blocked and spikes wait in the queue. The work takes as long as before, just elsewhere."
+  },
+  {
+    "id": "infra-sd-first",
+    "topic": "Infra & System Design",
+    "question": "In a system design interview ('design a task service'), what should you do first?",
+    "options": [
+      "Ask what it must do, and its volume and latency",
+      "Choose between SQL and NoSQL for the data",
+      "Estimate the monthly cost of the cloud setup",
+      "Draw the microservices and how they communicate"
+    ],
+    "answer": 0,
+    "explanation": "Requirements drive every later decision. Each answer turns a piece on or off: a cache, a queue, more copies."
+  },
+  {
+    "id": "infra-sd-low-volume",
+    "topic": "Infra & System Design",
+    "question": "Requirements: a few requests per second, one small team. Which base design fits best?",
+    "options": [
+      "Serverless functions per endpoint with DynamoDB",
+      "A modular monolith with PostgreSQL",
+      "A monolith with a read replica and a CDN",
+      "Microservices with Kafka between them"
+    ],
+    "answer": 1,
+    "explanation": "Start with the simplest design that meets the requirements. Add pieces only when volume or latency asks for them."
+  },
+  {
+    "id": "infra-sd-read-heavy",
+    "topic": "Infra & System Design",
+    "question": "The system has many more reads than writes, and the same data is read very often. What do you add?",
+    "options": [
+      "A cache for the most-read data",
+      "A queue for the read requests",
+      "More workers for background jobs",
+      "A second database for writes"
+    ],
+    "answer": 0,
+    "explanation": "A cache serves frequent reads without hitting the database each time, at the cost of possibly stale data."
+  },
+  {
+    "id": "infra-sd-slow-task",
+    "topic": "Infra & System Design",
+    "question": "One operation takes several seconds, like generating a report. How do you handle it in the design?",
+    "options": [
+      "A longer HTTP timeout for that endpoint",
+      "More API copies behind a load balancer",
+      "A cache: store the report before it is asked",
+      "A queue: respond 202 and process it later"
+    ],
+    "answer": 3,
+    "explanation": "Slow work leaves the request: the API enqueues it and responds 202, and a worker does it in the background."
+  },
+  {
+    "id": "infra-offset-repeat",
+    "topic": "Infra & System Design",
+    "question": "A list uses offset pagination (?page=3&limit=20). New tasks are inserted while the user browses. What can happen?",
+    "options": [
+      "The new tasks are skipped until a reload",
+      "The page size grows to fit the new tasks",
+      "Some tasks show up again on the next page",
+      "The next page fails with a 409 Conflict"
+    ],
+    "answer": 2,
+    "explanation": "Offset skips a fixed number of rows. When rows are inserted before the current position, everything shifts and items from the previous page appear again."
+  },
+  {
+    "id": "infra-offset-slow",
+    "topic": "Infra & System Design",
+    "question": "Why are distant pages slow with offset pagination?",
+    "options": [
+      "The database sorts the table again per page",
+      "Offsets cannot use any of the table's indexes",
+      "Each page opens a new database connection",
+      "The database still walks the skipped rows"
+    ],
+    "answer": 3,
+    "explanation": "OFFSET 100000 makes the database read and discard 100,000 rows before returning the page."
+  },
+  {
+    "id": "infra-cursor",
+    "topic": "Infra & System Design",
+    "question": "What can cursor pagination (?cursor=<last id>&limit=20) NOT do?",
+    "options": [
+      "Stay fast on very long lists",
+      "Stay stable when rows are added",
+      "Return the next 20 items in order",
+      "Jump straight to page 50"
+    ],
+    "answer": 3,
+    "explanation": "A cursor asks for 'the next 20 after this ID'. It is stable and fast, but there is no page number to jump to."
+  },
+  {
+    "id": "infra-unique-membership",
+    "topic": "Infra & System Design",
+    "question": "memberships links users and projects. Which constraint stops a user from being a member of the same project twice?",
+    "options": [
+      "FOREIGN KEY (project_id)",
+      "INDEX (user_id, project_id)",
+      "UNIQUE (user_id, project_id)",
+      "UNIQUE (user_id)"
+    ],
+    "answer": 2,
+    "explanation": "The pair must be unique. UNIQUE (user_id) would allow only one project per user, a plain index does not reject duplicates, and a foreign key only checks the project exists."
+  },
+  {
+    "id": "infra-foreign-key",
+    "topic": "Infra & System Design",
+    "question": "What does a foreign key from tasks.project_id to projects.id prevent?",
+    "options": [
+      "Two tasks with the same title in one project",
+      "A project being created without any tasks",
+      "Slow queries filtering tasks by project",
+      "Tasks that point to a missing project"
+    ],
+    "answer": 3,
+    "explanation": "A foreign key makes the database reject a project_id that has no matching row in projects. Speeding up queries is an index's job."
+  },
+  {
+    "id": "infra-growth-first",
+    "topic": "Infra & System Design",
+    "question": "An endpoint gets slow as traffic grows. After measuring, what is usually the cheapest first fix?",
+    "options": [
+      "Splitting into microservices",
+      "Adding a queue for the requests",
+      "Optimizing queries and indexes",
+      "Adding more API copies"
+    ],
+    "answer": 2,
+    "explanation": "Attack the real bottleneck from cheapest to most expensive: queries and indexes, then cache, then queues, then more copies."
+  },
+  {
+    "id": "infra-concurrent-edit",
+    "topic": "Infra & System Design",
+    "question": "Two users edit the same task at the same time, and one would silently overwrite the other. What prevents it?",
+    "options": [
+      "A UNIQUE constraint on the task's title",
+      "Optimistic locking with a version column",
+      "A cache with a short TTL on the task",
+      "An idempotency key on the request"
+    ],
+    "answer": 1,
+    "explanation": "The update requires the version that was read. If someone saved first, it affects 0 rows and the second user reloads instead of overwriting."
+  },
+  {
+    "id": "infra-email-down",
+    "topic": "Infra & System Design",
+    "question": "When the email provider is down, user signup must still work. What do you use?",
+    "options": [
+      "A longer timeout for the email call",
+      "A database transaction around both",
+      "A queue that retries sending the email",
+      "A circuit breaker that skips the email"
+    ],
+    "answer": 2,
+    "explanation": "Signup saves the user and enqueues the email; a worker retries until the provider is back. A transaction cannot cover an external service, and a breaker alone would lose the email."
+  },
+  {
+    "id": "infra-tradeoff-cache",
+    "topic": "Infra & System Design",
+    "question": "What is the usual trade-off of adding a cache?",
+    "options": [
+      "Faster writes, but reads become slower",
+      "Stronger consistency, but higher latency",
+      "Faster reads, but possibly stale data",
+      "Less memory, but more database queries"
+    ],
+    "answer": 2,
+    "explanation": "A cache speeds up reads at the cost of possibly serving outdated data until it expires or is invalidated. Saying the cost of each decision is part of a good system design answer."
   }
 ]
