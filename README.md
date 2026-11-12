@@ -2,7 +2,15 @@
 
 A local multiple-choice quiz for interview study. Each round draws random questions from a fixed bank, shows feedback with an explanation after every answer, and ends with a final score.
 
-**Status: work in progress.** The question bank and its startup validation exist. The round logic and the UI are still being built (groups 4-6 of the OpenSpec change `quiz-game`).
+The bank has 384 questions across 11 topics: JavaScript, TypeScript, Node.js & HTTP, Security, Architecture, OOP & Patterns, Databases, Algorithms, Testing, React, and Infra & System Design.
+
+## Features
+
+- Topic selection on the start screen (all topics selected by default).
+- Rounds of random questions, with the options shuffled on every question.
+- Feedback with an explanation after each answer, and a final score.
+- Syntax highlighting for code snippets (JavaScript, TypeScript, CSS, HTML and SQL).
+- Startup validation of the question bank, with an error screen that lists every problem.
 
 ## Live demo
 
@@ -87,9 +95,17 @@ The bank is validated at startup (`src/parse.js` checks that the file is valid J
 src/
   config.js          # QUESTIONS_PER_ROUND
   questions.json     # question bank
+  parse.js           # JSON parsing of the bank
   validate.js        # bank validation
+  round.js           # round logic (question draw, shuffle, score)
+  highlight.js       # syntax highlighting of code snippets
+  ui.js              # screens and rendering
   main.js, style.css # app entry and styles
   *.test.js          # unit tests
 e2e/                 # Playwright tests
-openspec/            # OpenSpec specs and the quiz-game change (proposal, design, tasks)
+openspec/            # OpenSpec specs and archived changes (proposal, design, tasks)
 ```
+
+## Planned
+
+A button on each question to open the full section of the study material the question is based on, so the player can read the complete topic after answering. This will likely need a new optional field in the question format to link each question to its section.
