@@ -22,6 +22,7 @@ export const state = {
 };
 
 let bank = [];
+let guide = new Map();
 
 /**
  * Shows only the screen with the given name and hides the others.
@@ -300,12 +301,14 @@ export function showErrors(errors) {
 }
 
 /**
- * Stores the question bank, connects the events once and shows the start screen.
+ * Stores the question bank and the guide index, connects the events once and shows the start screen.
  * @param {Array<object>} questions - The validated question bank.
+ * @param {Map<string, {title: string, chapterTitle: string, lines: Array<string>}>} guideIndex - The guide sections by id.
  * @returns {void}
  */
-export function initUI(questions) {
+export function initUI(questions, guideIndex) {
   bank = questions;
+  guide = guideIndex;
   $("btn-start").addEventListener("click", startRound);
   $("btn-again").addEventListener("click", showStart);
   $("btn-submit").addEventListener("click", submitAnswer);

@@ -22,8 +22,8 @@
 
 ## 4. Startup wiring
 
-- [ ] 4.1 In `src/main.js`, import `guide.json` as raw text, parse and validate it, then validate the bank against the guide ids (skip the `guideId` existence check when the guide is unusable), show the errors of both together on the error screen, and pass the guide index to `initUI`; verify by running `npm run dev` with a broken `guideId`, a broken link and a malformed guide file, and seeing all problems listed and no round available
-- [ ] 4.2 Make the error screen text in `index.html` accurate for both files (it now says "the questions file") and verify it visually
+- [x] 4.1 In `src/main.js`, import `guide.json` as raw text, parse and validate it, then validate the bank against the guide ids (skip the `guideId` existence check when the guide is unusable), show the errors of both together on the error screen, and pass the guide index to `initUI`; verify by running `npm run dev` with a broken `guideId`, a broken link and a malformed guide file, and seeing all problems listed and no round available
+- [x] 4.2 Make the error screen text in `index.html` accurate for both files (it now says "the questions file") and verify it visually
 
 ## 5. Guide dialog UI
 
