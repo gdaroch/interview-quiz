@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { validateBank } from './validate.js';
 import bundledQuestions from './data/questions.json';
+import bundledGuide from './data/guide.json';
+import { buildGuideIndex } from './guide.js';
 
 const makeQuestion = (overrides = {}) => ({
   id: 'q1',
@@ -9,6 +11,7 @@ const makeQuestion = (overrides = {}) => ({
   options: ['1', '2', '3'],
   answer: 1,
   explanation: 'Basic arithmetic.',
+  guideId: 'sec-1',
   ...overrides,
 });
 
@@ -275,8 +278,52 @@ describe('validateBank - error reporting', () => {
   });
 });
 
+describe('validateBank - guideId', () => {
+  it('reports a missing guideId', () => {
+    const errors = validateBank([withoutKey(makeQuestion(), 'guideId')]);
+    expect(errors).toEqual([expect.objectContaining({ questionRef: 'q1', field: 'guideId' })]);
+    expect(errors[0].message).toBe('"guideId" must be a string');
+  });
+
+  it.each([
+    ['a number', 5],
+    ['null', null],
+    ['an array', ['sec-1']],
+  ])('reports a guideId that is %s', (_label, value) => {
+    const errors = validateBank([makeQuestion({ guideId: value })]);
+    expect(errors).toEqual([expect.objectContaining({ questionRef: 'q1', field: 'guideId' })]);
+  });
+
+  it('reports an unknown guideId when a set of ids is given', () => {
+    const errors = validateBank([makeQuestion({ guideId: 'nope' })], new Set(['sec-1']));
+    expect(errors).toEqual([
+      { questionRef: 'q1', field: 'guideId', message: 'unknown guideId "nope"' },
+    ]);
+  });
+
+  it('accepts a guideId that exists in the set', () => {
+    expect(validateBank([makeQuestion()], new Set(['sec-1', 'sec-2']))).toEqual([]);
+  });
+
+  it('accepts several questions sharing the same guideId', () => {
+    const bank = [makeQuestion({ id: 'a' }), makeQuestion({ id: 'b' }), makeQuestion({ id: 'c' })];
+    expect(validateBank(bank, new Set(['sec-1']))).toEqual([]);
+  });
+
+  it('does not check that the guideId exists when no set is given', () => {
+    expect(validateBank([makeQuestion({ guideId: 'anything' })])).toEqual([]);
+  });
+
+  it('does not report an unknown guideId on top of a wrong-type one', () => {
+    const errors = validateBank([makeQuestion({ guideId: 5 })], new Set(['sec-1']));
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toBe('"guideId" must be a string');
+  });
+});
+
 describe('bundled question bank', () => {
-  it('passes validateBank with no errors', () => {
-    expect(validateBank(bundledQuestions)).toEqual([]);
+  it('passes validateBank against the ids of the real guide', () => {
+    const guideIds = new Set(buildGuideIndex(bundledGuide).keys());
+    expect(validateBank(bundledQuestions, guideIds)).toEqual([]);
   });
 });

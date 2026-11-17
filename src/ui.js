@@ -1,6 +1,7 @@
 import { QUESTIONS_PER_ROUND } from "./config.js";
 import { createRound, filterByTopics, getTopics, isCorrect, countCorrect } from "./round.js";
 import { highlightCode } from "./highlight.js";
+import { renderSection } from "./guide.js";
 
 /**
  * Finds an element by its id.
@@ -19,9 +20,12 @@ export const state = {
   submitted: false,
   score: 0,
   selectedTopics: new Set(),
+  // The guide reader is separate from the round: the last id is the visible section, empty means closed.
+  guide: { stack: [] },
 };
 
 let bank = [];
+let guide = new Map();
 
 /**
  * Shows only the screen with the given name and hides the others.
@@ -121,6 +125,7 @@ export function renderQuestion() {
 
   $("btn-submit").hidden = state.submitted;
   $("btn-submit").disabled = state.selected === null;
+  $("btn-guide").hidden = !state.submitted;
   $("btn-next").hidden = !state.submitted;
   $("btn-next").textContent = last ? "See results" : "Next";
 }
@@ -274,6 +279,70 @@ export function nextQuestion() {
 }
 
 /**
+ * Draws the guide dialog from the stack: the visible section, the Back button, and open or closed.
+ * @returns {void}
+ */
+export function renderGuide() {
+  const dialog = $("guide-dialog");
+  const stack = state.guide.stack;
+  if (stack.length === 0) {
+    if (dialog.open) dialog.close();
+    return;
+  }
+  const section = guide.get(stack[stack.length - 1]);
+  if (!section) return;
+  $("guide-chapter").textContent = section.chapterTitle;
+  $("guide-title").textContent = section.title;
+  // The only innerHTML in the app: markdown-it runs with raw HTML disabled and the source is the repository's guide.json.
+  $("guide-body").innerHTML = renderSection(section);
+  $("guide-back").hidden = stack.length <= 1;
+  $("guide-body").scrollTop = 0;
+  if (!dialog.open) dialog.showModal();
+  // The clicked link was replaced, so move focus to the title to keep the keyboard place.
+  $("guide-title").focus();
+}
+
+/**
+ * Opens the guide at the section of the current question. Only works after answering.
+ * @returns {void}
+ */
+export function openGuide() {
+  if (!state.submitted) return;
+  state.guide.stack = [state.round[state.index].guideId];
+  renderGuide();
+}
+
+/**
+ * Shows another guide section on top of the current one. Unknown ids are ignored.
+ * @param {string} id - The id of the section to show.
+ * @returns {void}
+ */
+export function followGuideLink(id) {
+  if (!guide.has(id)) return;
+  state.guide.stack.push(id);
+  renderGuide();
+}
+
+/**
+ * Goes back to the previous guide section. Does nothing on the first one.
+ * @returns {void}
+ */
+export function guideBack() {
+  if (state.guide.stack.length <= 1) return;
+  state.guide.stack.pop();
+  renderGuide();
+}
+
+/**
+ * Closes the guide and forgets the visited sections.
+ * @returns {void}
+ */
+export function closeGuide() {
+  state.guide.stack = [];
+  renderGuide();
+}
+
+/**
  * Builds one error row: question reference, field and message.
  * @param {{questionRef: string, field: string, message: string}} err - One validation error.
  * @returns {HTMLLIElement} The list item.
@@ -300,16 +369,32 @@ export function showErrors(errors) {
 }
 
 /**
- * Stores the question bank, connects the events once and shows the start screen.
+ * Stores the question bank and the guide index, connects the events once and shows the start screen.
  * @param {Array<object>} questions - The validated question bank.
+ * @param {Map<string, {title: string, chapterTitle: string, lines: Array<string>}>} guideIndex - The guide sections by id.
  * @returns {void}
  */
-export function initUI(questions) {
+export function initUI(questions, guideIndex) {
   bank = questions;
+  guide = guideIndex;
   $("btn-start").addEventListener("click", startRound);
   $("btn-again").addEventListener("click", showStart);
   $("btn-submit").addEventListener("click", submitAnswer);
   $("btn-next").addEventListener("click", nextQuestion);
   $("q-options").addEventListener("change", (e) => selectOption(Number(e.target.value)));
+  $("btn-guide").addEventListener("click", openGuide);
+  $("guide-back").addEventListener("click", guideBack);
+  $("guide-close").addEventListener("click", closeGuide);
+  // One delegated listener: the links are rebuilt on every section change.
+  $("guide-body").addEventListener("click", (e) => {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    e.preventDefault();
+    followGuideLink(link.getAttribute("href").slice(1));
+  });
+  // Escape and the Close button both end here, so the stack is always emptied.
+  $("guide-dialog").addEventListener("close", () => {
+    state.guide.stack = [];
+  });
   showStart();
 }

@@ -99,3 +99,99 @@ test('shows colored tokens in the code block of a SQL question', async ({ page }
   await expect(page.locator('#q-code')).toBeVisible();
   await expect(code.locator('[class*="hljs-"]').first()).toBeVisible();
 });
+
+test('opens the full explanation, follows a link, goes back and resumes the round untouched', async ({ page }) => {
+  // Fixed shuffle so the round order is deterministic
+  await page.addInitScript(() => {
+    Math.random = () => 0.999999;
+  });
+  await page.goto('/');
+
+  // Node.js & HTTP guide sections link to other sections; keep only that topic
+  const topics = page.locator('#start-topics');
+  const names = await topics.locator('button').allTextContents();
+  for (const name of names.filter((n) => n !== 'Node.js & HTTP')) {
+    await topics.getByRole('button', { name, exact: true }).click();
+  }
+  await expect(page.locator('#start-topics button[aria-pressed="true"]')).toHaveCount(1);
+  await page.locator('#btn-start').click();
+
+  const roundLength = Number(/of (\d+)/.exec(await page.locator('#q-progress').textContent())[1]);
+  const radios = page.locator('#q-options').getByRole('radio');
+  const dialog = page.locator('#guide-dialog');
+  const link = page.locator('#guide-body a[href^="#"]').first();
+
+  // Not every guide section has internal links, so answer questions until one does
+  // (the last question is skipped so there is always a next one to continue with)
+  let found = false;
+  for (let n = 1; n < roundLength && !found; n++) {
+    await expect(page.locator('#q-progress')).toHaveText(`Question ${n} of ${roundLength}`);
+    await expect(page.locator('#btn-guide')).toBeHidden();
+    await radios.first().check();
+    await page.locator('#btn-submit').click();
+    await expect(page.locator('#btn-guide')).toBeVisible();
+
+    await page.locator('#btn-guide').click();
+    await expect(dialog).toHaveJSProperty('open', true);
+    found = (await link.count()) > 0;
+    if (!found) {
+      await page.locator('#guide-close').click();
+      await expect(dialog).toHaveJSProperty('open', false);
+      await page.locator('#btn-next').click();
+    }
+  }
+  expect(found, 'some question in the round links to a guide section with internal links').toBe(true);
+
+  // Close to capture the question state, then reopen
+  await page.locator('#guide-close').click();
+  await expect(dialog).toHaveJSProperty('open', false);
+  const snapshot = async () => ({
+    text: await page.locator('#q-text').textContent(),
+    verdict: await page.locator('#q-verdict').textContent(),
+    explanation: await page.locator('#q-explanation').textContent(),
+    score: await page.locator('#q-score').textContent(),
+    progress: await page.locator('#q-progress').textContent(),
+    checked: await radios.evaluateAll((els) => els.map((el) => el.checked)),
+  });
+  const before = await snapshot();
+  expect(before.checked.filter(Boolean)).toHaveLength(1);
+
+  await page.locator('#btn-guide').click();
+  await expect(dialog).toHaveJSProperty('open', true);
+  await expect(page.locator('#guide-title')).not.toBeEmpty();
+  await expect(page.locator('#guide-body')).not.toBeEmpty();
+  await expect(page.locator('#guide-back')).toBeHidden();
+  const firstTitle = await page.locator('#guide-title').textContent();
+
+  // Following an internal link shows another section without touching the URL
+  const urlBefore = page.url();
+  await link.click();
+  await expect(page.locator('#guide-title')).not.toHaveText(firstTitle);
+  await expect(page.locator('#guide-back')).toBeVisible();
+  expect(page.url()).toBe(urlBefore);
+
+  // Back returns to the first section
+  await page.locator('#guide-back').click();
+  await expect(page.locator('#guide-title')).toHaveText(firstTitle);
+  await expect(page.locator('#guide-back')).toBeHidden();
+
+  // Close button: focus returns to the opener and the question is unchanged
+  await page.locator('#guide-close').click();
+  await expect(dialog).toHaveJSProperty('open', false);
+  await expect(page.locator('#btn-guide')).toBeFocused();
+  expect(await snapshot()).toEqual(before);
+
+  // Escape closes it too
+  await page.locator('#btn-guide').click();
+  await expect(dialog).toHaveJSProperty('open', true);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveJSProperty('open', false);
+  await expect(page.locator('#btn-guide')).toBeFocused();
+  expect(await snapshot()).toEqual(before);
+
+  // The round continues: next question, guide button hidden again
+  await page.locator('#btn-next').click();
+  const next = Number(/Question (\d+)/.exec(before.progress)[1]) + 1;
+  await expect(page.locator('#q-progress')).toHaveText(`Question ${next} of ${roundLength}`);
+  await expect(page.locator('#btn-guide')).toBeHidden();
+});
