@@ -27,11 +27,11 @@
 
 ## 5. Guide dialog UI
 
-- [ ] 5.1 In `index.html`, add the "Full explanation" button (hidden by default) to the question screen actions, and a `<dialog id="guide-dialog">` with a title header, Back and Close buttons and a scrollable body; verify the markup loads without errors
-- [ ] 5.2 In `src/ui.js`, add the `guide` field (`stack`) to `state` and the functions to open the guide from the current question, follow a link, go back and close, without reading or changing any round field; verify with unit tests on `state` for open, follow, back at the first section, close and reopen from the question's section
-- [ ] 5.3 In `src/ui.js`, draw the dialog from the stack: show the chapter and section title, render the section with `renderSection` (the one documented `innerHTML` assignment), show Back only when the stack has more than one entry, scroll the body to the top on every change; verify in the browser
-- [ ] 5.4 In `src/ui.js`, show the "Full explanation" button only when `state.submitted`, open the dialog with `showModal()`, handle links with one delegated click listener on the dialog body (`a[href^="#"]`, preventing navigation), and empty the stack on the dialog `close` event so Escape and Close behave the same; verify manually that Escape, Close and Back work, focus returns to the button, and the question, selection, feedback and score are unchanged after closing
-- [ ] 5.5 In `src/style.css`, style the dialog (width, scrolling, backdrop, header, mobile layout) and the rendered Markdown (headings, paragraphs, lists, tables, inline code, code blocks, links) with the existing colors and tokens; verify visually on a desktop and a narrow width
+- [x] 5.1 In `index.html`, add the "Full explanation" button (hidden by default) to the question screen actions, and a `<dialog id="guide-dialog">` with a title header, Back and Close buttons and a scrollable body; verify the markup loads without errors
+- [x] 5.2 In `src/ui.js`, add the `guide` field (`stack`) to `state` and the functions to open the guide from the current question, follow a link, go back and close, without reading or changing any round field; verify with unit tests on `state` for open, follow, back at the first section, close and reopen from the question's section
+- [x] 5.3 In `src/ui.js`, draw the dialog from the stack: show the chapter and section title, render the section with `renderSection` (the one documented `innerHTML` assignment), show Back only when the stack has more than one entry, scroll the body to the top on every change; verify in the browser
+- [x] 5.4 In `src/ui.js`, show the "Full explanation" button only when `state.submitted`, open the dialog with `showModal()`, handle links with one delegated click listener on the dialog body (`a[href^="#"]`, preventing navigation), and empty the stack on the dialog `close` event so Escape and Close behave the same; verify manually that Escape, Close and Back work, focus returns to the button, and the question, selection, feedback and score are unchanged after closing
+- [x] 5.5 In `src/style.css`, style the dialog (width, scrolling, backdrop, header, mobile layout) and the rendered Markdown (headings, paragraphs, lists, tables, inline code, code blocks, links) with the existing colors and tokens; verify visually on a desktop and a narrow width
 
 ## 6. End-to-end and docs
 

@@ -37,6 +37,7 @@
 
       <div class="actions">
         <button class="primary" id="btn-submit" disabled>Submit</button>
+        <button class="secondary" id="btn-guide" hidden>Full explanation</button>
         <button class="primary" id="btn-next" hidden>Next</button>
       </div>
     </section>
@@ -59,6 +60,19 @@
     </section>
 
   </main>
+
+  <!-- Study guide reader: a native modal dialog, closed by default -->
+  <dialog id="guide-dialog" aria-labelledby="guide-title">
+    <header class="guide-header">
+      <button class="secondary" type="button" id="guide-back">Back</button>
+      <div class="guide-heading">
+        <span id="guide-chapter" class="topic"></span>
+        <h2 id="guide-title" tabindex="-1"></h2>
+      </div>
+      <button class="secondary" type="button" id="guide-close">Close</button>
+    </header>
+    <div id="guide-body" class="guide-body"></div>
+  </dialog>
 
   <script type="module" src="/src/main.js"></script>
 </body>
