@@ -35,9 +35,9 @@
 
 ## 6. End-to-end and docs
 
-- [ ] 6.1 Add an e2e happy-path test in `e2e/quiz.spec.js`: answer a question, check the button is not there before submitting and is there after, open the guide, follow an internal link, go Back, close it, and check the question, the selected option, the feedback and the score are unchanged, then continue with Next; verify `npm run test:e2e` passes
-- [ ] 6.2 Update `README.md` (features, the SQL-only highlighting sentence now listing YAML and Dockerfile, the project structure with `guide.js`, the dependency on `markdown-it`) and verify the README matches the final file layout
-- [ ] 6.3 Run `npm test`, `npm run test:e2e` and `npm run build` together and verify all pass
+- [x] 6.1 Add an e2e happy-path test in `e2e/quiz.spec.js`: answer a question, check the button is not there before submitting and is there after, open the guide, follow an internal link, go Back, close it, and check the question, the selected option, the feedback and the score are unchanged, then continue with Next; verify `npm run test:e2e` passes
+- [x] 6.2 Update `README.md` (features, the SQL-only highlighting sentence now listing YAML and Dockerfile, the project structure with `guide.js`, the dependency on `markdown-it`) and verify the README matches the final file layout
+- [x] 6.3 Run `npm test`, `npm run test:e2e` and `npm run build` together and verify all pass
 
 ## Workflow follow-up
 
