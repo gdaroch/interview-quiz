@@ -34,7 +34,7 @@ The first time you run the e2e tests, install the browser with `npx playwright i
 
 ## Editing the question bank
 
-Questions live in `src/questions.json`, a JSON array of question objects. Example with two questions: a minimal one, and one with the optional `code` field.
+Questions live in `src/data/questions.json`, a JSON array of question objects. Example with two questions: a minimal one, and one with the optional `code` field.
 
 ```json
 [
@@ -94,7 +94,9 @@ The bank is validated at startup (`src/parse.js` checks that the file is valid J
 ```
 src/
   config.js          # QUESTIONS_PER_ROUND
-  questions.json     # question bank
+  data/
+    questions.json   # question bank
+    guide.json       # study guide material
   parse.js           # JSON parsing of the bank
   validate.js        # bank validation
   round.js           # round logic (question draw, shuffle, score)

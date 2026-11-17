@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { validateBank } from './validate.js';
-import bundledQuestions from './questions.json';
+import bundledQuestions from './data/questions.json';
 
 const makeQuestion = (overrides = {}) => ({
   id: 'q1',

@@ -10,7 +10,8 @@
       "A function sees variables based on where it is written"
     ],
     "answer": 3,
-    "explanation": "Lexical scope depends on where the function is defined in the code. JavaScript looks in the closest scope first and then in the outer ones, never in the caller's local variables."
+    "explanation": "Lexical scope depends on where the function is defined in the code. JavaScript looks in the closest scope first and then in the outer ones, never in the caller's local variables.",
+    "guideId": "js-scope"
   },
   {
     "id": "js-scope-shadow",
@@ -24,6 +25,7 @@
     ],
     "answer": 2,
     "explanation": "The local tax (0.10) only exists inside calculatePrice, so the result is 100 * 1.10 = 110. Outside the function, the global tax is still 0.19: the local variable did not modify it.",
+    "guideId": "js-scope",
     "code": {
       "language": "javascript",
       "lines": [
@@ -49,6 +51,7 @@
     ],
     "answer": 3,
     "explanation": "var has function scope, so a is visible in the whole function. let has block scope, so b only exists inside the if block, and reading it outside throws ReferenceError.",
+    "guideId": "js-scope",
     "code": {
       "language": "javascript",
       "lines": [
@@ -76,6 +79,7 @@
     ],
     "answer": 2,
     "explanation": "The local price is registered for the whole function (hoisting), so it takes priority over the outer one. But it is not initialized yet: that stretch is the Temporal Dead Zone, and reading a const there throws ReferenceError.",
+    "guideId": "js-hoisting-tdz",
     "code": {
       "language": "javascript",
       "lines": [
@@ -100,6 +104,7 @@
     ],
     "answer": 3,
     "explanation": "var is initialized with undefined during hoisting, so the first log prints undefined. let is also registered but stays uninitialized (TDZ) until its line, so reading b throws ReferenceError.",
+    "guideId": "js-hoisting-tdz",
     "code": {
       "language": "javascript",
       "lines": [
@@ -121,7 +126,8 @@
       "function greet() {}"
     ],
     "answer": 3,
-    "explanation": "Function declarations can be invoked before their line. Functions assigned to const or let follow the rules of those variables, so calling them earlier throws ReferenceError, even when the function expression has a name."
+    "explanation": "Function declarations can be invoked before their line. Functions assigned to const or let follow the rules of those variables, so calling them earlier throws ReferenceError, even when the function expression has a name.",
+    "guideId": "js-hoisting-tdz"
   },
   {
     "id": "js-hoisting-what",
@@ -134,7 +140,8 @@
       "Copies outer variables into scopes that reuse the name"
     ],
     "answer": 2,
-    "explanation": "Hoisting does not move any code. Before running a scope, JavaScript registers its declarations. Only var gets undefined; let and const stay uninitialized until their line (TDZ)."
+    "explanation": "Hoisting does not move any code. Before running a scope, JavaScript registers its declarations. Only var gets undefined; let and const stay uninitialized until their line (TDZ).",
+    "guideId": "js-hoisting-tdz"
   },
   {
     "id": "js-closure-independent",
@@ -148,6 +155,7 @@
     ],
     "answer": 2,
     "explanation": "Each call to createCounter() creates an independent environment with its own count. usersCounter was called three times in total and ordersCounter once, and they never share state.",
+    "guideId": "js-closures",
     "code": {
       "language": "javascript",
       "lines": [
@@ -174,7 +182,8 @@
       "A reference to the object that invoked the function"
     ],
     "answer": 0,
-    "explanation": "A closure keeps access to the variables themselves (not a snapshot of their values) from the environment where the function was defined, even after the outer function has finished."
+    "explanation": "A closure keeps access to the variables themselves (not a snapshot of their values) from the environment where the function was defined, even after the outer function has finished.",
+    "guideId": "js-closures"
   },
   {
     "id": "js-this-detached-strict",
@@ -188,6 +197,7 @@
     ],
     "answer": 2,
     "explanation": "In regular functions, this depends on how the function is invoked. Calling heal() on its own loses the player object: in strict mode this is undefined, so this.health throws a TypeError.",
+    "guideId": "js-this",
     "code": {
       "language": "javascript",
       "lines": [
@@ -213,7 +223,8 @@
       "The global object (window in the browser)"
     ],
     "answer": 3,
-    "explanation": "Without strict mode, this falls back to the global object. There is no error, but the code modifies a global property by accident, which is harder to detect than the strict mode TypeError."
+    "explanation": "Without strict mode, this falls back to the global object. There is no error, but the code modifies a global property by accident, which is harder to detect than the strict mode TypeError.",
+    "guideId": "js-this"
   },
   {
     "id": "js-this-arrow-method",
@@ -227,6 +238,7 @@
     ],
     "answer": 3,
     "explanation": "Arrow functions have no this of their own: they use the one from the code around them. Here that is the outer scope, not player. That is why arrows are not used as methods of object literals.",
+    "guideId": "js-this",
     "code": {
       "language": "javascript",
       "lines": [
@@ -250,6 +262,7 @@
     ],
     "answer": 2,
     "explanation": "The arrow function is written inside heal(), so it reuses heal's this. heal() was called as player.heal(), so this is player. A regular function here would lose that context.",
+    "guideId": "js-this",
     "code": {
       "language": "javascript",
       "lines": [
@@ -275,7 +288,8 @@
       "bind returns a new function with this fixed, without running it"
     ],
     "answer": 3,
-    "explanation": "call and apply run the function immediately with the given this; call takes arguments one by one, apply takes them in an array. bind does not run anything: it returns a new function with this fixed."
+    "explanation": "call and apply run the function immediately with the given this; call takes arguments one by one, apply takes them in an array. bind does not run anything: it returns a new function with this fixed.",
+    "guideId": "js-this"
   },
   {
     "id": "js-call-equivalent",
@@ -289,6 +303,7 @@
     ],
     "answer": 0,
     "explanation": "apply is like call but takes the arguments in an array. bind only returns a function; the last option also passes player as the amount argument.",
+    "guideId": "js-this",
     "code": {
       "language": "javascript",
       "lines": [
@@ -309,6 +324,7 @@
     ],
     "answer": 1,
     "explanation": "readFile only starts the read and returns. The last console.log runs immediately; the callback runs later, once the file has been read (or failed). The order is always the same.",
+    "guideId": "js-callbacks",
     "code": {
       "language": "javascript",
       "lines": [
@@ -334,7 +350,8 @@
       "A callback can run synchronously, as in Array filter"
     ],
     "answer": 3,
-    "explanation": "A callback is just a function passed to another function to be invoked when appropriate. filter invokes it synchronously, while readFile invokes it after the I/O finishes."
+    "explanation": "A callback is just a function passed to another function to be invoked when appropriate. filter invokes it synchronously, while readFile invokes it after the I/O finishes.",
+    "guideId": "js-callbacks"
   },
   {
     "id": "js-error-first",
@@ -347,7 +364,8 @@
       "The arguments of the original call"
     ],
     "answer": 2,
-    "explanation": "Node callbacks like readFile's (error, content) receive the error as the first argument. If the operation succeeded, it is null and the result comes next."
+    "explanation": "Node callbacks like readFile's (error, content) receive the error as the first argument. If the operation succeeded, it is null and the result comes next.",
+    "guideId": "js-callbacks"
   },
   {
     "id": "js-async-returns",
@@ -360,7 +378,8 @@
       "A Promise"
     ],
     "answer": 3,
-    "explanation": "An async function always returns a Promise, even if you return a plain value or never use await. The returned value becomes the fulfilled value of that Promise."
+    "explanation": "An async function always returns a Promise, even if you return a plain value or never use await. The returned value becomes the fulfilled value of that Promise.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-await-suspends",
@@ -373,7 +392,8 @@
       "The event loop until the Promise resolves"
     ],
     "answer": 0,
-    "explanation": "await pauses only its own async function. Its caller receives a pending Promise and keeps running, and the thread keeps serving other work, which is why Node can handle other requests while one awaits a database query."
+    "explanation": "await pauses only its own async function. Its caller receives a pending Promise and keeps running, and the thread keeps serving other work, which is why Node can handle other requests while one awaits a database query.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-fetch-404",
@@ -386,7 +406,8 @@
       "It rejects with an HTTP error object"
     ],
     "answer": 0,
-    "explanation": "fetch does not reject for HTTP errors like 404 or 500: it only rejects on network failures. In production you check response.ok (or the status) yourself."
+    "explanation": "fetch does not reject for HTTP errors like 404 or 500: it only rejects on network failures. In production you check response.ok (or the status) yourself.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-promise-allsettled",
@@ -399,7 +420,8 @@
       "Promise.all"
     ],
     "answer": 0,
-    "explanation": "allSettled waits for all promises and reports each one as fulfilled or rejected. Promise.all rejects as soon as one rejects, so you lose the other results."
+    "explanation": "allSettled waits for all promises and reports each one as fulfilled or rejected. Promise.all rejects as soon as one rejects, so you lose the other results.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-promise-any",
@@ -412,7 +434,8 @@
       "Promise.any"
     ],
     "answer": 3,
-    "explanation": "Promise.any ignores rejections until one promise fulfills. Promise.race adopts the first result that finishes, even if it is a rejection."
+    "explanation": "Promise.any ignores rejections until one promise fulfills. Promise.race adopts the first result that finishes, even if it is a rejection.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-promise-race-cancel",
@@ -425,7 +448,8 @@
       "race cancels it automatically when the timeout wins"
     ],
     "answer": 2,
-    "explanation": "Promise.race only decides which result to adopt. The other operations keep running in the background, and their own callbacks still run; cancelling them needs a separate mechanism, like an AbortController."
+    "explanation": "Promise.race only decides which result to adopt. The other operations keep running in the background, and their own callbacks still run; cancelling them needs a separate mechanism, like an AbortController.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-promise-all-reject",
@@ -438,7 +462,8 @@
       "It fulfills with undefined in the failed position"
     ],
     "answer": 1,
-    "explanation": "Promise.all rejects as soon as one promise rejects (you catch it with try/catch). The other operations are not cancelled; they keep running. Use allSettled to get every outcome."
+    "explanation": "Promise.all rejects as soon as one promise rejects (you catch it with try/catch). The other operations are not cancelled; they keep running. Use allSettled to get every outcome.",
+    "guideId": "js-promises"
   },
   {
     "id": "js-event-loop-order",
@@ -452,6 +477,7 @@
     ],
     "answer": 2,
     "explanation": "Synchronous code runs first (A, E). Then process.nextTick (D), then microtasks such as Promise callbacks (C), and finally macrotasks like setTimeout (B).",
+    "guideId": "js-event-loop",
     "code": {
       "language": "javascript",
       "lines": [
@@ -474,7 +500,8 @@
       "Only when the Call Stack is empty"
     ],
     "answer": 3,
-    "explanation": "The Event Loop never interrupts running code. A task (even an expired timer) waits until the Call Stack is empty. An await only frees the stack if nothing else synchronous is still running."
+    "explanation": "The Event Loop never interrupts running code. A task (even an expired timer) waits until the Call Stack is empty. An await only frees the stack if nothing else synchronous is still running.",
+    "guideId": "js-event-loop"
   },
   {
     "id": "js-settimeout-zero",
@@ -487,7 +514,8 @@
       "fn runs before any of the pending Promise callbacks"
     ],
     "answer": 2,
-    "explanation": "A delay of 0 is a minimum, not a promise of immediacy. The callback is a macrotask: it waits for synchronous code and all pending microtasks first."
+    "explanation": "A delay of 0 is a minimum, not a promise of immediacy. The callback is a macrotask: it waits for synchronous code and all pending microtasks first.",
+    "guideId": "js-event-loop"
   },
   {
     "id": "js-microtasks-between",
@@ -500,7 +528,8 @@
       "Nothing; macrotasks run back to back"
     ],
     "answer": 2,
-    "explanation": "After every macrotask, the Event Loop runs all pending microtasks (Promise callbacks, code after await) before taking the next macrotask."
+    "explanation": "After every macrotask, the Event Loop runs all pending microtasks (Promise callbacks, code after await) before taking the next macrotask.",
+    "guideId": "js-event-loop"
   },
   {
     "id": "js-blocking-sync",
@@ -513,7 +542,8 @@
       "Node splits it into microtasks to keep serving"
     ],
     "answer": 0,
-    "explanation": "JSON.parse is heavy synchronous work on the only JavaScript thread. While it runs, the Call Stack is busy, so the server cannot respond to anything else."
+    "explanation": "JSON.parse is heavy synchronous work on the only JavaScript thread. While it runs, the Call Stack is busy, so the server cannot respond to anything else.",
+    "guideId": "js-event-loop"
   },
   {
     "id": "js-foreach-async",
@@ -527,6 +557,7 @@
     ],
     "answer": 1,
     "explanation": "forEach ignores what its callback returns, so it does not wait for the promises. All saves start, and 'Done' is printed immediately. Use for...of with await to wait for each one.",
+    "guideId": "js-async-patterns",
     "code": {
       "language": "javascript",
       "lines": [
@@ -549,6 +580,7 @@
     ],
     "answer": 0,
     "explanation": "Each await waits for its operation before the next one starts, so the times add up: 2 + 3 = 5 seconds.",
+    "guideId": "js-async-patterns",
     "code": {
       "language": "javascript",
       "lines": [
@@ -568,7 +600,8 @@
       "[getA, getB].forEach(async fn => await fn());"
     ],
     "answer": 0,
-    "explanation": "Promise.all starts both operations at once and waits for both, so the total is the slowest one (3 s). race keeps only one result, for...of runs them in sequence (5 s), and forEach does not wait at all."
+    "explanation": "Promise.all starts both operations at once and waits for both, so the total is the slowest one (3 s). race keeps only one result, for...of runs them in sequence (5 s), and forEach does not wait at all.",
+    "guideId": "js-async-patterns"
   },
   {
     "id": "js-for-of-order",
@@ -581,7 +614,8 @@
       "Promise.all over the array"
     ],
     "answer": 2,
-    "explanation": "for...of (or any for/while loop) lets you await each operation before continuing. Promise.all and allSettled run everything concurrently, and forEach does not wait."
+    "explanation": "for...of (or any for/while loop) lets you await each operation before continuing. Promise.all and allSettled run everything concurrently, and forEach does not wait.",
+    "guideId": "js-async-patterns"
   },
   {
     "id": "js-concurrency-why",
@@ -594,7 +628,8 @@
       "Promise.all stops sending as soon as one email fails"
     ],
     "answer": 2,
-    "explanation": "Promise.all starts every operation immediately. With thousands, you can exceed the API's rate limit (429) or exhaust database connections. Limit concurrency with batches or p-limit."
+    "explanation": "Promise.all starts every operation immediately. With thousands, you can exceed the API's rate limit (429) or exhaust database connections. Limit concurrency with batches or p-limit.",
+    "guideId": "js-concurrency-limit"
   },
   {
     "id": "js-batches-drawback",
@@ -608,6 +643,7 @@
     ],
     "answer": 3,
     "explanation": "A batch only finishes when all 50 finish: if one takes 10 s, the whole batch takes 10 s while the other slots sit idle. A concurrency limiter that starts a new email as soon as any finishes avoids that.",
+    "guideId": "js-concurrency-limit",
     "code": {
       "language": "javascript",
       "lines": [
@@ -630,6 +666,7 @@
     ],
     "answer": 1,
     "explanation": "Calling sendEmail(id) would start the request immediately. Passing a function lets p-limit call it only when one of the N slots is free.",
+    "guideId": "js-concurrency-limit",
     "code": {
       "language": "javascript",
       "lines": [
@@ -652,6 +689,7 @@
     ],
     "answer": 0,
     "explanation": "React compares the previous and new state by reference (Object.is). Mutating the object and passing the same reference looks like no change. Create a new object instead: setUser(prev => ({ ...prev, age: 31 })).",
+    "guideId": "js-immutability",
     "code": {
       "language": "javascript",
       "lines": [
@@ -674,6 +712,7 @@
     ],
     "answer": 1,
     "explanation": "Spread makes a shallow copy: next is a new object, but next.address is still the same object as prev.address. Changing it through next also changes it for prev.",
+    "guideId": "js-immutability",
     "code": {
       "language": "javascript",
       "lines": [
@@ -695,7 +734,8 @@
       "It gives new references to unchanged parts too"
     ],
     "answer": 3,
-    "explanation": "structuredClone makes a deep copy, so every nested object gets a new reference, even the ones that did not change. Memoized components then re-render without need."
+    "explanation": "structuredClone makes a deep copy, so every nested object gets a new reference, even the ones that did not change. Memoized components then re-render without need.",
+    "guideId": "js-immutability"
   },
   {
     "id": "js-structuredclone-limit",
@@ -708,7 +748,8 @@
       "Date objects"
     ],
     "answer": 2,
-    "explanation": "structuredClone creates an independent deep copy of data, including nested objects, arrays and dates, but it does not support functions."
+    "explanation": "structuredClone creates an independent deep copy of data, including nested objects, arrays and dates, but it does not support functions.",
+    "guideId": "js-immutability"
   },
   {
     "id": "js-pure-function",
@@ -722,6 +763,7 @@
     ],
     "answer": 2,
     "explanation": "A pure function depends only on its arguments. impure reads the external discount, so the same price can give different results if discount changes.",
+    "guideId": "js-pure-functions",
     "code": {
       "language": "javascript",
       "lines": [
@@ -742,7 +784,8 @@
       "One that pushes an item into an array it received"
     ],
     "answer": 3,
-    "explanation": "A side effect changes something outside the function: writing a file, making a request, or mutating an object the caller owns. Creating and returning new values is not a side effect."
+    "explanation": "A side effect changes something outside the function: writing a file, making a request, or mutating an object the caller owns. Creating and returning new values is not a side effect.",
+    "guideId": "js-pure-functions"
   },
   {
     "id": "js-coercion-equals",
@@ -756,6 +799,7 @@
     ],
     "answer": 1,
     "explanation": "== converts types implicitly, so '15' becomes 15 and they are equal. === compares without converting, and a number is never strictly equal to a string.",
+    "guideId": "js-coercion",
     "code": {
       "language": "javascript",
       "lines": [
@@ -775,7 +819,8 @@
       "15 === req.params.id"
     ],
     "answer": 1,
-    "explanation": "Prefer === with an explicit conversion. == works but hides the conversion, while === and Object.is without converting are always false for a number and a string. Validating the input also avoids NaN surprises."
+    "explanation": "Prefer === with an explicit conversion. == works but hides the conversion, while === and Object.is without converting are always false for a number and a string. Validating the input also avoids NaN surprises.",
+    "guideId": "js-coercion"
   },
   {
     "id": "js-prototype-push",
@@ -788,7 +833,8 @@
       "Each array literal gets its own copy of push"
     ],
     "answer": 1,
-    "explanation": "Arrays inherit methods from Array.prototype. When push is not found on the array itself, JavaScript looks it up through the prototype chain."
+    "explanation": "Arrays inherit methods from Array.prototype. When push is not found on the array itself, JavaScript looks it up through the prototype chain.",
+    "guideId": "js-prototypes"
   },
   {
     "id": "js-prototype-lookup",
@@ -801,7 +847,8 @@
       "Searches the object's prototype chain"
     ],
     "answer": 3,
-    "explanation": "Property lookup first checks the object, then its prototype, then that prototype's prototype, and so on. Only at the end of the chain does it return undefined."
+    "explanation": "Property lookup first checks the object, then its prototype, then that prototype's prototype, and so on. Only at the end of the chain does it return undefined.",
+    "guideId": "js-prototypes"
   },
   {
     "id": "js-prototype-classes",
@@ -814,7 +861,8 @@
       "They only use prototypes when extends appears"
     ],
     "answer": 2,
-    "explanation": "class syntax is built on prototypes. Methods live on the class's prototype and instances inherit them through the prototype chain."
+    "explanation": "class syntax is built on prototypes. Methods live on the class's prototype and instances inherit them through the prototype chain.",
+    "guideId": "js-prototypes"
   },
   {
     "id": "js-esm-detection",
@@ -827,7 +875,8 @@
       "When the file name ends in .cjs"
     ],
     "answer": 1,
-    "explanation": "Node uses ESM for .mjs files, or for .js files when the nearest package.json has \"type\": \"module\". Otherwise it uses CommonJS. The .cjs extension forces CommonJS."
+    "explanation": "Node uses ESM for .mjs files, or for .js files when the nearest package.json has \"type\": \"module\". Otherwise it uses CommonJS. The .cjs extension forces CommonJS.",
+    "guideId": "js-modules"
   },
   {
     "id": "js-esm-load-time",
@@ -840,7 +889,8 @@
       "import: before the file runs; require: when its line runs"
     ],
     "answer": 3,
-    "explanation": "import is resolved before executing the file, so an invalid import fails before any code runs. require loads the file at the moment that line executes."
+    "explanation": "import is resolved before executing the file, so an invalid import fails before any code runs. require loads the file at the moment that line executes.",
+    "guideId": "js-modules"
   },
   {
     "id": "js-require-esm",
@@ -853,7 +903,8 @@
       "When that module uses top-level await"
     ],
     "answer": 3,
-    "explanation": "Node 22+ allows require() of an ES module, except when the module uses await outside a function (top-level await)."
+    "explanation": "Node 22+ allows require() of an ES module, except when the module uses await outside a function (top-level await).",
+    "guideId": "js-modules"
   },
   {
     "id": "js-debounce-search",
@@ -866,7 +917,8 @@
       "Debounce"
     ],
     "answer": 3,
-    "explanation": "Debounce waits until the event stops for a given time and then runs once. Throttle would still run periodically while the user keeps typing."
+    "explanation": "Debounce waits until the event stops for a given time and then runs once. Throttle would still run periodically while the user keeps typing.",
+    "guideId": "js-debounce-throttle"
   },
   {
     "id": "js-throttle-scroll",
@@ -879,7 +931,8 @@
       "Debounce"
     ],
     "answer": 0,
-    "explanation": "Throttle runs at most once per interval while the event keeps happening. Debounce would wait until scrolling stops, which is not what you want here."
+    "explanation": "Throttle runs at most once per interval while the event keeps happening. Debounce would wait until scrolling stops, which is not what you want here.",
+    "guideId": "js-debounce-throttle"
   },
   {
     "id": "js-debounce-calls",
@@ -893,6 +946,7 @@
     ],
     "answer": 0,
     "explanation": "Each call clears the previous timer and schedules a new one. Only the last call survives 300 ms of silence, so fetchResults runs once with the final value.",
+    "guideId": "js-debounce-throttle",
     "code": {
       "language": "javascript",
       "lines": [
@@ -918,7 +972,8 @@
       "A global variable shared by all debounces"
     ],
     "answer": 1,
-    "explanation": "debounce returns a function that closes over timer. Each debounced function has its own timer, remembered between calls without being exposed."
+    "explanation": "debounce returns a function that closes over timer. Each debounced function has its own timer, remembered between calls without being exposed.",
+    "guideId": "js-debounce-throttle"
   },
   {
     "id": "js-nullish-vs-or",
@@ -932,6 +987,7 @@
     ],
     "answer": 0,
     "explanation": "?? replaces only null or undefined, so count ?? 10 keeps 0. || replaces any falsy value, including 0, so it returns 10.",
+    "guideId": "js-quick-reminders",
     "code": {
       "language": "javascript",
       "lines": [
@@ -952,6 +1008,7 @@
     ],
     "answer": 0,
     "explanation": "const prevents reassigning the variable, but it does not freeze the object. Its properties can still change.",
+    "guideId": "js-quick-reminders",
     "code": {
       "language": "javascript",
       "lines": [
@@ -973,6 +1030,7 @@
     ],
     "answer": 3,
     "explanation": "Strict mode forbids assigning undeclared variables. Without 'use strict', this would silently create a global variable.",
+    "guideId": "js-quick-reminders",
     "code": {
       "language": "javascript",
       "lines": [
@@ -992,7 +1050,8 @@
       "undefined: no value assigned; null: intentional absence"
     ],
     "answer": 3,
-    "explanation": "undefined means no value has been assigned (variables, missing properties, missing arguments). null is set on purpose to say 'no value here'."
+    "explanation": "undefined means no value has been assigned (variables, missing properties, missing arguments). null is set on purpose to say 'no value here'.",
+    "guideId": "js-quick-reminders"
   },
   {
     "id": "ts-runtime-erased",
@@ -1005,7 +1064,8 @@
       "It throws a TypeError when email is used"
     ],
     "answer": 1,
-    "explanation": "TypeScript checks types before running. The compiled JavaScript has no types, so data arriving over the network needs runtime validation (for example, Zod)."
+    "explanation": "TypeScript checks types before running. The compiled JavaScript has no types, so data arriving over the network needs runtime validation (for example, Zod).",
+    "guideId": "ts-why"
   },
   {
     "id": "ts-what-adds",
@@ -1018,7 +1078,8 @@
       "Type checking before the code runs"
     ],
     "answer": 3,
-    "explanation": "TypeScript adds static type checking. It helps refactoring and documents contracts, but it does not replace tests or runtime validation of external data."
+    "explanation": "TypeScript adds static type checking. It helps refactoring and documents contracts, but it does not replace tests or runtime validation of external data.",
+    "guideId": "ts-why"
   },
   {
     "id": "ts-type-only-union",
@@ -1031,7 +1092,8 @@
       "An object shape with an optional property"
     ],
     "answer": 2,
-    "explanation": "interface describes object contracts and can extend them. Unions, tuples and similar compositions are only possible with type."
+    "explanation": "interface describes object contracts and can extend them. Unions, tuples and similar compositions are only possible with type.",
+    "guideId": "ts-type-interface"
   },
   {
     "id": "ts-interface-merging",
@@ -1044,7 +1106,8 @@
       "The second declaration replaces the first"
     ],
     "answer": 2,
-    "explanation": "Interfaces support declaration merging: TypeScript combines both declarations. Declaring the same type alias twice is a compile error instead."
+    "explanation": "Interfaces support declaration merging: TypeScript combines both declarations. Declaring the same type alias twice is a compile error instead.",
+    "guideId": "ts-type-interface"
   },
   {
     "id": "ts-type-duplicate",
@@ -1057,7 +1120,8 @@
       "The second declaration replaces the first"
     ],
     "answer": 0,
-    "explanation": "Type aliases cannot be redeclared. Only interfaces merge when declared more than once."
+    "explanation": "Type aliases cannot be redeclared. Only interfaces merge when declared more than once.",
+    "guideId": "ts-type-interface"
   },
   {
     "id": "ts-optional-property",
@@ -1070,7 +1134,8 @@
       "The property can only hold null or undefined"
     ],
     "answer": 1,
-    "explanation": "? marks an optional property: objects of that type may or may not have it. When present, it must be a string."
+    "explanation": "? marks an optional property: objects of that type may or may not have it. When present, it must be a string.",
+    "guideId": "ts-type-interface"
   },
   {
     "id": "ts-narrowing",
@@ -1084,6 +1149,7 @@
     ],
     "answer": 2,
     "explanation": "Checking the discriminant (event.type) lets TypeScript reduce the possible types. Inside case 'paid', event can only be the variant that has amount.",
+    "guideId": "ts-unions-narrowing",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1117,7 +1183,8 @@
       "Compile error on the PaymentEvent type itself"
     ],
     "answer": 2,
-    "explanation": "With the new variant unhandled, event is no longer never in the default branch, so assigning it to never fails to compile. That is how you catch forgotten cases."
+    "explanation": "With the new variant unhandled, event is no longer never in the default branch, so assigning it to never fails to compile. That is how you catch forgotten cases.",
+    "guideId": "ts-unions-narrowing"
   },
   {
     "id": "ts-discriminant",
@@ -1130,7 +1197,8 @@
       "A shared literal property that identifies each variant"
     ],
     "answer": 3,
-    "explanation": "Each variant has the same property (often type) with a different literal value, like 'paid' or 'refunded'. Checking it lets TypeScript narrow to one variant."
+    "explanation": "Each variant has the same property (often type) with a different literal value, like 'paid' or 'refunded'. Checking it lets TypeScript narrow to one variant.",
+    "guideId": "ts-unions-narrowing"
   },
   {
     "id": "ts-generic-inference",
@@ -1144,6 +1212,7 @@
     ],
     "answer": 0,
     "explanation": "T is inferred as number from the array (not the literals 10 and 20). The return type is T | undefined because the list could be empty.",
+    "guideId": "ts-generics",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1165,7 +1234,8 @@
       "It lets the array mix different types"
     ],
     "answer": 1,
-    "explanation": "A generic reuses logic while keeping type information: receiving User[] returns User. With any, the result loses its type and errors go unnoticed."
+    "explanation": "A generic reuses logic while keeping type information: receiving User[] returns User. With any, the result loses its type and errors go unnoticed.",
+    "guideId": "ts-generics"
   },
   {
     "id": "ts-unknown-vs-any",
@@ -1178,7 +1248,8 @@
       "unknown forces a check before use; any disables checking"
     ],
     "answer": 3,
-    "explanation": "any turns off type analysis. unknown accepts any value but makes you check its type (for example, with a type guard) before using it."
+    "explanation": "any turns off type analysis. unknown accepts any value but makes you check its type (for example, with a type guard) before using it.",
+    "guideId": "ts-unknown-guards"
   },
   {
     "id": "ts-assertion-runtime",
@@ -1192,6 +1263,7 @@
     ],
     "answer": 2,
     "explanation": "A type assertion only tells the compiler to trust you; it does not convert or validate. user.name is undefined at runtime, so calling toUpperCase throws.",
+    "guideId": "ts-unknown-guards",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1213,6 +1285,7 @@
     ],
     "answer": 2,
     "explanation": "A type guard is a function that performs the check and teaches the result to the compiler. Inside if (isUser(payload)), TypeScript treats payload as User.",
+    "guideId": "ts-unknown-guards",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1234,7 +1307,8 @@
       "It is checked at compile time, before requests arrive"
     ],
     "answer": 1,
-    "explanation": "A schema validates real data at runtime, and z.infer derives the TypeScript type from it. You keep one source of truth instead of two definitions."
+    "explanation": "A schema validates real data at runtime, and z.infer derives the TypeScript type from it. You keep one source of truth instead of two definitions.",
+    "guideId": "ts-zod"
   },
   {
     "id": "ts-safeparse-vs-parse",
@@ -1247,7 +1321,8 @@
       "safeParse also sanitizes HTML; parse only checks types"
     ],
     "answer": 1,
-    "explanation": "safeParse returns an object you check with if (result.success). parse returns the data directly, but throws an exception if the data is invalid."
+    "explanation": "safeParse returns an object you check with if (result.success). parse returns the data directly, but throws an exception if the data is invalid.",
+    "guideId": "ts-zod"
   },
   {
     "id": "ts-zod-infer",
@@ -1261,6 +1336,7 @@
     ],
     "answer": 3,
     "explanation": "z.infer extracts a compile-time type from the schema, so you do not maintain a separate type by hand.",
+    "guideId": "ts-zod",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1285,7 +1361,8 @@
       "Partial<User>"
     ],
     "answer": 3,
-    "explanation": "Partial makes all properties optional. Pick selects properties, Omit excludes them and Record builds a type from keys and values."
+    "explanation": "Partial makes all properties optional. Pick selects properties, Omit excludes them and Record builds a type from keys and values.",
+    "guideId": "ts-utility-types"
   },
   {
     "id": "ts-omit-runtime",
@@ -1299,6 +1376,7 @@
     ],
     "answer": 3,
     "explanation": "Utility types only exist at compile time. The real object still has passwordHash, and res.json sends it. A mapper that builds the response with allowed fields solves this.",
+    "guideId": "ts-utility-types",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1320,6 +1398,7 @@
     ],
     "answer": 0,
     "explanation": "keyof produces a union of the property names of a type.",
+    "guideId": "ts-utility-types",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1340,6 +1419,7 @@
     ],
     "answer": 1,
     "explanation": "TypeScript widens 'admin' to string because the property could change later. With as const, it would keep the exact value and mark it readonly.",
+    "guideId": "ts-utility-types",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1359,6 +1439,7 @@
     ],
     "answer": 1,
     "explanation": "as const keeps the exact values as a readonly tuple. typeof ROLES[number] is the type of an element at any index, which is the union of those literals. Without as const, it would be string.",
+    "guideId": "ts-utility-types",
     "code": {
       "language": "typescript",
       "lines": [
@@ -1378,7 +1459,8 @@
       "Changing nested properties inside its value"
     ],
     "answer": 0,
-    "explanation": "readonly is a compile-time check. The compiled JavaScript can still change the property, and nested objects are not protected either."
+    "explanation": "readonly is a compile-time check. The compiled JavaScript can still change the property, and nested objects are not protected either.",
+    "guideId": "ts-utility-types"
   },
   {
     "id": "node-single-thread",
@@ -1391,7 +1473,8 @@
       "Node uses one thread for everything, including file I/O"
     ],
     "answer": 0,
-    "explanation": "Your JavaScript runs on one thread. Network I/O is handled by the operating system, and files and crypto by Node's internal thread pool, so they do not block your code."
+    "explanation": "Your JavaScript runs on one thread. Network I/O is handled by the operating system, and files and crypto by Node's internal thread pool, so they do not block your code.",
+    "guideId": "node-what"
   },
   {
     "id": "node-thread-pool",
@@ -1404,7 +1487,8 @@
       "The OS network stack"
     ],
     "answer": 2,
-    "explanation": "Node delegates files and crypto to an internal thread pool. Network I/O goes to the operating system. Worker Threads are for your own heavy CPU calculations."
+    "explanation": "Node delegates files and crypto to an internal thread pool. Network I/O goes to the operating system. Worker Threads are for your own heavy CPU calculations.",
+    "guideId": "node-what"
   },
   {
     "id": "node-weak-spot",
@@ -1417,7 +1501,8 @@
       "Many concurrent network requests"
     ],
     "answer": 2,
-    "explanation": "Node shines with concurrent I/O. Heavy calculations on the main thread block the event loop, and the server stops responding while they run."
+    "explanation": "Node shines with concurrent I/O. Heavy calculations on the main thread block the event loop, and the server stops responding while they run.",
+    "guideId": "node-what"
   },
   {
     "id": "node-layer-business-rule",
@@ -1430,7 +1515,8 @@
       "In a middleware"
     ],
     "answer": 2,
-    "explanation": "Business rules live in the service. That way you can test the rule without an HTTP server, and it applies no matter who calls it."
+    "explanation": "Business rules live in the service. That way you can test the rule without an HTTP server, and it applies no matter who calls it.",
+    "guideId": "node-layers"
   },
   {
     "id": "node-layer-controller",
@@ -1443,7 +1529,8 @@
       "Authenticate the token before routing"
     ],
     "answer": 1,
-    "explanation": "The controller reads the request, calls the service and builds the HTTP response. Authentication usually happens in middleware, rules in the service and queries in the repository."
+    "explanation": "The controller reads the request, calls the service and builds the HTTP response. Authentication usually happens in middleware, rules in the service and queries in the repository.",
+    "guideId": "node-layers"
   },
   {
     "id": "node-layer-middleware",
@@ -1456,7 +1543,8 @@
       "Middleware"
     ],
     "answer": 3,
-    "explanation": "Middlewares run in the request chain before the controller. Typical uses are authentication, body validation and logging."
+    "explanation": "Middlewares run in the request chain before the controller. Typical uses are authentication, body validation and logging.",
+    "guideId": "node-layers"
   },
   {
     "id": "node-safe-method",
@@ -1469,7 +1557,8 @@
       "It requires authentication to be called"
     ],
     "answer": 2,
-    "explanation": "Safe means read-only, like GET. It has nothing to do with security. Being able to repeat a request without changing the result is idempotency, a different property."
+    "explanation": "Safe means read-only, like GET. It has nothing to do with security. Being able to repeat a request without changing the result is idempotency, a different property.",
+    "guideId": "node-rest-methods"
   },
   {
     "id": "node-delete-idempotent",
@@ -1482,7 +1571,8 @@
       "No; the response changed between the calls"
     ],
     "answer": 1,
-    "explanation": "Idempotency is about the effect on the data, not the response. After the first call the task is gone, and the second call changes nothing more."
+    "explanation": "Idempotency is about the effect on the data, not the response. After the first call the task is gone, and the second call changes nothing more.",
+    "guideId": "node-rest-methods"
   },
   {
     "id": "node-post-not-idempotent",
@@ -1495,7 +1585,8 @@
       "PUT /tasks/1"
     ],
     "answer": 1,
-    "explanation": "Sending POST /tasks three times could create three different tasks. PUT replaces with the same content, DELETE removes once and GET only reads."
+    "explanation": "Sending POST /tasks three times could create three different tasks. PUT replaces with the same content, DELETE removes once and GET only reads.",
+    "guideId": "node-rest-methods"
   },
   {
     "id": "node-put-vs-patch",
@@ -1508,7 +1599,8 @@
       "PUT"
     ],
     "answer": 3,
-    "explanation": "PUT replaces the resource and is idempotent if well designed. PATCH changes part of it and may or may not be idempotent."
+    "explanation": "PUT replaces the resource and is idempotent if well designed. PATCH changes part of it and may or may not be idempotent.",
+    "guideId": "node-rest-methods"
   },
   {
     "id": "node-status-403",
@@ -1521,7 +1613,8 @@
       "409 Conflict"
     ],
     "answer": 2,
-    "explanation": "She is authenticated but lacks permission, so the answer is 403. 401 means valid authentication is missing."
+    "explanation": "She is authenticated but lacks permission, so the answer is 403. 401 means valid authentication is missing.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-status-401",
@@ -1534,7 +1627,8 @@
       "403 Forbidden"
     ],
     "answer": 0,
-    "explanation": "401 means valid authentication is missing, despite its name. 403 is for authenticated users without permission."
+    "explanation": "401 means valid authentication is missing, despite its name. 403 is for authenticated users without permission.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-status-409",
@@ -1547,7 +1641,8 @@
       "400 Bad Request"
     ],
     "answer": 0,
-    "explanation": "The request is well formed, but it clashes with the current data. That is 409 Conflict."
+    "explanation": "The request is well formed, but it clashes with the current data. That is 409 Conflict.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-status-422",
@@ -1560,7 +1655,8 @@
       "412 Precondition Failed"
     ],
     "answer": 1,
-    "explanation": "422 means correct format, but the data breaks a rule. Some APIs use 400 for both malformed requests and this case. 412 is for failed conditional headers like If-Match."
+    "explanation": "422 means correct format, but the data breaks a rule. Some APIs use 400 for both malformed requests and this case. 412 is for failed conditional headers like If-Match.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-status-429",
@@ -1573,7 +1669,8 @@
       "429 Too Many Requests"
     ],
     "answer": 3,
-    "explanation": "429 signals that the client went over the rate limit. 503 is for a server that is down or overloaded."
+    "explanation": "429 signals that the client went over the rate limit. 503 is for a server that is down or overloaded.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-status-204",
@@ -1586,7 +1683,8 @@
       "204 No Content"
     ],
     "answer": 3,
-    "explanation": "204 means success without content. 200 is success with content, and 201 is for a created resource."
+    "explanation": "204 means success without content. 200 is success with content, and 201 is for a created resource.",
+    "guideId": "node-status-codes"
   },
   {
     "id": "node-next-without-return",
@@ -1600,6 +1698,7 @@
     ],
     "answer": 2,
     "explanation": "next() does not stop the function, and sending a response does not either. Without return, the chain continues after the 401. Write return res.status(401)... or return next().",
+    "guideId": "node-middleware",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1623,7 +1722,8 @@
       "Jumps straight to the error handler"
     ],
     "answer": 3,
-    "explanation": "next(error) skips the normal middlewares and goes directly to the error handler, where each error is translated to its HTTP status."
+    "explanation": "next(error) skips the normal middlewares and goes directly to the error handler, where each error is translated to its HTTP status.",
+    "guideId": "node-middleware"
   },
   {
     "id": "node-error-handler",
@@ -1636,7 +1736,8 @@
       "It is registered after all the routes"
     ],
     "answer": 2,
-    "explanation": "Express detects error handlers by their signature (err, req, res, next). With only 3 parameters, it is treated as a normal middleware. It is usually registered after the routes, but that is not how Express identifies it."
+    "explanation": "Express detects error handlers by their signature (err, req, res, next). With only 3 parameters, it is treated as a normal middleware. It is usually registered after the routes, but that is not how Express identifies it.",
+    "guideId": "node-middleware"
   },
   {
     "id": "node-middleware-factory",
@@ -1650,6 +1751,7 @@
     ],
     "answer": 1,
     "explanation": "validateBody is a factory: it runs once and returns the middleware. The returned middleware, which remembers schema through a closure, runs on every request.",
+    "guideId": "node-middleware",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1678,7 +1780,8 @@
       "When the request was sent over HTTPS"
     ],
     "answer": 1,
-    "explanation": "Retrying an idempotent operation cannot duplicate effects. A 500 does not tell you whether the operation was applied, so non-idempotent operations, like a payment, need an idempotency key."
+    "explanation": "Retrying an idempotent operation cannot duplicate effects. A 500 does not tell you whether the operation was applied, so non-idempotent operations, like a payment, need an idempotency key.",
+    "guideId": "node-resilience"
   },
   {
     "id": "node-exponential-backoff",
@@ -1691,7 +1794,8 @@
       "To make each retry faster than the previous one"
     ],
     "answer": 1,
-    "explanation": "Increasing the wait gives a failing service time to recover instead of hitting it with constant retries. The number of attempts is still limited."
+    "explanation": "Increasing the wait gives a failing service time to recover instead of hitting it with constant retries. The number of attempts is still limited.",
+    "guideId": "node-resilience"
   },
   {
     "id": "node-idempotency-key",
@@ -1704,7 +1808,8 @@
       "It recognizes the reused Idempotency-Key"
     ],
     "answer": 3,
-    "explanation": "The client generates one key per operation and reuses it on retries. The server stores the key with its result, so a retry returns the stored result instead of charging again."
+    "explanation": "The client generates one key per operation and reuses it on retries. The server stores the key with its result, so a retry returns the stored result instead of charging again.",
+    "guideId": "node-resilience"
   },
   {
     "id": "node-idempotency-concurrent",
@@ -1717,7 +1822,8 @@
       "A longer timeout on the second request"
     ],
     "answer": 1,
-    "explanation": "Both requests could pass an in-memory or SELECT check at the same time. A unique constraint lets the database reject the second insert, even with simultaneous requests or several server instances."
+    "explanation": "Both requests could pass an in-memory or SELECT check at the same time. A unique constraint lets the database reject the second insert, even with simultaneous requests or several server instances.",
+    "guideId": "node-resilience"
   },
   {
     "id": "node-webhook-definition",
@@ -1730,7 +1836,8 @@
       "A persistent connection that streams events to the browser"
     ],
     "answer": 2,
-    "explanation": "Instead of your backend polling ('was it paid yet?'), the provider sends an HTTP request to your URL when something happens, like Stripe after a completed payment."
+    "explanation": "Instead of your backend polling ('was it paid yet?'), the provider sends an HTTP request to your URL when something happens, like Stripe after a completed payment.",
+    "guideId": "node-webhooks"
   },
   {
     "id": "node-webhook-signature",
@@ -1743,7 +1850,8 @@
       "To check whether the event ID was seen before"
     ],
     "answer": 1,
-    "explanation": "The provider signs each webhook with a secret it shares with you. Your API recalculates the signature and rejects the webhook if it does not match."
+    "explanation": "The provider signs each webhook with a secret it shares with you. Your API recalculates the signature and rejects the webhook if it does not match.",
+    "guideId": "node-webhooks"
   },
   {
     "id": "node-webhook-fast",
@@ -1756,7 +1864,8 @@
       "The provider retries when your response is slow"
     ],
     "answer": 3,
-    "explanation": "If your API is slow or fails, the provider retries the delivery. Responding right away and processing from a queue avoids timeouts and extra retries."
+    "explanation": "If your API is slow or fails, the provider retries the delivery. Responding right away and processing from a queue avoids timeouts and extra retries.",
+    "guideId": "node-webhooks"
   },
   {
     "id": "node-webhook-duplicate",
@@ -1769,7 +1878,8 @@
       "Process both; the provider will dedupe"
     ],
     "answer": 2,
-    "explanation": "Webhooks can be delivered more than once, so you process them idempotently: save the event ID and skip events you already handled."
+    "explanation": "Webhooks can be delivered more than once, so you process them idempotently: save the event ID and skip events you already handled.",
+    "guideId": "node-webhooks"
   },
   {
     "id": "node-origin",
@@ -1782,7 +1892,8 @@
       "Yes; protocol and port both match"
     ],
     "answer": 2,
-    "explanation": "An origin is protocol + domain + port. A subdomain counts as a different domain, so these are different origins."
+    "explanation": "An origin is protocol + domain + port. A subdomain counts as a different domain, so these are different origins.",
+    "guideId": "node-cors-cookies"
   },
   {
     "id": "node-cors-not-auth",
@@ -1795,7 +1906,8 @@
       "No; the API rejects unknown origins"
     ],
     "answer": 0,
-    "explanation": "CORS is a browser policy that controls which pages can read responses. curl and other servers do not apply it, so CORS is not authentication."
+    "explanation": "CORS is a browser policy that controls which pages can read responses. curl and other servers do not apply it, so CORS is not authentication.",
+    "guideId": "node-cors-cookies"
   },
   {
     "id": "node-cors-preflight",
@@ -1808,7 +1920,8 @@
       "After the API responds with a CORS error"
     ],
     "answer": 1,
-    "explanation": "For requests that can modify data or are less common (PUT, DELETE, JSON body), the browser first asks permission with OPTIONS. A simple GET is sent directly."
+    "explanation": "For requests that can modify data or are less common (PUT, DELETE, JSON body), the browser first asks permission with OPTIONS. A simple GET is sent directly.",
+    "guideId": "node-cors-cookies"
   },
   {
     "id": "node-cors-credentials",
@@ -1821,7 +1934,8 @@
       "credentials: 'include' + Allow-Credentials + exact origin"
     ],
     "answer": 3,
-    "explanation": "Both sides must agree: the frontend sets credentials: 'include' and the API responds with Access-Control-Allow-Credentials: true and the exact origin. * is not allowed with cookies."
+    "explanation": "Both sides must agree: the frontend sets credentials: 'include' and the API responds with Access-Control-Allow-Credentials: true and the exact origin. * is not allowed with cookies.",
+    "guideId": "node-cors-cookies"
   },
   {
     "id": "node-emit-sync",
@@ -1835,6 +1949,7 @@
     ],
     "answer": 3,
     "explanation": "emit is synchronous: it runs every listener before continuing with the next line.",
+    "guideId": "node-events",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1858,7 +1973,8 @@
       "emit returns false and continues"
     ],
     "answer": 2,
-    "explanation": "'error' is special: if it is emitted with no listener, Node throws it and the process goes down."
+    "explanation": "'error' is special: if it is emitted with no listener, Node throws it and the process goes down.",
+    "guideId": "node-events"
   },
   {
     "id": "node-event-vs-promise",
@@ -1871,7 +1987,8 @@
       "Promises cross processes; events stay in one process"
     ],
     "answer": 1,
-    "explanation": "A Promise resolves or rejects only once. An EventEmitter event can fire many times, and each time its listeners run."
+    "explanation": "A Promise resolves or rejects only once. An EventEmitter event can fire many times, and each time its listeners run.",
+    "guideId": "node-events"
   },
   {
     "id": "node-stream-backpressure",
@@ -1885,6 +2002,7 @@
     ],
     "answer": 2,
     "explanation": "pipe() sends the file in chunks and handles backpressure: when the client is slow, reading pauses so memory does not fill up.",
+    "guideId": "node-streams-pool-shutdown",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1905,7 +2023,8 @@
       "Opening a connection is slow, so they are reused"
     ],
     "answer": 3,
-    "explanation": "Opening a connection involves network and authentication. A pool keeps connections open and hands a free one to each query."
+    "explanation": "Opening a connection involves network and authentication. A pool keeps connections open and hands a free one to each query.",
+    "guideId": "node-streams-pool-shutdown"
   },
   {
     "id": "node-pool-full",
@@ -1918,7 +2037,8 @@
       "The pool opens an 11th connection"
     ],
     "answer": 2,
-    "explanation": "When every connection is in use, new queries wait for one to be released. That is why Promise.all over thousands of queries can saturate the pool."
+    "explanation": "When every connection is in use, new queries wait for one to be released. That is why Promise.all over thousands of queries can saturate the pool.",
+    "guideId": "node-streams-pool-shutdown"
   },
   {
     "id": "node-graceful-shutdown",
@@ -1932,6 +2052,7 @@
     ],
     "answer": 1,
     "explanation": "server.close() stops accepting new connections and waits for the ones in progress; then the pool is closed. By default, Node would cut requests in progress.",
+    "guideId": "node-streams-pool-shutdown",
     "code": {
       "language": "javascript",
       "lines": [
@@ -1953,7 +2074,8 @@
       "Querying PostgreSQL for a list of users"
     ],
     "answer": 0,
-    "explanation": "Worker Threads help with CPU-heavy work. I/O like databases, APIs or streams already runs without blocking, so a worker adds nothing there."
+    "explanation": "Worker Threads help with CPU-heavy work. I/O like databases, APIs or streams already runs without blocking, so a worker adds nothing there.",
+    "guideId": "node-worker-threads"
   },
   {
     "id": "node-worker-data",
@@ -1966,7 +2088,8 @@
       "They read the same object by reference"
     ],
     "answer": 1,
-    "explanation": "Workers do not share variables. Values are copied when sent (as with structuredClone), and the worker runs its own entry file instead of receiving a function."
+    "explanation": "Workers do not share variables. Values are copied when sent (as with structuredClone), and the worker runs its own entry file instead of receiving a function.",
+    "guideId": "node-worker-threads"
   },
   {
     "id": "node-memory-leak",
@@ -1979,7 +2102,8 @@
       "A variable read before it is declared"
     ],
     "answer": 2,
-    "explanation": "If unused data is still referenced, the garbage collector cannot free it. Memory grows with each request until the server slows down or crashes."
+    "explanation": "If unused data is still referenced, the garbage collector cannot free it. Memory grows with each request until the server slows down or crashes.",
+    "guideId": "node-memory-leaks"
   },
   {
     "id": "node-memory-leak-code",
@@ -1993,6 +2117,7 @@
     ],
     "answer": 2,
     "explanation": "cache lives as long as the process and never deletes entries. Limit its size or use Redis with expiration.",
+    "guideId": "node-memory-leaks",
     "code": {
       "language": "javascript",
       "lines": [
@@ -2015,7 +2140,8 @@
       "Read a CPU profile of the busiest endpoint"
     ],
     "answer": 2,
-    "explanation": "A heap snapshot is a picture of the memory that shows which objects are retained. Typical causes are unlimited caches and listeners or timers that are never removed."
+    "explanation": "A heap snapshot is a picture of the memory that shows which objects are retained. Typical causes are unlimited caches and listeners or timers that are never removed.",
+    "guideId": "node-memory-leaks"
   },
   {
     "id": "node-cache-private",
@@ -2028,7 +2154,8 @@
       "public, max-age=3600"
     ],
     "answer": 1,
-    "explanation": "private allows caching only in the user's browser. public would let shared caches, like a CDN, store personal data for other users."
+    "explanation": "private allows caching only in the user's browser. public would let shared caches, like a CDN, store personal data for other users.",
+    "guideId": "node-http-cache"
   },
   {
     "id": "node-etag-304",
@@ -2041,7 +2168,8 @@
       "200 OK with the full body again"
     ],
     "answer": 2,
-    "explanation": "The ETag identifies the version of the response. If it still matches, the server responds 304 without a body, and the browser reuses its copy."
+    "explanation": "The ETag identifies the version of the response. If it still matches, the server responds 304 without a body, and the browser reuses its copy.",
+    "guideId": "node-http-cache"
   },
   {
     "id": "node-cache-public",
@@ -2054,7 +2182,8 @@
       "Revalidating the response with an ETag"
     ],
     "answer": 0,
-    "explanation": "public allows shared caches between users, like a CDN. private keeps the response only in that user's browser."
+    "explanation": "public allows shared caches between users, like a CDN. private keeps the response only in that user's browser.",
+    "guideId": "node-http-cache"
   },
   {
     "id": "node-api-versioning",
@@ -2067,7 +2196,8 @@
       "To change the contract without breaking old clients"
     ],
     "answer": 3,
-    "explanation": "Versioning lets you introduce incompatible changes in a new version while existing clients keep using the old one."
+    "explanation": "Versioning lets you introduce incompatible changes in a new version while existing clients keep using the old one.",
+    "guideId": "node-http-cache"
   },
   {
     "id": "sec-authn-vs-authz",
@@ -2080,7 +2210,8 @@
       "Authn runs in the frontend; authz in the backend"
     ],
     "answer": 0,
-    "explanation": "Authentication proves identity. Authorization checks what you can do with a specific resource. A valid JWT does not mean the user can access any record."
+    "explanation": "Authentication proves identity. Authorization checks what you can do with a specific resource. A valid JWT does not mean the user can access any record.",
+    "guideId": "sec-authn-authz"
   },
   {
     "id": "sec-bola-identify",
@@ -2094,6 +2225,7 @@
     ],
     "answer": 3,
     "explanation": "The API checks the user is authenticated, but not that the invoice belongs to them. Changing the ID in the URL exposes other users' invoices. It is #1 in the OWASP API Security Top 10.",
+    "guideId": "sec-bola",
     "code": {
       "language": "typescript",
       "lines": [
@@ -2114,7 +2246,8 @@
       "Validate that the id is a well-formed UUID"
     ],
     "answer": 0,
-    "explanation": "The query itself must require ownership, for example findOne({ id, ownerId: req.user.id }). A valid token or a well-formed ID does not prove the invoice is yours."
+    "explanation": "The query itself must require ownership, for example findOne({ id, ownerId: req.user.id }). A valid token or a well-formed ID does not prove the invoice is yours.",
+    "guideId": "sec-bola"
   },
   {
     "id": "sec-bola-404",
@@ -2127,7 +2260,8 @@
       "To avoid confirming that the invoice exists"
     ],
     "answer": 3,
-    "explanation": "A 403 would reveal the resource exists. A 404 gives an attacker no information about which IDs are valid."
+    "explanation": "A 403 would reveal the resource exists. A 404 gives an attacker no information about which IDs are valid.",
+    "guideId": "sec-bola"
   },
   {
     "id": "sec-rbac-abac",
@@ -2140,7 +2274,8 @@
       "OAuth2 scopes and RBAC roles"
     ],
     "answer": 0,
-    "explanation": "The role (member) is RBAC. Belonging to the project is an attribute of the user and resource, which is ABAC. In practice they are combined."
+    "explanation": "The role (member) is RBAC. Belonging to the project is an attribute of the user and resource, which is ABAC. In practice they are combined.",
+    "guideId": "sec-rbac"
   },
   {
     "id": "sec-hide-button",
@@ -2153,7 +2288,8 @@
       "Required for RBAC, but not needed for ABAC"
     ],
     "answer": 1,
-    "explanation": "Anyone can call the API directly. Authorization lives in the backend; hiding buttons only improves the user experience."
+    "explanation": "Anyone can call the API directly. Authorization lives in the backend; hiding buttons only improves the user experience.",
+    "guideId": "sec-rbac"
   },
   {
     "id": "sec-jwt-parts",
@@ -2166,7 +2302,8 @@
       "algorithm.payload.hash"
     ],
     "answer": 1,
-    "explanation": "The header has the token type and algorithm, the payload has the claims (like sub and exp), and the signature is computed with the server's secret key."
+    "explanation": "The header has the token type and algorithm, the payload has the claims (like sub and exp), and the signature is computed with the server's secret key.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-jwt-payload-readable",
@@ -2179,7 +2316,8 @@
       "Only after the token has expired"
     ],
     "answer": 2,
-    "explanation": "The payload is encoded, not encrypted: anyone can decode it. Do not put sensitive data in it."
+    "explanation": "The payload is encoded, not encrypted: anyone can decode it. Do not put sensitive data in it.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-jwt-tamper",
@@ -2192,7 +2330,8 @@
       "The signature no longer matches and it is rejected"
     ],
     "answer": 3,
-    "explanation": "The server recalculates the signature from the header, payload and its secret key. Any change in the payload produces a different signature, so the token is rejected."
+    "explanation": "The server recalculates the signature from the header, payload and its secret key. Any change in the payload produces a different signature, so the token is rejected.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-jwt-short-lived",
@@ -2205,7 +2344,8 @@
       "Short lifetimes make the payload smaller"
     ],
     "answer": 1,
-    "explanation": "A JWT cannot be invalidated before exp unless the server keeps a list of revoked tokens. A short lifetime limits how long a stolen token is useful."
+    "explanation": "A JWT cannot be invalidated before exp unless the server keeps a list of revoked tokens. A short lifetime limits how long a stolen token is useful.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-jwt-scaling",
@@ -2218,7 +2358,8 @@
       "Each server issues and trusts its own tokens"
     ],
     "answer": 0,
-    "explanation": "Any server with the key can verify the signature and expiration without querying a database of sessions."
+    "explanation": "Any server with the key can verify the signature and expiration without querying a database of sessions.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-jwt-sub",
@@ -2231,7 +2372,8 @@
       "sub"
     ],
     "answer": 3,
-    "explanation": "sub (subject) identifies the user. exp is the expiration time; iss and aud identify the issuer and the intended audience."
+    "explanation": "sub (subject) identifies the user. exp is the expiration time; iss and aud identify the issuer and the intended audience.",
+    "guideId": "sec-jwt"
   },
   {
     "id": "sec-refresh-purpose",
@@ -2244,7 +2386,8 @@
       "To store the user's profile claims"
     ],
     "answer": 0,
-    "explanation": "The access token is sent on every request and lasts minutes. The refresh token lasts longer and only serves to request a new access token when the current one expires."
+    "explanation": "The access token is sent on every request and lasts minutes. The refresh token lasts longer and only serves to request a new access token when the current one expires.",
+    "guideId": "sec-login-sessions"
   },
   {
     "id": "sec-refresh-rotation",
@@ -2257,7 +2400,8 @@
       "The old token is extended for 7 more days"
     ],
     "answer": 0,
-    "explanation": "With rotation, each use returns a new refresh token and invalidates the previous one. An old token showing up again signals that it was stolen."
+    "explanation": "With rotation, each use returns a new refresh token and invalidates the previous one. An old token showing up again signals that it was stolen.",
+    "guideId": "sec-login-sessions"
   },
   {
     "id": "sec-server-session",
@@ -2270,7 +2414,8 @@
       "The server skips any lookup on each request"
     ],
     "answer": 2,
-    "explanation": "The server stores the session in a database or Redis and the client only holds its ID in a cookie. Revoking it means deleting it, at the cost of a lookup on every request."
+    "explanation": "The server stores the session in a database or Redis and the client only holds its ID in a cookie. Revoking it means deleting it, at the cost of a lookup on every request.",
+    "guideId": "sec-login-sessions"
   },
   {
     "id": "sec-oidc",
@@ -2283,7 +2428,8 @@
       "A secure way to store the user's password"
     ],
     "answer": 1,
-    "explanation": "OAuth2 delegates access to resources (like reading a calendar). OIDC adds identity with an ID token, a JWT with the user's ID and email. It is what powers 'Sign in with Google'."
+    "explanation": "OAuth2 delegates access to resources (like reading a calendar). OIDC adds identity with an ID token, a JWT with the user's ID and email. It is what powers 'Sign in with Google'.",
+    "guideId": "sec-oauth-oidc"
   },
   {
     "id": "sec-auth-code",
@@ -2296,7 +2442,8 @@
       "The ID token"
     ],
     "answer": 1,
-    "explanation": "Google returns a temporary code. Your app then exchanges that code for the tokens directly with Google."
+    "explanation": "Google returns a temporary code. Your app then exchanges that code for the tokens directly with Google.",
+    "guideId": "sec-oauth-oidc"
   },
   {
     "id": "sec-pkce",
@@ -2309,7 +2456,8 @@
       "XSS scripts stealing the access token"
     ],
     "answer": 1,
-    "explanation": "Your app sends Google a hash of a random secret, and later the original secret when exchanging the code. Without that secret, an intercepted code cannot be redeemed."
+    "explanation": "Your app sends Google a hash of a random secret, and later the original secret when exchanging the code. Without that secret, an intercepted code cannot be redeemed.",
+    "guideId": "sec-oauth-oidc"
   },
   {
     "id": "sec-localstorage",
@@ -2322,7 +2470,8 @@
       "It is deleted when the tab is closed"
     ],
     "answer": 0,
-    "explanation": "Any JavaScript on the page can read localStorage, including injected code. There is no CSRF risk, because the browser does not attach it on its own."
+    "explanation": "Any JavaScript on the page can read localStorage, including injected code. There is no CSRF risk, because the browser does not attach it on its own.",
+    "guideId": "sec-token-storage"
   },
   {
     "id": "sec-httponly",
@@ -2335,7 +2484,8 @@
       "It only makes sure the cookie travels over HTTPS"
     ],
     "answer": 0,
-    "explanation": "JavaScript cannot read an HttpOnly cookie, so XSS cannot steal it. But the browser attaches it automatically, so you need SameSite or CSRF tokens."
+    "explanation": "JavaScript cannot read an HttpOnly cookie, so XSS cannot steal it. But the browser attaches it automatically, so you need SameSite or CSRF tokens.",
+    "guideId": "sec-token-storage"
   },
   {
     "id": "sec-samesite",
@@ -2348,7 +2498,8 @@
       "Sends the cookie only over encrypted HTTPS"
     ],
     "answer": 0,
-    "explanation": "SameSite stops the browser from sending the cookie on requests started from other sites, which mitigates CSRF. HTTPS-only is Secure, and hiding it from JS is HttpOnly."
+    "explanation": "SameSite stops the browser from sending the cookie on requests started from other sites, which mitigates CSRF. HTTPS-only is Secure, and hiding it from JS is HttpOnly.",
+    "guideId": "sec-token-storage"
   },
   {
     "id": "sec-csrf-token",
@@ -2361,7 +2512,8 @@
       "It is stored in an HttpOnly cookie"
     ],
     "answer": 1,
-    "explanation": "The server gives the token to your page and requires it on every request that changes data. A malicious site can make the browser send cookies, but it cannot read that value."
+    "explanation": "The server gives the token to your page and requires it on every request that changes data. A malicious site can make the browser send cookies, but it cannot read that value.",
+    "guideId": "sec-token-storage"
   },
   {
     "id": "sec-sha256-passwords",
@@ -2374,7 +2526,8 @@
       "It collides often with short passwords"
     ],
     "answer": 0,
-    "explanation": "If the database is stolen, a fast hash lets attackers test millions of guesses per second. Slow algorithms like Argon2id make that attack very expensive."
+    "explanation": "If the database is stolen, a fast hash lets attackers test millions of guesses per second. Slow algorithms like Argon2id make that attack very expensive.",
+    "guideId": "sec-passwords-secrets"
   },
   {
     "id": "sec-password-algorithm",
@@ -2387,7 +2540,8 @@
       "Argon2id"
     ],
     "answer": 3,
-    "explanation": "Argon2id (or scrypt and bcrypt) is slow on purpose and uses a salt. SHA-512 and HMAC-SHA256 are too fast for passwords, and AES is encryption, which can be reversed."
+    "explanation": "Argon2id (or scrypt and bcrypt) is slow on purpose and uses a salt. SHA-512 and HMAC-SHA256 are too fast for passwords, and AES is encryption, which can be reversed.",
+    "guideId": "sec-passwords-secrets"
   },
   {
     "id": "sec-salt",
@@ -2400,7 +2554,8 @@
       "It lets admins reverse a hash if needed"
     ],
     "answer": 2,
-    "explanation": "A salt is a random value, different per user, combined with the password. Two users with the same password end up with different hashes."
+    "explanation": "A salt is a random value, different per user, combined with the password. Two users with the same password end up with different hashes.",
+    "guideId": "sec-passwords-secrets"
   },
   {
     "id": "sec-secrets-storage",
@@ -2413,7 +2568,8 @@
       "In a secrets manager or server env vars"
     ],
     "answer": 3,
-    "explanation": "Secrets are not hashed, because the app needs to use them. They go in a secrets manager (like Azure Key Vault) or the server's environment variables; never in the repo, logs or frontend."
+    "explanation": "Secrets are not hashed, because the app needs to use them. They go in a secrets manager (like Azure Key Vault) or the server's environment variables; never in the repo, logs or frontend.",
+    "guideId": "sec-passwords-secrets"
   },
   {
     "id": "sec-sqli-result",
@@ -2427,6 +2583,7 @@
     ],
     "answer": 1,
     "explanation": "The quote in the input closes the email text, so the condition becomes '' OR '1'='1', which is always true. The parameterized version searches for that literal text and finds nobody.",
+    "guideId": "sec-injection",
     "code": {
       "language": "javascript",
       "lines": [
@@ -2451,7 +2608,8 @@
       "They run every query with read-only permissions"
     ],
     "answer": 1,
-    "explanation": "The query and the data are sent separately, so the database never interprets the data as SQL code."
+    "explanation": "The query and the data are sent separately, so the database never interprets the data as SQL code.",
+    "guideId": "sec-injection"
   },
   {
     "id": "sec-prisma-raw",
@@ -2464,7 +2622,8 @@
       "When the queried columns have no index"
     ],
     "answer": 0,
-    "explanation": "ORMs parameterize automatically, except when you write raw SQL by concatenating text, like $queryRawUnsafe."
+    "explanation": "ORMs parameterize automatically, except when you write raw SQL by concatenating text, like $queryRawUnsafe.",
+    "guideId": "sec-injection"
   },
   {
     "id": "sec-least-privilege",
@@ -2477,7 +2636,8 @@
       "It is the admin user, but only used by the backend"
     ],
     "answer": 2,
-    "explanation": "Each user, process and account gets only the permissions it needs. If the app is compromised, the damage is limited."
+    "explanation": "Each user, process and account gets only the permissions it needs. If the app is compromised, the damage is limited.",
+    "guideId": "sec-injection"
   },
   {
     "id": "arch-soc",
@@ -2490,7 +2650,8 @@
       "In the task service"
     ],
     "answer": 3,
-    "explanation": "The rule belongs in one place, the service, so it applies whether the order comes from the API, a worker or a terminal script."
+    "explanation": "The rule belongs in one place, the service, so it applies whether the order comes from the API, a worker or a terminal script.",
+    "guideId": "arch-separation"
   },
   {
     "id": "arch-thin-controller",
@@ -2503,7 +2664,8 @@
       "Controllers run before authentication"
     ],
     "answer": 0,
-    "explanation": "If the same action runs from a worker or a script, a rule trapped in the controller would be skipped. Thin controllers only translate HTTP and delegate."
+    "explanation": "If the same action runs from a worker or a script, a rule trapped in the controller would be skipped. Thin controllers only translate HTTP and delegate.",
+    "guideId": "arch-controller"
   },
   {
     "id": "arch-dto-mapper",
@@ -2516,7 +2678,8 @@
       "The shape of the data an operation receives or returns"
     ],
     "answer": 3,
-    "explanation": "A DTO is the contract of the data going in or out of an operation. A mapper function then converts database or domain objects into that contract."
+    "explanation": "A DTO is the contract of the data going in or out of an operation. A mapper function then converts database or domain objects into that contract.",
+    "guideId": "arch-dto-mapping"
   },
   {
     "id": "arch-mapper-leak",
@@ -2529,7 +2692,8 @@
       "So fields like passwordHash are never sent"
     ],
     "answer": 3,
-    "explanation": "The mapper only copies allowed fields, so an internal or storage detail never becomes part of the public API by accident."
+    "explanation": "The mapper only copies allowed fields, so an internal or storage detail never becomes part of the public API by accident.",
+    "guideId": "arch-dto-mapping"
   },
   {
     "id": "arch-dto-type-validation",
@@ -2542,7 +2706,8 @@
       "Only when strict: true is enabled"
     ],
     "answer": 0,
-    "explanation": "Types disappear at runtime. A schema (like Zod) validates the actual data, and the type can be inferred from it."
+    "explanation": "Types disappear at runtime. A schema (like Zod) validates the actual data, and the type can be inferred from it.",
+    "guideId": "arch-dto-mapping"
   },
   {
     "id": "arch-format-vs-business",
@@ -2555,7 +2720,8 @@
       "dueDate must be an ISO 8601 date"
     ],
     "answer": 0,
-    "explanation": "Format checks only need the received data. Business rules need context, like who the user is or the state in the database."
+    "explanation": "Format checks only need the received data. Business rules need context, like who the user is or the state in the database.",
+    "guideId": "arch-format-vs-business"
   },
   {
     "id": "arch-business-where",
@@ -2568,7 +2734,8 @@
       "In the controller, before the service"
     ],
     "answer": 2,
-    "explanation": "This rule needs context (the project's state in the database), so it belongs in the service or use case. The schema only checks format."
+    "explanation": "This rule needs context (the project's state in the database), so it belongs in the service or use case. The schema only checks format.",
+    "guideId": "arch-format-vs-business"
   },
   {
     "id": "arch-service-vs-usecase",
@@ -2581,7 +2748,8 @@
       "Use case: reads data; service: writes data"
     ],
     "answer": 1,
-    "explanation": "A service groups the operations of one area (IssueService with create, close and assign). A use case is one class per business action, like CreateIssue with a single execute() method."
+    "explanation": "A service groups the operations of one area (IssueService with create, close and assign). A use case is one class per business action, like CreateIssue with a single execute() method.",
+    "guideId": "arch-service-usecase"
   },
   {
     "id": "arch-usecase-http",
@@ -2594,7 +2762,8 @@
       "The request object, to read the user"
     ],
     "answer": 0,
-    "explanation": "Services and use cases receive their dependencies from outside and know nothing about HTTP, so a worker or script can reuse them."
+    "explanation": "Services and use cases receive their dependencies from outside and know nothing about HTTP, so a worker or script can reuse them.",
+    "guideId": "arch-service-usecase"
   },
   {
     "id": "arch-invariant",
@@ -2607,7 +2776,8 @@
       "A field whose value can never change after the object is created"
     ],
     "answer": 0,
-    "explanation": "An invariant is a business rule that must never break, wherever the change comes from, like 'an archived issue cannot be closed'."
+    "explanation": "An invariant is a business rule that must never break, wherever the change comes from, like 'an archived issue cannot be closed'.",
+    "guideId": "arch-domain"
   },
   {
     "id": "arch-domain-decides",
@@ -2621,6 +2791,7 @@
     ],
     "answer": 3,
     "explanation": "The service coordinates the steps (load, call the domain, save). The domain decides if the change is valid, without depending on HTTP or the ORM.",
+    "guideId": "arch-domain",
     "code": {
       "language": "typescript",
       "lines": [
@@ -2647,7 +2818,8 @@
       "A second check inside the controller"
     ],
     "answer": 0,
-    "explanation": "With concurrency, both requests can validate against the same old state. Transactions or database constraints protect the invariant at the moment of writing."
+    "explanation": "With concurrency, both requests can validate against the same old state. Transactions or database constraints protect the invariant at the moment of writing.",
+    "guideId": "arch-domain"
   },
   {
     "id": "arch-repository-myth",
@@ -2660,7 +2832,8 @@
       "Easier tests by passing a fake repository"
     ],
     "answer": 1,
-    "explanation": "A repository is an interface for data access, but switching databases usually still requires changes. It also does not need to wrap every ORM method."
+    "explanation": "A repository is an interface for data access, but switching databases usually still requires changes. It also does not need to wrap every ORM method.",
+    "guideId": "arch-repository"
   },
   {
     "id": "arch-repository-redundant",
@@ -2673,7 +2846,8 @@
       "When the service has business rules"
     ],
     "answer": 2,
-    "explanation": "Repositories pay off when they improve isolation and testing. In a simple CRUD, an extra layer over the ORM can just duplicate it."
+    "explanation": "Repositories pay off when they improve isolation and testing. In a simple CRUD, an extra layer over the ORM can just duplicate it.",
+    "guideId": "arch-repository"
   },
   {
     "id": "arch-request-flow",
@@ -2686,7 +2860,8 @@
       "Middleware → Controller → Repository → Service"
     ],
     "answer": 1,
-    "explanation": "Middlewares authenticate and validate first, the controller translates HTTP and calls the service, and the service applies the rules and uses the repository for data access."
+    "explanation": "Middlewares authenticate and validate first, the controller translates HTTP and calls the service, and the service applies the rules and uses the repository for data access.",
+    "guideId": "arch-flow"
   },
   {
     "id": "arch-worker-entry",
@@ -2699,7 +2874,8 @@
       "At the controller, with a fake request"
     ],
     "answer": 2,
-    "explanation": "A worker skips HTTP and calls the service. That is why business rules cannot live in the controller."
+    "explanation": "A worker skips HTTP and calls the service. That is why business rules cannot live in the controller.",
+    "guideId": "arch-flow"
   },
   {
     "id": "arch-di-vs-dip",
@@ -2712,7 +2888,8 @@
       "DI needs a framework; DIP does not"
     ],
     "answer": 0,
-    "explanation": "DI is how dependencies are delivered (from outside). DIP says high-level code depends on contracts, not on low-level implementations. DI helps meet DIP, and it can be done by hand."
+    "explanation": "DI is how dependencies are delivered (from outside). DIP says high-level code depends on contracts, not on low-level implementations. DI helps meet DIP, and it can be done by hand.",
+    "guideId": "arch-di-dip"
   },
   {
     "id": "arch-dip-example",
@@ -2725,7 +2902,8 @@
       "PostgresIssueRepository depends on IssueService"
     ],
     "answer": 2,
-    "explanation": "The business code depends on a contract, so you can change the implementation (Postgres in production, a fake in tests) without touching the service."
+    "explanation": "The business code depends on a contract, so you can change the implementation (Postgres in production, a fake in tests) without touching the service.",
+    "guideId": "arch-di-dip"
   },
   {
     "id": "arch-nest-tokens",
@@ -2738,7 +2916,8 @@
       "Interfaces cannot be mocked in tests"
     ],
     "answer": 1,
-    "explanation": "TypeScript interfaces disappear when compiling, so Nest has nothing to look up at runtime. Tokens or classes exist at runtime."
+    "explanation": "TypeScript interfaces disappear when compiling, so Nest has nothing to look up at runtime. Tokens or classes exist at runtime.",
+    "guideId": "arch-di-dip"
   },
   {
     "id": "arch-error-mapping",
@@ -2751,7 +2930,8 @@
       "In every controller's catch block"
     ],
     "answer": 1,
-    "explanation": "Domain errors know nothing about HTTP. One function, called from the error-handling middleware, maps each domain error to a status code, so the mapping is not repeated."
+    "explanation": "Domain errors know nothing about HTTP. One function, called from the error-handling middleware, maps each domain error to a status code, so the mapping is not repeated.",
+    "guideId": "arch-domain-errors"
   },
   {
     "id": "arch-error-no-http",
@@ -2764,7 +2944,8 @@
       "Errors with extra fields cannot be serialized"
     ],
     "answer": 0,
-    "explanation": "Keeping errors free of HTTP means they still make sense when the rule runs from a worker or a script. Never put res.status() inside the domain."
+    "explanation": "Keeping errors free of HTTP means they still make sense when the rule runs from a worker or a script. Never put res.status() inside the domain.",
+    "guideId": "arch-domain-errors"
   },
   {
     "id": "arch-unknown-error",
@@ -2777,7 +2958,8 @@
       "503, so the client retries later"
     ],
     "answer": 1,
-    "explanation": "Unknown errors are unexpected server errors. Respond 500 and never expose internal details; log them instead. 503 means a temporary unavailability, not a bug."
+    "explanation": "Unknown errors are unexpected server errors. Respond 500 and never expose internal details; log them instead. 503 means a temporary unavailability, not a bug.",
+    "guideId": "arch-domain-errors"
   },
   {
     "id": "arch-p95",
@@ -2790,7 +2972,8 @@
       "Requests take exactly 2 s 95% of the time"
     ],
     "answer": 2,
-    "explanation": "The 95th percentile means 95% of requests take that long or less, and the slowest 5% take more. Unlike the average, it does not hide that slow group."
+    "explanation": "The 95th percentile means 95% of requests take that long or less, and the slowest 5% take more. Unlike the average, it does not hide that slow group.",
+    "guideId": "arch-observability"
   },
   {
     "id": "arch-trace",
@@ -2803,7 +2986,8 @@
       "The requestId"
     ],
     "answer": 1,
-    "explanation": "A trace records a request's path and how long each step took (Node, database, another service). Metrics show numbers over time, and logs record events."
+    "explanation": "A trace records a request's path and how long each step took (Node, database, another service). Metrics show numbers over time, and logs record events.",
+    "guideId": "arch-observability"
   },
   {
     "id": "arch-request-id",
@@ -2816,7 +3000,8 @@
       "Signing the response for the client"
     ],
     "answer": 0,
-    "explanation": "Each request gets a unique ID included in its logs and traces, so you can correlate them while investigating a problem."
+    "explanation": "Each request gets a unique ID included in its logs and traces, so you can correlate them while investigating a problem.",
+    "guideId": "arch-observability"
   },
   {
     "id": "arch-structured-log",
@@ -2829,7 +3014,8 @@
       "A log written in fixed-width text columns"
     ],
     "answer": 1,
-    "explanation": "Structured logs use a format like { level, path, requestId }, which can be searched and filtered by field."
+    "explanation": "Structured logs use a format like { level, path, requestId }, which can be searched and filtered by field.",
+    "guideId": "arch-observability"
   },
   {
     "id": "arch-microservices-when",
@@ -2842,7 +3028,8 @@
       "When teams block each other's deploys"
     ],
     "answer": 3,
-    "explanation": "Microservices solve organizational and scaling problems: teams that block each other, or parts that must scale very differently. Code size, a second database or a queue can all live inside a monolith."
+    "explanation": "Microservices solve organizational and scaling problems: teams that block each other, or parts that must scale very differently. Code size, a second database or a queue can all live inside a monolith.",
+    "guideId": "arch-monolith-microservices"
   },
   {
     "id": "arch-microservices-cost",
@@ -2855,7 +3042,8 @@
       "Function calls become network requests that can fail"
     ],
     "answer": 3,
-    "explanation": "What is a function call in a monolith becomes a request over the network, which can be slow or fail. You also need more infrastructure and observability."
+    "explanation": "What is a function call in a monolith becomes a request over the network, which can be slow or fail. You also need more infrastructure and observability.",
+    "guideId": "arch-monolith-microservices"
   },
   {
     "id": "arch-modular-monolith",
@@ -2868,7 +3056,8 @@
       "By reading the other module's tables directly"
     ],
     "answer": 1,
-    "explanation": "Each module exposes a public interface (for example, the functions exported from its index file); everything else is internal. That keeps boundaries clear while keeping a single deploy."
+    "explanation": "Each module exposes a public interface (for example, the functions exported from its index file); everything else is internal. That keeps boundaries clear while keeping a single deploy.",
+    "guideId": "arch-modular-monolith"
   },
   {
     "id": "arch-modular-extract",
@@ -2881,7 +3070,8 @@
       "Little: only what is behind that interface changes"
     ],
     "answer": 3,
-    "explanation": "Because the other modules only used the public interface, the extraction only changes its implementation (for example, a function that now makes an HTTP request)."
+    "explanation": "Because the other modules only used the public interface, the extraction only changes its implementation (for example, a function that now makes an HTTP request).",
+    "guideId": "arch-modular-monolith"
   },
   {
     "id": "arch-clean-dependency-rule",
@@ -2894,7 +3084,8 @@
       "Any layer may import any other layer"
     ],
     "answer": 2,
-    "explanation": "Dependencies point inwards. The domain and use cases do not know Express or the ORM, so you can test them and change technical details without touching the rules."
+    "explanation": "Dependencies point inwards. The domain and use cases do not know Express or the ORM, so you can test them and change technical details without touching the rules.",
+    "guideId": "arch-clean"
   },
   {
     "id": "arch-clean-innermost",
@@ -2907,7 +3098,8 @@
       "Adapters"
     ],
     "answer": 0,
-    "explanation": "From outside in: frameworks and drivers, adapters, use cases, and the domain at the center."
+    "explanation": "From outside in: frameworks and drivers, adapters, use cases, and the domain at the center.",
+    "guideId": "arch-clean"
   },
   {
     "id": "arch-system-vs-app",
@@ -2920,7 +3112,8 @@
       "Yes: Clean Architecture needs one DB per layer"
     ],
     "answer": 0,
-    "explanation": "Monolith vs microservices decides how many applications you deploy. Clean, Hexagonal and DDD organize code inside one application. They are commonly combined."
+    "explanation": "Monolith vs microservices decides how many applications you deploy. Clean, Hexagonal and DDD organize code inside one application. They are commonly combined.",
+    "guideId": "arch-clean"
   },
   {
     "id": "arch-hex-port",
@@ -2933,7 +3126,8 @@
       "An interface the core defines for what it needs"
     ],
     "answer": 3,
-    "explanation": "A port says which operations the core needs, without saying how. An adapter is the outside class that implements it with a concrete technology, like PostgreSQL."
+    "explanation": "A port says which operations the core needs, without saying how. An adapter is the outside class that implements it with a concrete technology, like PostgreSQL.",
+    "guideId": "arch-hexagonal"
   },
   {
     "id": "arch-hex-adapter-direction",
@@ -2946,7 +3140,8 @@
       "Input: it calls the core"
     ],
     "answer": 3,
-    "explanation": "Input adapters are used by the outside to call the core (a controller). Output adapters are used by the core to reach the outside (a Postgres repository)."
+    "explanation": "Input adapters are used by the outside to call the core (a controller). Output adapters are used by the core to reach the outside (a Postgres repository).",
+    "guideId": "arch-hexagonal"
   },
   {
     "id": "arch-hex-test",
@@ -2960,6 +3155,7 @@
     ],
     "answer": 3,
     "explanation": "The service only knows the port, so in tests you give it another adapter that stores data in memory.",
+    "guideId": "arch-hexagonal",
     "code": {
       "language": "typescript",
       "lines": [
@@ -2982,7 +3178,8 @@
       "issue.close()"
     ],
     "answer": 3,
-    "explanation": "Ubiquitous language means the code uses the same words as the business. 'Close the issue' becomes issue.close()."
+    "explanation": "Ubiquitous language means the code uses the same words as the business. 'Close the issue' becomes issue.close().",
+    "guideId": "arch-ddd"
   },
   {
     "id": "arch-ddd-bounded-context",
@@ -2995,7 +3192,8 @@
       "Each bounded context has its own model"
     ],
     "answer": 3,
-    "explanation": "The same word means different things in each business area. Sales cares about contacts; Billing about tax ID and address. Each context keeps its own model instead of one giant class."
+    "explanation": "The same word means different things in each business area. Sales cares about contacts; Billing about tax ID and address. Each context keeps its own model instead of one giant class.",
+    "guideId": "arch-ddd"
   },
   {
     "id": "arch-ddd-aggregate",
@@ -3009,6 +3207,7 @@
     ],
     "answer": 2,
     "explanation": "An aggregate is only modified through its root, which checks its rules (for example, no items added to a shipped order). Pushing directly into the list bypasses that check.",
+    "guideId": "arch-ddd",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3028,7 +3227,8 @@
       "In a simple CRUD application"
     ],
     "answer": 3,
-    "explanation": "DDD pays off in complex domains. In an app that only stores and reads data, it adds structure without benefit."
+    "explanation": "DDD pays off in complex domains. In an app that only stores and reads data, it adds structure without benefit.",
+    "guideId": "arch-ddd"
   },
   {
     "id": "arch-eda-pubsub",
@@ -3041,7 +3241,8 @@
       "A direct HTTP call"
     ],
     "answer": 0,
-    "explanation": "With pub/sub, each subscriber receives its own copy. With a queue, each message is processed by only one consumer, which is useful to split work."
+    "explanation": "With pub/sub, each subscriber receives its own copy. With a queue, each message is processed by only one consumer, which is useful to split work.",
+    "guideId": "arch-eda"
   },
   {
     "id": "arch-eventual-consistency",
@@ -3054,7 +3255,8 @@
       "Cascading failure"
     ],
     "answer": 2,
-    "explanation": "Other services learn about the change with a delay. That is the price of decoupling services through a broker."
+    "explanation": "Other services learn about the change with a delay. That is the price of decoupling services through a broker.",
+    "guideId": "arch-eda"
   },
   {
     "id": "arch-dead-letter",
@@ -3067,7 +3269,8 @@
       "Messages delivered twice, to remove copies"
     ],
     "answer": 1,
-    "explanation": "Messages that fail again and again are moved to a separate queue so they do not block the rest and someone can inspect them."
+    "explanation": "Messages that fail again and again are moved to a separate queue so they do not block the rest and someone can inspect them.",
+    "guideId": "arch-eda"
   },
   {
     "id": "arch-eda-vs-eventemitter",
@@ -3080,7 +3283,8 @@
       "EDA events travel between services via a broker"
     ],
     "answer": 3,
-    "explanation": "EventEmitter works inside one process. In EDA, events travel over the network between services, through a broker like RabbitMQ or Kafka."
+    "explanation": "EventEmitter works inside one process. In EDA, events travel over the network between services, through a broker like RabbitMQ or Kafka.",
+    "guideId": "arch-eda"
   },
   {
     "id": "arch-compare-combine",
@@ -3093,7 +3297,8 @@
       "Only once the modules become services"
     ],
     "answer": 1,
-    "explanation": "A modular monolith decides how the system is deployed and split by business area. Hexagonal organizes the code inside each module. They are commonly combined."
+    "explanation": "A modular monolith decides how the system is deployed and split by business area. Hexagonal organizes the code inside each module. They are commonly combined.",
+    "guideId": "arch-comparison"
   },
   {
     "id": "arch-api-gateway",
@@ -3106,7 +3311,8 @@
       "Routing and concerns like authentication"
     ],
     "answer": 3,
-    "explanation": "The gateway is the single entry point: it routes each request to the right service and centralizes authentication, rate limiting and logs."
+    "explanation": "The gateway is the single entry point: it routes each request to the right service and centralizes authentication, rate limiting and logs.",
+    "guideId": "arch-gateway-saga"
   },
   {
     "id": "arch-saga-why",
@@ -3119,7 +3325,8 @@
       "No transaction spans several databases"
     ],
     "answer": 3,
-    "explanation": "Each microservice has its own database, so there is no all-or-nothing transaction across them. A saga runs steps in each service and compensates if one fails."
+    "explanation": "Each microservice has its own database, so there is no all-or-nothing transaction across them. A saga runs steps in each service and compensates if one fails.",
+    "guideId": "arch-gateway-saga"
   },
   {
     "id": "arch-saga-compensation",
@@ -3132,7 +3339,8 @@
       "Refund the payment and cancel the order"
     ],
     "answer": 3,
-    "explanation": "Compensating actions undo the previous steps, in reverse order."
+    "explanation": "Compensating actions undo the previous steps, in reverse order.",
+    "guideId": "arch-gateway-saga"
   },
   {
     "id": "arch-saga-choreography",
@@ -3145,7 +3353,8 @@
       "Compensation"
     ],
     "answer": 0,
-    "explanation": "In choreography, services react to events. In orchestration, a central service tells each one what to do."
+    "explanation": "In choreography, services react to events. In orchestration, a central service tells each one what to do.",
+    "guideId": "arch-gateway-saga"
   },
   {
     "id": "arch-circuit-open",
@@ -3158,7 +3367,8 @@
       "They retry with exponential backoff"
     ],
     "answer": 2,
-    "explanation": "Open means the breaker stopped calling the failing service for a while. Calls fail fast instead of waiting for timeouts. Counting failures while calls pass is the closed state."
+    "explanation": "Open means the breaker stopped calling the failing service for a while. Calls fail fast instead of waiting for timeouts. Counting failures while calls pass is the closed state.",
+    "guideId": "arch-circuit-breaker"
   },
   {
     "id": "arch-circuit-half-open",
@@ -3171,7 +3381,8 @@
       "A few test calls are let through"
     ],
     "answer": 3,
-    "explanation": "After some time open, the breaker lets a few calls through. If they work, it closes; if they fail, it opens again."
+    "explanation": "After some time open, the breaker lets a few calls through. If they work, it closes; if they fail, it opens again.",
+    "guideId": "arch-circuit-breaker"
   },
   {
     "id": "arch-cascading-failure",
@@ -3184,7 +3395,8 @@
       "Waiting calls hold connections and memory"
     ],
     "answer": 3,
-    "explanation": "Each waiting call ties up resources. When they pile up, your service fails too, and then the services that depend on it: a cascading failure."
+    "explanation": "Each waiting call ties up resources. When they pile up, your service fails too, and then the services that depend on it: a cascading failure.",
+    "guideId": "arch-circuit-breaker"
   },
   {
     "id": "arch-cqrs",
@@ -3197,7 +3409,8 @@
       "Events from the services consuming them"
     ],
     "answer": 1,
-    "explanation": "CQRS splits write code and data from read code and data, sometimes in different databases kept in sync by events."
+    "explanation": "CQRS splits write code and data from read code and data, sometimes in different databases kept in sync by events.",
+    "guideId": "arch-cqrs"
   },
   {
     "id": "arch-cqrs-projection",
@@ -3210,7 +3423,8 @@
       "The query that reads the summary"
     ],
     "answer": 2,
-    "explanation": "A projection consumes events like 'order created' and updates the read database. Reads can be slightly stale because of eventual consistency."
+    "explanation": "A projection consumes events like 'order created' and updates the read database. Reads can be slightly stale because of eventual consistency.",
+    "guideId": "arch-cqrs"
   },
   {
     "id": "arch-event-sourcing",
@@ -3223,7 +3437,8 @@
       "Events only until they are consumed"
     ],
     "answer": 0,
-    "explanation": "Instead of the current state, you store every event that produced it. For example, an account balance is the sum of its deposits and withdrawals."
+    "explanation": "Instead of the current state, you store every event that produced it. For example, an account balance is the sum of its deposits and withdrawals.",
+    "guideId": "arch-cqrs"
   },
   {
     "id": "arch-outbox-problem",
@@ -3236,7 +3451,8 @@
       "Slow queries on the orders table under heavy load"
     ],
     "answer": 1,
-    "explanation": "Saving to the database and publishing to the broker cannot share a transaction. The event is saved in an outbox table in the same transaction, and a relay publishes it later."
+    "explanation": "Saving to the database and publishing to the broker cannot share a transaction. The event is saved in an outbox table in the same transaction, and a relay publishes it later.",
+    "guideId": "arch-outbox"
   },
   {
     "id": "arch-outbox-duplicates",
@@ -3249,7 +3465,8 @@
       "The relay may publish an event twice"
     ],
     "answer": 3,
-    "explanation": "If the relay publishes but fails before marking sent = true, it will publish again. Consumers must handle repeats without duplicating effects."
+    "explanation": "If the relay publishes but fails before marking sent = true, it will publish again. Consumers must handle repeats without duplicating effects.",
+    "guideId": "arch-outbox"
   },
   {
     "id": "arch-serverless-cold-start",
@@ -3262,7 +3479,8 @@
       "The first deploy of a brand-new function"
     ],
     "answer": 0,
-    "explanation": "If the function has not been used for a while, the provider must prepare it again, so the first execution takes longer."
+    "explanation": "If the function has not been used for a while, the provider must prepare it again, so the first execution takes longer.",
+    "guideId": "arch-serverless"
   },
   {
     "id": "arch-serverless-fit",
@@ -3275,7 +3493,8 @@
       "Resizing an image when it is uploaded"
     ],
     "answer": 2,
-    "explanation": "Each execution has a time limit (15 minutes on Lambda). Serverless fits sporadic or event-driven work; long processes or constant traffic fit a traditional service better."
+    "explanation": "Each execution has a time limit (15 minutes on Lambda). Serverless fits sporadic or event-driven work; long processes or constant traffic fit a traditional service better.",
+    "guideId": "arch-serverless"
   },
   {
     "id": "oop-encapsulation-vs-abstraction",
@@ -3288,7 +3507,8 @@
       "Encapsulation uses extends; abstraction uses interfaces"
     ],
     "answer": 2,
-    "explanation": "Encapsulation keeps state private and changes it only through methods that validate. Abstraction lets callers know what a class does without depending on how."
+    "explanation": "Encapsulation keeps state private and changes it only through methods that validate. Abstraction lets callers know what a class does without depending on how.",
+    "guideId": "oop-pillars"
   },
   {
     "id": "oop-encapsulation",
@@ -3302,6 +3522,7 @@
     ],
     "answer": 0,
     "explanation": "balance is private and only changes through deposit(), which rejects invalid amounts. That prevents invalid states.",
+    "guideId": "oop-pillars",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3324,6 +3545,7 @@
     ],
     "answer": 0,
     "explanation": "Polymorphism: the same call, fee(), runs a different implementation depending on the object's class. Premium overrides it.",
+    "guideId": "oop-pillars",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3350,6 +3572,7 @@
     ],
     "answer": 3,
     "explanation": "With inheritance you would need EmailedPdfReport, EmailedCsvReport, and so on. With composition, you combine a formatter and a delivery when creating the object.",
+    "guideId": "oop-composition",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3372,7 +3595,8 @@
       "class NotFoundError extends Error"
     ],
     "answer": 3,
-    "explanation": "Inheritance still works for simple cases like custom errors. Report variants are better combined with composition, and a service inheriting from a DB client mixes responsibilities."
+    "explanation": "Inheritance still works for simple cases like custom errors. Report variants are better combined with composition, and a service inheriting from a DB client mixes responsibilities.",
+    "guideId": "oop-composition"
   },
   {
     "id": "oop-srp",
@@ -3385,7 +3609,8 @@
       "Liskov Substitution"
     ],
     "answer": 1,
-    "explanation": "A class should have one reason to change. Emails belong in a Mailer and SQL in the repository."
+    "explanation": "A class should have one reason to change. Emails belong in a Mailer and SQL in the repository.",
+    "guideId": "oop-solid"
   },
   {
     "id": "oop-ocp",
@@ -3398,7 +3623,8 @@
       "Interface Segregation"
     ],
     "answer": 0,
-    "explanation": "Open/Closed: add behavior without modifying existing code."
+    "explanation": "Open/Closed: add behavior without modifying existing code.",
+    "guideId": "oop-solid"
   },
   {
     "id": "oop-lsp",
@@ -3411,7 +3637,8 @@
       "Dependency Inversion"
     ],
     "answer": 2,
-    "explanation": "An implementation must work wherever the original is expected. Code that receives a Storage expects save() to save, so this one breaks it."
+    "explanation": "An implementation must work wherever the original is expected. Code that receives a Storage expects save() to save, so this one breaks it.",
+    "guideId": "oop-solid"
   },
   {
     "id": "oop-isp",
@@ -3424,7 +3651,8 @@
       "Single Responsibility"
     ],
     "answer": 2,
-    "explanation": "Interfaces should be small and fit their users. A reader should receive something like OrderReader, without deleteAll()."
+    "explanation": "Interfaces should be small and fit their users. A reader should receive something like OrderReader, without deleteAll().",
+    "guideId": "oop-solid"
   },
   {
     "id": "oop-lsp-behavior",
@@ -3437,7 +3665,8 @@
       "Declaring the same private fields"
     ],
     "answer": 0,
-    "explanation": "Liskov is not only about types: an implementation must also behave as the code using it expects."
+    "explanation": "Liskov is not only about types: an implementation must also behave as the code using it expects.",
+    "guideId": "oop-solid"
   },
   {
     "id": "oop-pattern-kind",
@@ -3450,7 +3679,8 @@
       "Architectural"
     ],
     "answer": 0,
-    "explanation": "Creational patterns are about how objects are created. Structural ones combine classes and objects; behavioral ones split responsibilities and communication."
+    "explanation": "Creational patterns are about how objects are created. Structural ones combine classes and objects; behavioral ones split responsibilities and communication.",
+    "guideId": "oop-patterns"
   },
   {
     "id": "oop-factory",
@@ -3464,6 +3694,7 @@
     ],
     "answer": 0,
     "explanation": "The factory decides which concrete class to create. Callers depend only on the interface, and adding a channel only touches the factory.",
+    "guideId": "oop-creational",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3485,7 +3716,8 @@
       "It cannot be used for a database pool"
     ],
     "answer": 0,
-    "explanation": "A Singleton does not appear in the constructor of the code that uses it, so the dependency is hidden and hard to replace in tests."
+    "explanation": "A Singleton does not appear in the constructor of the code that uses it, so the dependency is hidden and hard to replace in tests.",
+    "guideId": "oop-creational"
   },
   {
     "id": "oop-singleton-alternative",
@@ -3498,7 +3730,8 @@
       "Create a new pool in each service"
     ],
     "answer": 0,
-    "explanation": "Create a single instance and pass it through constructors, like Nest does. The dependency stays visible and easy to replace."
+    "explanation": "Create a single instance and pass it through constructors, like Nest does. The dependency stays visible and easy to replace.",
+    "guideId": "oop-creational"
   },
   {
     "id": "oop-facade",
@@ -3511,7 +3744,8 @@
       "Adapter"
     ],
     "answer": 2,
-    "explanation": "A Facade offers a simple interface that coordinates several steps. Callers do not know each step."
+    "explanation": "A Facade offers a simple interface that coordinates several steps. Callers do not know each step.",
+    "guideId": "oop-structural"
   },
   {
     "id": "oop-adapter",
@@ -3525,6 +3759,7 @@
     ],
     "answer": 2,
     "explanation": "It translates an external API's format into the interface your code expects. If the provider changes, only the adapter changes.",
+    "guideId": "oop-structural",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3549,7 +3784,8 @@
       "Facade translates an interface; Adapter hides steps"
     ],
     "answer": 2,
-    "explanation": "Adapter converts one interface into the one your code expects. Facade hides several steps behind a single simple operation."
+    "explanation": "Adapter converts one interface into the one your code expects. Facade hides several steps behind a single simple operation.",
+    "guideId": "oop-structural"
   },
   {
     "id": "oop-strategy",
@@ -3563,6 +3799,7 @@
     ],
     "answer": 0,
     "explanation": "Several classes implement the same interface (StripePayment, WebpayPayment), and the code receives one without knowing which. Adding another does not touch checkout().",
+    "guideId": "oop-behavioral",
     "code": {
       "language": "typescript",
       "lines": [
@@ -3584,7 +3821,8 @@
       "The factory picks the strategy; the code just uses it"
     ],
     "answer": 3,
-    "explanation": "A factory decides which strategy to create from some data (like the user's choice). The rest of the code uses it through the shared interface."
+    "explanation": "A factory decides which strategy to create from some data (like the user's choice). The rest of the code uses it through the shared interface.",
+    "guideId": "oop-behavioral"
   },
   {
     "id": "oop-observer-vs-pubsub",
@@ -3597,7 +3835,8 @@
       "Pub/Sub is in-process; Observer uses a broker"
     ],
     "answer": 1,
-    "explanation": "In Observer, the object notifies its subscribers directly in the same process (like EventEmitter). In Pub/Sub, publishers and subscribers do not know each other and communicate through a broker."
+    "explanation": "In Observer, the object notifies its subscribers directly in the same process (like EventEmitter). In Pub/Sub, publishers and subscribers do not know each other and communicate through a broker.",
+    "guideId": "oop-behavioral"
   },
   {
     "id": "db-relational-when",
@@ -3610,7 +3849,8 @@
       "In-memory, like Redis"
     ],
     "answer": 2,
-    "explanation": "Relational databases offer tables with constraints and transactions, a good fit for data that must stay consistent across records."
+    "explanation": "Relational databases offer tables with constraints and transactions, a good fit for data that must stay consistent across records.",
+    "guideId": "db-relational-document"
   },
   {
     "id": "db-document-when",
@@ -3623,7 +3863,8 @@
       "In-memory, like Redis"
     ],
     "answer": 2,
-    "explanation": "Document databases store JSON-like records with flexible shape, useful for variable data read as a whole. The choice depends on access patterns."
+    "explanation": "Document databases store JSON-like records with flexible shape, useful for variable data read as a whole. The choice depends on access patterns.",
+    "guideId": "db-relational-document"
   },
   {
     "id": "db-where-vs-having",
@@ -3637,6 +3878,7 @@
     ],
     "answer": 1,
     "explanation": "WHERE filters rows (orders) before GROUP BY. HAVING filters the groups (users) after the counts are calculated. If a condition uses an aggregate function, it goes in HAVING.",
+    "guideId": "db-sql-joins",
     "code": {
       "language": "sql",
       "lines": [
@@ -3661,7 +3903,8 @@
       "CROSS JOIN orders"
     ],
     "answer": 2,
-    "explanation": "INNER JOIN (or JOIN) only keeps users with matching orders. LEFT JOIN keeps all users; those without orders get COUNT(o.id) = 0."
+    "explanation": "INNER JOIN (or JOIN) only keeps users with matching orders. LEFT JOIN keeps all users; those without orders get COUNT(o.id) = 0.",
+    "guideId": "db-sql-joins"
   },
   {
     "id": "db-index-cost",
@@ -3674,7 +3917,8 @@
       "A table lock on every SELECT"
     ],
     "answer": 0,
-    "explanation": "An index speeds up finding rows, but it takes space and must be updated on every insert, update and delete."
+    "explanation": "An index speeds up finding rows, but it takes space and must be updated on every insert, update and delete.",
+    "guideId": "db-indexes"
   },
   {
     "id": "db-composite-index",
@@ -3688,6 +3932,7 @@
     ],
     "answer": 1,
     "explanation": "A composite index helps when the query uses its columns from left to right. Filtering only by created_at skips the first column, user_id.",
+    "guideId": "db-indexes",
     "code": {
       "language": "sql",
       "lines": [
@@ -3706,7 +3951,8 @@
       "Run the query with EXPLAIN ANALYZE"
     ],
     "answer": 3,
-    "explanation": "EXPLAIN ANALYZE runs the query and shows the plan: whether it used the index and how long each step took."
+    "explanation": "EXPLAIN ANALYZE runs the query and shows the plan: whether it used the index and how long each step took.",
+    "guideId": "db-indexes"
   },
   {
     "id": "db-acid-isolation",
@@ -3719,7 +3965,8 @@
       "Isolation"
     ],
     "answer": 3,
-    "explanation": "Isolation keeps concurrent transactions from seeing each other's unfinished changes."
+    "explanation": "Isolation keeps concurrent transactions from seeing each other's unfinished changes.",
+    "guideId": "db-transactions"
   },
   {
     "id": "db-acid-durability",
@@ -3732,7 +3979,8 @@
       "Isolation"
     ],
     "answer": 2,
-    "explanation": "Durability guarantees that once a transaction commits, its changes are not lost, even if the server crashes."
+    "explanation": "Durability guarantees that once a transaction commits, its changes are not lost, even if the server crashes.",
+    "guideId": "db-transactions"
   },
   {
     "id": "db-acid-consistency",
@@ -3745,7 +3993,8 @@
       "All replicas show the same data at the same time"
     ],
     "answer": 2,
-    "explanation": "In ACID, consistency means the database's constraints (UNIQUE, CHECK, foreign keys) are satisfied when the transaction ends. 'All or nothing' is atomicity."
+    "explanation": "In ACID, consistency means the database's constraints (UNIQUE, CHECK, foreign keys) are satisfied when the transaction ends. 'All or nothing' is atomicity.",
+    "guideId": "db-transactions"
   },
   {
     "id": "db-transaction-broker",
@@ -3758,7 +4007,8 @@
       "No; use the Outbox Pattern"
     ],
     "answer": 3,
-    "explanation": "ACID covers changes inside one database, not external services. For those, use Outbox, idempotency and compensations (sagas)."
+    "explanation": "ACID covers changes inside one database, not external services. For those, use Outbox, idempotency and compensations (sagas).",
+    "guideId": "db-transactions"
   },
   {
     "id": "db-atomic-update",
@@ -3772,6 +4022,7 @@
     ],
     "answer": 1,
     "explanation": "The check and the decrement happen in one query. The second update finds stock = 0, so the WHERE matches no rows: 0 rows affected means no stock.",
+    "guideId": "db-locking",
     "code": {
       "language": "sql",
       "lines": [
@@ -3791,7 +4042,8 @@
       "Only if the table has an index"
     ],
     "answer": 0,
-    "explanation": "Both can read the same value before either writes. A transaction alone does not prevent this race condition; use an atomic update, locking or a constraint."
+    "explanation": "Both can read the same value before either writes. A transaction alone does not prevent this race condition; use an atomic update, locking or a constraint.",
+    "guideId": "db-locking"
   },
   {
     "id": "db-pessimistic-lock",
@@ -3804,7 +4056,8 @@
       "An atomic update"
     ],
     "answer": 0,
-    "explanation": "It reads the row and locks it until the transaction ends, so a concurrent purchase waits."
+    "explanation": "It reads the row and locks it until the transaction ends, so a concurrent purchase waits.",
+    "guideId": "db-locking"
   },
   {
     "id": "db-optimistic-lock",
@@ -3817,7 +4070,8 @@
       "The row was deleted by a database trigger"
     ],
     "answer": 1,
-    "explanation": "Optimistic locking does not block; it detects conflicts. 0 rows affected means the version changed since you read it, so you reload and retry."
+    "explanation": "Optimistic locking does not block; it detects conflicts. 0 rows affected means the version changed since you read it, so you reload and retry.",
+    "guideId": "db-locking"
   },
   {
     "id": "db-constraint",
@@ -3830,7 +4084,8 @@
       "CHECK (stock >= 0) on the table"
     ],
     "answer": 3,
-    "explanation": "A constraint is a rule in the table definition. The database rejects any change that breaks it, which backs up every other strategy."
+    "explanation": "A constraint is a rule in the table definition. The database rejects any change that breaks it, which backs up every other strategy.",
+    "guideId": "db-locking"
   },
   {
     "id": "db-n-plus-one",
@@ -3844,6 +4099,7 @@
     ],
     "answer": 1,
     "explanation": "One query loads the users, then one more runs for each user: 1 + N. That is the N+1 problem.",
+    "guideId": "db-n-plus-one",
     "code": {
       "language": "javascript",
       "lines": [
@@ -3865,7 +4121,8 @@
       "Add an index on users.id"
     ],
     "answer": 2,
-    "explanation": "Use a JOIN, WHERE user_id IN (...), or the ORM's eager loading (include: { orders: true } in Prisma). Promise.all still runs N queries."
+    "explanation": "Use a JOIN, WHERE user_id IN (...), or the ORM's eager loading (include: { orders: true } in Prisma). Promise.all still runs N queries.",
+    "guideId": "db-n-plus-one"
   },
   {
     "id": "db-migration-rename",
@@ -3878,7 +4135,8 @@
       "Add the new column"
     ],
     "answer": 3,
-    "explanation": "Expand/contract keeps changes backwards compatible: add the new column, write to both, migrate data, read from the new one, and only then drop the old one."
+    "explanation": "Expand/contract keeps changes backwards compatible: add the new column, write to both, migrate data, read from the new one, and only then drop the old one.",
+    "guideId": "db-migrations"
   },
   {
     "id": "db-cache-aside-miss",
@@ -3891,7 +4149,8 @@
       "Read it from PostgreSQL without caching it"
     ],
     "answer": 0,
-    "explanation": "Cache-aside: look in Redis; on a miss, read from the database and store it with a TTL so it expires. On updates, invalidate the key."
+    "explanation": "Cache-aside: look in Redis; on a miss, read from the database and store it with a TTL so it expires. On updates, invalidate the key.",
+    "guideId": "db-redis"
   },
   {
     "id": "db-cache-invalidate",
@@ -3904,7 +4163,8 @@
       "Increase its TTL"
     ],
     "answer": 2,
-    "explanation": "Deleting the key forces the next read to load fresh data. Waiting for the TTL means users can see the old price until then."
+    "explanation": "Deleting the key forces the next read to load fresh data. Waiting for the TTL means users can see the old price until then.",
+    "guideId": "db-redis"
   },
   {
     "id": "db-cache-stampede",
@@ -3917,7 +4177,8 @@
       "N+1 queries"
     ],
     "answer": 0,
-    "explanation": "It is mitigated by letting only one request recompute the value (with a lock) while the rest wait or use the old one."
+    "explanation": "It is mitigated by letting only one request recompute the value (with a lock) while the rest wait or use the old one.",
+    "guideId": "db-redis"
   },
   {
     "id": "db-stale-price",
@@ -3930,7 +4191,8 @@
       "Redis TTLs can expire a few seconds late"
     ],
     "answer": 2,
-    "explanation": "Until the key expires or is invalidated, Redis can return an outdated value. For the price you actually charge, verify the real value."
+    "explanation": "Until the key expires or is invalidated, Redis can return an outdated value. For the price you actually charge, verify the real value.",
+    "guideId": "db-redis"
   },
   {
     "id": "db-redis-down",
@@ -3943,7 +4205,8 @@
       "The app serves the last values it cached"
     ],
     "answer": 1,
-    "explanation": "In cache-aside, the cache is an optimization. If it fails, the app keeps working against the database, just slower."
+    "explanation": "In cache-aside, the cache is an optimization. If it fails, the app keeps working against the database, just slower.",
+    "guideId": "db-redis"
   },
   {
     "id": "algo-big-o",
@@ -3956,7 +4219,8 @@
       "The memory used by the program in bytes"
     ],
     "answer": 2,
-    "explanation": "Big O describes the growth of time or memory as n increases. It does not measure exact seconds or bytes."
+    "explanation": "Big O describes the growth of time or memory as n increases. It does not measure exact seconds or bytes.",
+    "guideId": "algo-big-o"
   },
   {
     "id": "algo-nested-loops",
@@ -3970,6 +4234,7 @@
     ],
     "answer": 1,
     "explanation": "For each element, the inner loop goes over all elements again: n × n comparisons.",
+    "guideId": "algo-big-o",
     "code": {
       "language": "javascript",
       "lines": [
@@ -3992,7 +4257,8 @@
       "O(n log n)"
     ],
     "answer": 3,
-    "explanation": "Efficient sorting algorithms like merge sort, and JavaScript's sort, are O(n log n)."
+    "explanation": "Efficient sorting algorithms like merge sort, and JavaScript's sort, are O(n log n).",
+    "guideId": "algo-big-o"
   },
   {
     "id": "algo-array-access",
@@ -4005,7 +4271,8 @@
       "O(1) for both operations"
     ],
     "answer": 0,
-    "explanation": "Index access goes directly to the position. Finding a value requires going through the array."
+    "explanation": "Index access goes directly to the position. Finding a value requires going through the array.",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-map-lookup",
@@ -4018,7 +4285,8 @@
       "Map caches the most recently read key"
     ],
     "answer": 2,
-    "explanation": "Map and Set are hash tables: the key is converted into the position of its value, so there is no need to go through the entries."
+    "explanation": "Map and Set are hash tables: the key is converted into the position of its value, so there is no need to go through the entries.",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-shift-cost",
@@ -4031,7 +4299,8 @@
       "O(log n), because it splits the array"
     ],
     "answer": 0,
-    "explanation": "shift() removes the first element and moves all the others one position. A real queue adds and removes in O(1)."
+    "explanation": "shift() removes the first element and moves all the others one position. A real queue adds and removes in O(1).",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-stack-undo",
@@ -4044,7 +4313,8 @@
       "Set"
     ],
     "answer": 0,
-    "explanation": "A stack returns the last item added first, like a pile of plates."
+    "explanation": "A stack returns the last item added first, like a pile of plates.",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-queue-jobs",
@@ -4057,7 +4327,8 @@
       "Map"
     ],
     "answer": 2,
-    "explanation": "A queue returns the first item added first, like a line at the bank."
+    "explanation": "A queue returns the first item added first, like a line at the bank.",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-linked-list",
@@ -4070,7 +4341,8 @@
       "O(n²)"
     ],
     "answer": 0,
-    "explanation": "You only change which node the references point to. In an array it would be O(n), because the following elements must move. Reaching position i, however, is O(n)."
+    "explanation": "You only change which node the references point to. In an array it would be O(n), because the following elements must move. Reaching position i, however, is O(n).",
+    "guideId": "algo-data-structures"
   },
   {
     "id": "algo-default-sort",
@@ -4084,6 +4356,7 @@
     ],
     "answer": 2,
     "explanation": "Without a comparator, sort converts numbers to text. '10' comes before '9' because it starts with '1'.",
+    "guideId": "algo-sorting-recursion",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4102,7 +4375,8 @@
       "(a, b) => b - a"
     ],
     "answer": 1,
-    "explanation": "A negative result puts a first; a positive one puts b first. b - a sorts descending, and a boolean result does not give sort the negative/zero/positive values it needs."
+    "explanation": "A negative result puts a first; a positive one puts b first. b - a sorts descending, and a boolean result does not give sort the negative/zero/positive values it needs.",
+    "guideId": "algo-sorting-recursion"
   },
   {
     "id": "algo-bubble-sort",
@@ -4115,7 +4389,8 @@
       "O(n)"
     ],
     "answer": 1,
-    "explanation": "It compares neighbors and swaps them, repeating up to n passes of n comparisons. It is mainly used for teaching."
+    "explanation": "It compares neighbors and swaps them, repeating up to n passes of n comparisons. It is mainly used for teaching.",
+    "guideId": "algo-sorting-recursion"
   },
   {
     "id": "algo-recursion-no-base",
@@ -4128,7 +4403,8 @@
       "It loops forever without throwing any error"
     ],
     "answer": 0,
-    "explanation": "Each call stays on the Call Stack until it finishes. Without a base case, the stack overflows and JavaScript throws an error."
+    "explanation": "Each call stays on the Call Stack until it finishes. Without a base case, the stack overflows and JavaScript throws an error.",
+    "guideId": "algo-sorting-recursion"
   },
   {
     "id": "algo-binary-requirement",
@@ -4141,7 +4417,8 @@
       "The array length must be a power of 2"
     ],
     "answer": 2,
-    "explanation": "Binary search discards half of the range based on the middle element, which only works if the data is ordered."
+    "explanation": "Binary search discards half of the range based on the middle element, which only works if the data is ordered.",
+    "guideId": "algo-binary-search"
   },
   {
     "id": "algo-binary-steps",
@@ -4154,7 +4431,8 @@
       "About 100"
     ],
     "answer": 2,
-    "explanation": "Each step halves the range: 2^20 is roughly one million, so about 20 steps. That is O(log n)."
+    "explanation": "Each step halves the range: 2^20 is roughly one million, so about 20 steps. That is O(log n).",
+    "guideId": "algo-binary-search"
   },
   {
     "id": "algo-binary-result",
@@ -4168,6 +4446,7 @@
     ],
     "answer": 0,
     "explanation": "The middle (index 2, value 5) is less than 8, so left moves to 3. The new middle is index 3, value 8: found at position 3.",
+    "guideId": "algo-binary-search",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4196,6 +4475,7 @@
     ],
     "answer": 1,
     "explanation": "Building the Map costs O(m), and each of the n lookups is O(1). The slow version runs find (O(m)) for each id: O(n × m).",
+    "guideId": "algo-map",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4219,7 +4499,8 @@
       "Extra time for less memory"
     ],
     "answer": 0,
-    "explanation": "The Map takes extra memory, but each lookup becomes O(1) instead of going through the list."
+    "explanation": "The Map takes extra memory, but each lookup becomes O(1) instead of going through the list.",
+    "guideId": "algo-map"
   },
   {
     "id": "algo-frequency-counter",
@@ -4232,7 +4513,8 @@
       "Binary search on the letters"
     ],
     "answer": 0,
-    "explanation": "Count how many times each letter appears in both words and compare the counts. That is O(n) instead of comparing every letter with every other."
+    "explanation": "Count how many times each letter appears in both words and compare the counts. That is O(n) instead of comparing every letter with every other.",
+    "guideId": "algo-map"
   },
   {
     "id": "algo-two-pointers-move",
@@ -4246,6 +4528,7 @@
     ],
     "answer": 3,
     "explanation": "The array is sorted, so to the right there are always bigger numbers. If the sum is too small, the left pointer moves to a bigger value; if too big, the right pointer moves to a smaller one.",
+    "guideId": "algo-two-pointers",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4273,7 +4556,8 @@
       "Binary search"
     ],
     "answer": 0,
-    "explanation": "Two pointers start at both ends and move toward each other based on the sum, avoiding testing every pair (O(n²))."
+    "explanation": "Two pointers start at both ends and move toward each other based on the sum, avoiding testing every pair (O(n²)).",
+    "guideId": "algo-two-pointers"
   },
   {
     "id": "algo-sliding-window-result",
@@ -4287,6 +4571,7 @@
     ],
     "answer": 3,
     "explanation": "The windows are 2+1+5=8, 1+5+1=7, 5+1+3=9 and 1+3+2=6. The largest is 9.",
+    "guideId": "algo-sliding-window",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4313,7 +4598,8 @@
       "It only looks at every k-th element of the array"
     ],
     "answer": 1,
-    "explanation": "Two consecutive windows share all elements except the one that leaves and the one that enters, so each window is updated in O(1) instead of summed from scratch."
+    "explanation": "Two consecutive windows share all elements except the one that leaves and the one that enters, so each window is updated in O(1) instead of summed from scratch.",
+    "guideId": "algo-sliding-window"
   },
   {
     "id": "algo-takehome-tests",
@@ -4326,7 +4612,8 @@
       "Many trivial tests written to reach 100% coverage"
     ],
     "answer": 0,
-    "explanation": "Tests for key rules, like 'a user cannot see other users' tasks', show judgment. High coverage made of trivial tests says little."
+    "explanation": "Tests for key rules, like 'a user cannot see other users' tasks', show judgment. High coverage made of trivial tests says little.",
+    "guideId": "algo-take-home"
   },
   {
     "id": "algo-takehome-readme",
@@ -4339,7 +4626,8 @@
       "The list of libraries and their exact versions"
     ],
     "answer": 0,
-    "explanation": "The reviewer should run it without asking you. Explaining decisions and what you left out shows judgment even if you did not finish everything."
+    "explanation": "The reviewer should run it without asking you. Explaining decisions and what you left out shows judgment even if you did not finish everything.",
+    "guideId": "algo-take-home"
   },
   {
     "id": "algo-takehome-overdesign",
@@ -4352,7 +4640,8 @@
       "As lack of judgment: it is overdesigned"
     ],
     "answer": 3,
-    "explanation": "A simple, well-tested solution is better. Microservices or many layers in a small exercise read as overdesign."
+    "explanation": "A simple, well-tested solution is better. Microservices or many layers in a small exercise read as overdesign.",
+    "guideId": "algo-take-home"
   },
   {
     "id": "algo-takehome-commits",
@@ -4365,7 +4654,8 @@
       "They let reviewers skip the tests"
     ],
     "answer": 0,
-    "explanation": "A history of small commits shows your process. A single commit with everything says nothing about how you worked."
+    "explanation": "A history of small commits shows your process. A single commit with everything says nothing about how you worked.",
+    "guideId": "algo-take-home"
   },
   {
     "id": "test-unit",
@@ -4378,7 +4668,8 @@
       "Running a query against PostgreSQL in Docker"
     ],
     "answer": 2,
-    "explanation": "A unit test checks one function or class in isolation, with no database or network. The others use real dependencies."
+    "explanation": "A unit test checks one function or class in isolation, with no database or network. The others use real dependencies.",
+    "guideId": "test-types"
   },
   {
     "id": "test-integration",
@@ -4391,7 +4682,8 @@
       "Unit"
     ],
     "answer": 1,
-    "explanation": "It tests several real pieces together (HTTP, service, database), but without a browser or the full deployed system. That is an integration test."
+    "explanation": "It tests several real pieces together (HTTP, service, database), but without a browser or the full deployed system. That is an integration test.",
+    "guideId": "test-types"
   },
   {
     "id": "test-e2e",
@@ -4404,7 +4696,8 @@
       "Unit"
     ],
     "answer": 1,
-    "explanation": "End-to-end tests run a complete user flow with the whole system running. A contract test only checks that two services agree on an API's shape."
+    "explanation": "End-to-end tests run a complete user flow with the whole system running. A contract test only checks that two services agree on an API's shape.",
+    "guideId": "test-types"
   },
   {
     "id": "test-pyramid",
@@ -4417,7 +4710,8 @@
       "Many integration, few unit, no end-to-end"
     ],
     "answer": 2,
-    "explanation": "Unit tests are fast and cheap, so you write many. End-to-end tests are slow and brittle, so you keep only a few for critical flows."
+    "explanation": "Unit tests are fast and cheap, so you write many. End-to-end tests are slow and brittle, so you keep only a few for critical flows.",
+    "guideId": "test-types"
   },
   {
     "id": "test-e2e-few",
@@ -4430,7 +4724,8 @@
       "They are slow and brittle"
     ],
     "answer": 3,
-    "explanation": "E2E tests run the whole system, so they take long and break for reasons unrelated to the change (timing, UI tweaks). They run fine in CI and do find bugs, but they cost more."
+    "explanation": "E2E tests run the whole system, so they take long and break for reasons unrelated to the change (timing, UI tweaks). They run fine in CI and do find bugs, but they cost more.",
+    "guideId": "test-types"
   },
   {
     "id": "test-supertest",
@@ -4443,7 +4738,8 @@
       "Running test files in parallel across workers"
     ],
     "answer": 0,
-    "explanation": "Supertest receives your Express app and sends requests to it, so you can assert on status codes and bodies without deploying anything."
+    "explanation": "Supertest receives your Express app and sends requests to it, so you can assert on status codes and bodies without deploying anything.",
+    "guideId": "test-types"
   },
   {
     "id": "test-testcontainers",
@@ -4456,7 +4752,8 @@
       "Runs each test file inside its own virtual machine"
     ],
     "answer": 0,
-    "explanation": "Testcontainers starts disposable Docker containers (a real database, a broker) for integration tests, and removes them afterwards."
+    "explanation": "Testcontainers starts disposable Docker containers (a real database, a broker) for integration tests, and removes them afterwards.",
+    "guideId": "test-types"
   },
   {
     "id": "test-tools-runner",
@@ -4469,7 +4766,8 @@
       "Docker or Compose"
     ],
     "answer": 2,
-    "explanation": "Jest and Vitest are test runners: they find test files, run them and provide functions like it, expect and mocks. Supertest and Testcontainers are helpers used inside those tests."
+    "explanation": "Jest and Vitest are test runners: they find test files, run them and provide functions like it, expect and mocks. Supertest and Testcontainers are helpers used inside those tests.",
+    "guideId": "test-types"
   },
   {
     "id": "test-aaa-act",
@@ -4483,6 +4781,7 @@
     ],
     "answer": 1,
     "explanation": "Arrange prepares the data (price), Act runs the code under test once, and Assert checks the result.",
+    "guideId": "test-aaa",
     "code": {
       "language": "typescript",
       "lines": [
@@ -4505,7 +4804,8 @@
       "-20"
     ],
     "answer": 2,
-    "explanation": "The expected value comes from the requirement, not from what the code returns now. Copying -20 into the test would only confirm the bug."
+    "explanation": "The expected value comes from the requirement, not from what the code returns now. Copying -20 into the test would only confirm the bug.",
+    "guideId": "test-aaa"
   },
   {
     "id": "test-aaa-act-count",
@@ -4518,7 +4818,8 @@
       "As many as the flow needs"
     ],
     "answer": 0,
-    "explanation": "A single action per test makes it clear what is being tested and why it fails. Several actions usually mean several tests."
+    "explanation": "A single action per test makes it clear what is being tested and why it fails. Several actions usually mean several tests.",
+    "guideId": "test-aaa"
   },
   {
     "id": "test-stub",
@@ -4531,7 +4832,8 @@
       "Stub"
     ],
     "answer": 3,
-    "explanation": "A stub returns fixed answers so the code under test can move forward. It does not record or verify calls."
+    "explanation": "A stub returns fixed answers so the code under test can move forward. It does not record or verify calls.",
+    "guideId": "test-doubles"
   },
   {
     "id": "test-mock",
@@ -4544,7 +4846,8 @@
       "Dummy"
     ],
     "answer": 2,
-    "explanation": "A mock records how it was called so the test can verify it afterwards. A dummy is only passed to fill a parameter and is never used."
+    "explanation": "A mock records how it was called so the test can verify it afterwards. A dummy is only passed to fill a parameter and is never used.",
+    "guideId": "test-doubles"
   },
   {
     "id": "test-fake",
@@ -4557,7 +4860,8 @@
       "Dummy"
     ],
     "answer": 0,
-    "explanation": "A fake is a real, simplified implementation. Unlike a stub, it has working behavior: what you save, you can read back."
+    "explanation": "A fake is a real, simplified implementation. Unlike a stub, it has working behavior: what you save, you can read back.",
+    "guideId": "test-doubles"
   },
   {
     "id": "test-vi-fn",
@@ -4571,6 +4875,7 @@
     ],
     "answer": 0,
     "explanation": "vi.fn() (jest.fn() in Jest) creates a standalone fake function that records every call. vi.spyOn would wrap an existing real method instead.",
+    "guideId": "test-doubles",
     "code": {
       "language": "typescript",
       "lines": [
@@ -4592,7 +4897,8 @@
       "Mocks make tests slower than real database calls"
     ],
     "answer": 1,
-    "explanation": "Verifying internal calls ties the test to the implementation. Use a mock when the call itself is the result, like sending an email."
+    "explanation": "Verifying internal calls ties the test to the implementation. Use a mock when the call itself is the result, like sending an email.",
+    "guideId": "test-doubles"
   },
   {
     "id": "test-cases-count",
@@ -4605,7 +4911,8 @@
       "One test per public method"
     ],
     "answer": 2,
-    "explanation": "List the outcomes: success, blocked user, no stock, and a failing repository. Each one gets its own test."
+    "explanation": "List the outcomes: success, blocked user, no stock, and a failing repository. Each one gets its own test.",
+    "guideId": "test-use-case"
   },
   {
     "id": "test-blocked-user",
@@ -4618,7 +4925,8 @@
       "It throws and no order is saved"
     ],
     "answer": 3,
-    "explanation": "The use case rejects the operation and nothing is persisted. It should not know about HTTP status codes; mapping errors to 403 happens in the HTTP layer."
+    "explanation": "The use case rejects the operation and nothing is persisted. It should not know about HTTP status codes; mapping errors to 403 happens in the HTTP layer.",
+    "guideId": "test-use-case"
   },
   {
     "id": "test-repo-fails",
@@ -4631,7 +4939,8 @@
       "It logs the error and returns true"
     ],
     "answer": 1,
-    "explanation": "Swallowing the error would make the caller think the order was saved. The use case lets it propagate, so the error handler can respond properly."
+    "explanation": "Swallowing the error would make the caller think the order was saved. The use case lets it propagate, so the error handler can respond properly.",
+    "guideId": "test-use-case"
   },
   {
     "id": "test-integration-case",
@@ -4644,7 +4953,8 @@
       "The total includes the applied discount"
     ],
     "answer": 2,
-    "explanation": "Authentication and status codes live in the HTTP layer, so they need a test that goes through the endpoint. Business outcomes are covered faster with unit tests."
+    "explanation": "Authentication and status codes live in the HTTP layer, so they need a test that goes through the endpoint. Business outcomes are covered faster with unit tests.",
+    "guideId": "test-use-case"
   },
   {
     "id": "test-tdd-cycle",
@@ -4657,7 +4967,8 @@
       "Refactor → Red → Green"
     ],
     "answer": 2,
-    "explanation": "Write a failing test (red), write the minimum code to make it pass (green), then improve the code with the test as a safety net (refactor)."
+    "explanation": "Write a failing test (red), write the minimum code to make it pass (green), then improve the code with the test as a safety net (refactor).",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-tdd-red",
@@ -4670,7 +4981,8 @@
       "It proves the test can detect the missing behavior"
     ],
     "answer": 3,
-    "explanation": "If a new test passes before the behavior exists, it is not testing what you think. Seeing it fail first confirms it checks the right thing."
+    "explanation": "If a new test passes before the behavior exists, it is not testing what you think. Seeing it fail first confirms it checks the right thing.",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-tdd-green",
@@ -4683,7 +4995,8 @@
       "The minimum needed to pass the test"
     ],
     "answer": 3,
-    "explanation": "Green is about passing the current test with the least code. Cleaning it up comes in the refactor step, and new cases come with new tests."
+    "explanation": "Green is about passing the current test with the least code. Cleaning it up comes in the refactor step, and new cases come with new tests.",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-ci",
@@ -4696,7 +5009,8 @@
       "Merges the branch if tests pass"
     ],
     "answer": 1,
-    "explanation": "CI checks each change automatically, so a broken build or failing test shows up before merging. Deploying automatically is Continuous Deployment (CD)."
+    "explanation": "CI checks each change automatically, so a broken build or failing test shows up before merging. Deploying automatically is Continuous Deployment (CD).",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-linter",
@@ -4709,7 +5023,8 @@
       "Flags errors without running the code"
     ],
     "answer": 3,
-    "explanation": "A linter analyzes the source code statically, for example an unused variable or a missing await. It does not run the code."
+    "explanation": "A linter analyzes the source code statically, for example an unused variable or a missing await. It does not run the code.",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-ai-risk",
@@ -4722,7 +5037,8 @@
       "They always produce low coverage"
     ],
     "answer": 0,
-    "explanation": "A generated test often derives its expected values from the current code, so a bug becomes the expected behavior. Review them like any other code."
+    "explanation": "A generated test often derives its expected values from the current code, so a bug becomes the expected behavior. Review them like any other code.",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "test-tdd-when",
@@ -4735,7 +5051,8 @@
       "Business rules with clear requirements"
     ],
     "answer": 3,
-    "explanation": "When the expected behavior is clear, the test can define it before the code exists. When requirements are still changing, tests written first are often rewritten."
+    "explanation": "When the expected behavior is clear, the test can define it before the code exists. When requirements are still changing, tests written first are often rewritten.",
+    "guideId": "test-tdd-ci"
   },
   {
     "id": "react-props-readonly",
@@ -4748,7 +5065,8 @@
       "Yes, but only if the prop is an object"
     ],
     "answer": 0,
-    "explanation": "Props flow from parent to child and must not be changed by the child. If the child needs to change something, the parent passes a function that updates its own state."
+    "explanation": "Props flow from parent to child and must not be changed by the child. If the child needs to change something, the parent passes a function that updates its own state.",
+    "guideId": "react-what"
   },
   {
     "id": "react-rerender-when",
@@ -4761,7 +5079,8 @@
       "On state change or parent re-render"
     ],
     "answer": 3,
-    "explanation": "A state update re-renders the component, and by default a parent's render re-renders all its children, even if their props did not change (unless they are memoized)."
+    "explanation": "A state update re-renders the component, and by default a parent's render re-renders all its children, even if their props did not change (unless they are memoized).",
+    "guideId": "react-what"
   },
   {
     "id": "react-virtual-dom",
@@ -4774,7 +5093,8 @@
       "It replaces the component's whole DOM subtree"
     ],
     "answer": 0,
-    "explanation": "React compares the new result with the previous one (the Virtual DOM) and applies only the differences to the real page."
+    "explanation": "React compares the new result with the previous one (the Virtual DOM) and applies only the differences to the real page.",
+    "guideId": "react-what"
   },
   {
     "id": "react-mutate-state",
@@ -4788,6 +5108,7 @@
     ],
     "answer": 1,
     "explanation": "Mutating the object does not call the setter, so React does not know anything changed and does not re-render. Use setUser({ ...user, name: 'Bea' }).",
+    "guideId": "react-usestate",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4814,6 +5135,7 @@
     ],
     "answer": 2,
     "explanation": "Inside a render, count is a fixed value (0). Both calls ask for 0 + 1, and React batches them into one render, so the result is 1.",
+    "guideId": "react-advanced",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4836,6 +5158,7 @@
     ],
     "answer": 2,
     "explanation": "The functional form receives the most recent value, so the second call starts from 1. Use it whenever the new value depends on the previous one.",
+    "guideId": "react-usestate",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4857,7 +5180,8 @@
       "Once, after the first render"
     ],
     "answer": 3,
-    "explanation": "An empty dependency array means the effect never re-runs after the first time. (In development, StrictMode may run it twice to check the cleanup.)"
+    "explanation": "An empty dependency array means the effect never re-runs after the first time. (In development, StrictMode may run it twice to check the cleanup.)",
+    "guideId": "react-useeffect"
   },
   {
     "id": "react-effect-no-array",
@@ -4870,7 +5194,8 @@
       "After every render"
     ],
     "answer": 3,
-    "explanation": "Without an array, React runs the effect after every render, whatever caused it."
+    "explanation": "Without an array, React runs the effect after every render, whatever caused it.",
+    "guideId": "react-useeffect"
   },
   {
     "id": "react-effect-deps",
@@ -4883,7 +5208,8 @@
       "Before each render in which count has changed"
     ],
     "answer": 1,
-    "explanation": "Effects always run after the first render. After that, React re-runs this one only when count is different from the previous render."
+    "explanation": "Effects always run after the first render. After that, React re-runs this one only when count is different from the previous render.",
+    "guideId": "react-useeffect"
   },
   {
     "id": "react-cleanup",
@@ -4897,6 +5223,7 @@
     ],
     "answer": 0,
     "explanation": "The cleanup stops what the effect started. React calls it before running the effect again and when the component is removed.",
+    "guideId": "react-useeffect",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4918,7 +5245,8 @@
       "React stops the interval"
     ],
     "answer": 2,
-    "explanation": "React does not know about timers or subscriptions you start. Without a cleanup they keep running, which wastes work and can leak memory."
+    "explanation": "React does not know about timers or subscriptions you start. Without a cleanup they keep running, which wastes work and can leak memory.",
+    "guideId": "react-useeffect"
   },
   {
     "id": "react-controlled",
@@ -4932,6 +5260,7 @@
     ],
     "answer": 3,
     "explanation": "A controlled input receives value from state and updates it with onChange on every keystroke, so React always knows the value.",
+    "guideId": "react-forms",
     "code": {
       "language": "javascript",
       "lines": [
@@ -4951,7 +5280,8 @@
       "An uncontrolled input read with a ref"
     ],
     "answer": 1,
-    "explanation": "To react on every change, React needs the value in state. Uncontrolled inputs are only read when needed, usually on submit."
+    "explanation": "To react on every change, React needs the value in state. Uncontrolled inputs are only read when needed, usually on submit.",
+    "guideId": "react-forms"
   },
   {
     "id": "react-uncontrolled",
@@ -4964,7 +5294,8 @@
       "From state, updated on every keystroke"
     ],
     "answer": 0,
-    "explanation": "In an uncontrolled input the browser keeps the value. You read it when needed, for example with useRef on submit."
+    "explanation": "In an uncontrolled input the browser keeps the value. You read it when needed, for example with useRef on submit.",
+    "guideId": "react-forms"
   },
   {
     "id": "react-key-index",
@@ -4977,7 +5308,8 @@
       "Index keys are ignored in production builds"
     ],
     "answer": 1,
-    "explanation": "When items move, each index ends up pointing to a different item. React keeps state by key, so a checked checkbox can appear on another task."
+    "explanation": "When items move, each index ends up pointing to a different item. React keeps state by key, so a checked checkbox can appear on another task.",
+    "guideId": "react-keys"
   },
   {
     "id": "react-key-best",
@@ -4990,7 +5322,8 @@
       "task.title"
     ],
     "answer": 1,
-    "explanation": "A key must be unique and stable between renders. Math.random() changes every render, titles can repeat, and the index changes when the list is reordered."
+    "explanation": "A key must be unique and stable between renders. Math.random() changes every render, titles can repeat, and the index changes when the list is reordered.",
+    "guideId": "react-keys"
   },
   {
     "id": "react-lifting-state",
@@ -5003,7 +5336,8 @@
       "Keep the state in their parent"
     ],
     "answer": 3,
-    "explanation": "Lifting state up to the closest common parent and passing it down by props is the simplest solution. Context or a global store are for wider sharing."
+    "explanation": "Lifting state up to the closest common parent and passing it down by props is the simplest solution. Context or a global store are for wider sharing.",
+    "guideId": "react-shared-state"
   },
   {
     "id": "react-context-problem",
@@ -5016,7 +5350,8 @@
       "Caching data fetched from the server"
     ],
     "answer": 0,
-    "explanation": "Context delivers a value to every component inside its Provider, without passing it level by level (prop drilling). Typical uses are the logged-in user or the theme."
+    "explanation": "Context delivers a value to every component inside its Provider, without passing it level by level (prop drilling). Typical uses are the logged-in user or the theme.",
+    "guideId": "react-shared-state"
   },
   {
     "id": "react-context-scope",
@@ -5030,6 +5365,7 @@
     ],
     "answer": 0,
     "explanation": "Every component below the Provider, at any depth, can read the value. Outside the Provider, useContext returns the default value passed to createContext (null here).",
+    "guideId": "react-shared-state",
     "code": {
       "language": "javascript",
       "lines": [
@@ -5052,7 +5388,8 @@
       "Whenever two components share the same value"
     ],
     "answer": 0,
-    "explanation": "Start with local state, lift it when siblings share it, and use Context for simple global data. A store pays off when shared state is large and changes from many places."
+    "explanation": "Start with local state, lift it when siblings share it, and use Context for simple global data. A store pays off when shared state is large and changes from many places.",
+    "guideId": "react-shared-state"
   },
   {
     "id": "react-usememo",
@@ -5065,7 +5402,8 @@
       "A cached value, recomputed when deps change"
     ],
     "answer": 3,
-    "explanation": "useMemo remembers the result of a calculation between renders. useCallback is the one that remembers a function."
+    "explanation": "useMemo remembers the result of a calculation between renders. useCallback is the one that remembers a function.",
+    "guideId": "react-memoization"
   },
   {
     "id": "react-usecallback",
@@ -5078,7 +5416,8 @@
       "The arguments of the last call"
     ],
     "answer": 0,
-    "explanation": "useCallback returns the same function object until its dependencies change, instead of creating a new function on every render."
+    "explanation": "useCallback returns the same function object until its dependencies change, instead of creating a new function on every render.",
+    "guideId": "react-memoization"
   },
   {
     "id": "react-usememo-vs-effect",
@@ -5091,7 +5430,8 @@
       "useMemo runs once; useEffect runs on every single render"
     ],
     "answer": 2,
-    "explanation": "useMemo returns a value you use while rendering. useEffect runs an action (outside React) after the render and returns nothing to it."
+    "explanation": "useMemo returns a value you use while rendering. useEffect runs an action (outside React) after the render and returns nothing to it.",
+    "guideId": "react-memoization"
   },
   {
     "id": "react-usememo-empty",
@@ -5105,6 +5445,7 @@
     ],
     "answer": 2,
     "explanation": "With [], the value is computed once and never again. The dependency array must include everything the calculation uses: [tasks, search].",
+    "guideId": "react-memoization",
     "code": {
       "language": "javascript",
       "lines": [
@@ -5126,7 +5467,8 @@
       "It removes unused state from components"
     ],
     "answer": 1,
-    "explanation": "React Compiler analyzes components when the app is built and memoizes them automatically, so manual useMemo and useCallback are only needed for fine control."
+    "explanation": "React Compiler analyzes components when the app is built and memoizes them automatically, so manual useMemo and useCallback are only needed for fine control.",
+    "guideId": "react-memoization"
   },
   {
     "id": "react-derived-effect",
@@ -5140,6 +5482,7 @@
     ],
     "answer": 2,
     "explanation": "Values derived from props or state should be computed during render: const done = tasks.filter(t => t.done). The effect sets done after the render, so React renders twice and the first render shows the old value.",
+    "guideId": "react-advanced",
     "code": {
       "language": "javascript",
       "lines": [
@@ -5161,7 +5504,8 @@
       "React always runs effects twice, also in production"
     ],
     "answer": 1,
-    "explanation": "In development, StrictMode mounts, unmounts and mounts again to check that the effect's cleanup undoes what it started. It does not happen in production."
+    "explanation": "In development, StrictMode mounts, unmounts and mounts again to check that the effect's cleanup undoes what it started. It does not happen in production.",
+    "guideId": "react-advanced"
   },
   {
     "id": "react-memo-callback",
@@ -5175,6 +5519,7 @@
     ],
     "answer": 3,
     "explanation": "React.memo skips the render only if all props are equal by reference. A new arrow function each render counts as a new prop; wrap it with useCallback.",
+    "guideId": "react-advanced",
     "code": {
       "language": "javascript",
       "lines": [
@@ -5198,6 +5543,7 @@
     ],
     "answer": 1,
     "explanation": "The handler captured count = 0 when it ran. After the await it still sees that old value. setCount(c => c + 1) would use the latest value.",
+    "guideId": "react-advanced",
     "code": {
       "language": "javascript",
       "lines": [
@@ -5219,7 +5565,8 @@
       "app/tasks/index.tsx"
     ],
     "answer": 1,
-    "explanation": "With file-based routing, the folder path defines the URL and the page.tsx file inside it is the page."
+    "explanation": "With file-based routing, the folder path defines the URL and the page.tsx file inside it is the page.",
+    "guideId": "react-nextjs"
   },
   {
     "id": "react-use-client",
@@ -5232,7 +5579,8 @@
       "When the component uses state, effects or events"
     ],
     "answer": 3,
-    "explanation": "Components are Server Components by default. 'use client' is needed for interactivity, like useState, useEffect or onClick."
+    "explanation": "Components are Server Components by default. 'use client' is needed for interactivity, like useState, useEffect or onClick.",
+    "guideId": "react-nextjs"
   },
   {
     "id": "react-ssr-benefit",
@@ -5245,7 +5593,8 @@
       "The API is no longer necessary"
     ],
     "answer": 2,
-    "explanation": "The browser receives ready HTML, so the first view appears sooner and search engines read the content more easily. Interactivity still needs JavaScript."
+    "explanation": "The browser receives ready HTML, so the first view appears sooner and search engines read the content more easily. Interactivity still needs JavaScript.",
+    "guideId": "react-nextjs"
   },
   {
     "id": "infra-image-container",
@@ -5258,7 +5607,8 @@
       "Container: read-only package; image: a running instance"
     ],
     "answer": 0,
-    "explanation": "An image is built from a Dockerfile and does not change. A container is an image in execution, and several containers can run from the same image."
+    "explanation": "An image is built from a Dockerfile and does not change. A container is an image in execution, and several containers can run from the same image.",
+    "guideId": "infra-docker"
   },
   {
     "id": "infra-volume",
@@ -5271,7 +5621,8 @@
       "A RUN step"
     ],
     "answer": 2,
-    "explanation": "A volume stores data outside the container's own filesystem, so it survives when the container is removed."
+    "explanation": "A volume stores data outside the container's own filesystem, so it survives when the container is removed.",
+    "guideId": "infra-docker"
   },
   {
     "id": "infra-dockerfile-cache",
@@ -5285,6 +5636,7 @@
     ],
     "answer": 0,
     "explanation": "Each instruction is a cached layer. If package.json did not change, Docker skips npm ci and only re-copies your code, which makes builds much faster.",
+    "guideId": "infra-docker",
     "code": {
       "language": "dockerfile",
       "lines": [
@@ -5308,7 +5660,8 @@
       "RUN: while building; CMD: when the container starts"
     ],
     "answer": 3,
-    "explanation": "RUN executes during the build and its result is saved in the image (like npm ci). CMD is the command the container runs when it starts."
+    "explanation": "RUN executes during the build and its result is saved in the image (like npm ci). CMD is the command the container runs when it starts.",
+    "guideId": "infra-docker"
   },
   {
     "id": "infra-container-vs-vm",
@@ -5321,7 +5674,8 @@
       "It runs the app without any operating system"
     ],
     "answer": 2,
-    "explanation": "A VM boots a full operating system. A container shares the host's kernel and only isolates the process, so it starts in seconds."
+    "explanation": "A VM boots a full operating system. A container shares the host's kernel and only isolates the process, so it starts in seconds.",
+    "guideId": "infra-docker"
   },
   {
     "id": "infra-compose-host",
@@ -5334,7 +5688,8 @@
       "127.0.0.1"
     ],
     "answer": 2,
-    "explanation": "Compose services find each other by service name. Inside the api container, localhost is the api container itself."
+    "explanation": "Compose services find each other by service name. Inside the api container, localhost is the api container itself.",
+    "guideId": "infra-compose"
   },
   {
     "id": "infra-compose-ports",
@@ -5347,7 +5702,8 @@
       "3000; 8080 is on your machine"
     ],
     "answer": 3,
-    "explanation": "The format is host:container. Your machine's port 8080 forwards to port 3000 inside the container."
+    "explanation": "The format is host:container. Your machine's port 8080 forwards to port 3000 inside the container.",
+    "guideId": "infra-compose"
   },
   {
     "id": "infra-depends-on",
@@ -5360,7 +5716,8 @@
       "api and db share the same container"
     ],
     "answer": 0,
-    "explanation": "depends_on controls start order. By itself it does not wait for PostgreSQL to be ready; that needs a healthcheck condition or a retry in the app."
+    "explanation": "depends_on controls start order. By itself it does not wait for PostgreSQL to be ready; that needs a healthcheck condition or a retry in the app.",
+    "guideId": "infra-compose"
   },
   {
     "id": "infra-compose-use",
@@ -5373,7 +5730,8 @@
       "Scaling containers automatically with the load"
     ],
     "answer": 0,
-    "explanation": "Compose starts several containers together (API, database, cache) on one machine, mostly for development and tests. Orchestrating production across machines is Kubernetes' job."
+    "explanation": "Compose starts several containers together (API, database, cache) on one machine, mostly for development and tests. Orchestrating production across machines is Kubernetes' job.",
+    "guideId": "infra-compose"
   },
   {
     "id": "infra-k8s-vs-docker",
@@ -5386,7 +5744,8 @@
       "Keeps N replicas running across machines"
     ],
     "answer": 3,
-    "explanation": "Docker packages and runs containers. Kubernetes orchestrates them: you declare the desired state ('3 copies of the API') and it restarts, scales and redeploys to keep it."
+    "explanation": "Docker packages and runs containers. Kubernetes orchestrates them: you declare the desired state ('3 copies of the API') and it restarts, scales and redeploys to keep it.",
+    "guideId": "infra-kubernetes"
   },
   {
     "id": "infra-k8s-pod",
@@ -5399,7 +5758,8 @@
       "Service"
     ],
     "answer": 2,
-    "explanation": "A pod wraps one or more containers that run together. Each copy of the API is usually one pod."
+    "explanation": "A pod wraps one or more containers that run together. Each copy of the API is usually one pod.",
+    "guideId": "infra-kubernetes"
   },
   {
     "id": "infra-k8s-deployment",
@@ -5412,7 +5772,8 @@
       "Service"
     ],
     "answer": 1,
-    "explanation": "A Deployment declares which image to run and how many replicas to keep. If a pod fails, it creates a new one."
+    "explanation": "A Deployment declares which image to run and how many replicas to keep. If a pod fails, it creates a new one.",
+    "guideId": "infra-kubernetes"
   },
   {
     "id": "infra-k8s-service",
@@ -5425,7 +5786,8 @@
       "It stores the secrets the pods need"
     ],
     "answer": 0,
-    "explanation": "Pods are created and destroyed all the time and change IPs. A Service gives one fixed address and spreads requests among the current pods."
+    "explanation": "Pods are created and destroyed all the time and change IPs. A Service gives one fixed address and spreads requests among the current pods.",
+    "guideId": "infra-kubernetes"
   },
   {
     "id": "infra-rolling-update",
@@ -5438,7 +5800,8 @@
       "So the database migration runs first"
     ],
     "answer": 2,
-    "explanation": "Pods are replaced gradually. Handling SIGTERM (stop accepting requests, finish the current ones, close the pool) avoids cutting users off during the deploy."
+    "explanation": "Pods are replaced gradually. Handling SIGTERM (stop accepting requests, finish the current ones, close the pool) avoids cutting users off during the deploy.",
+    "guideId": "infra-kubernetes"
   },
   {
     "id": "infra-vertical-drawbacks",
@@ -5451,7 +5814,8 @@
       "A hardware ceiling and one point of failure"
     ],
     "answer": 3,
-    "explanation": "Vertical scaling means a bigger machine. It is simple, but machines have a limit, and if that one machine falls, everything falls. The other options are concerns of horizontal scaling."
+    "explanation": "Vertical scaling means a bigger machine. It is simple, but machines have a limit, and if that one machine falls, everything falls. The other options are concerns of horizontal scaling.",
+    "guideId": "infra-scaling"
   },
   {
     "id": "infra-stateless",
@@ -5464,7 +5828,8 @@
       "Containerized"
     ],
     "answer": 2,
-    "explanation": "Any request can reach any copy, so nothing that must last between requests can live in one copy's memory."
+    "explanation": "Any request can reach any copy, so nothing that must last between requests can live in one copy's memory.",
+    "guideId": "infra-scaling"
   },
   {
     "id": "infra-session-memory",
@@ -5477,7 +5842,8 @@
       "Copy all sessions to each copy on startup"
     ],
     "answer": 1,
-    "explanation": "Moving session state to a shared store makes every copy able to read it, which keeps the API stateless."
+    "explanation": "Moving session state to a shared store makes every copy able to read it, which keeps the API stateless.",
+    "guideId": "infra-scaling"
   },
   {
     "id": "infra-pool-copies",
@@ -5490,7 +5856,8 @@
       "Each copy's pool shrinks to 1 connection"
     ],
     "answer": 0,
-    "explanation": "Each copy has its own pool, so 20 copies can open up to 200 connections. Adding copies can move the bottleneck to the database."
+    "explanation": "Each copy has its own pool, so 20 copies can open up to 200 connections. Adding copies can move the bottleneck to the database.",
+    "guideId": "infra-scaling"
   },
   {
     "id": "infra-db-bottleneck",
@@ -5503,7 +5870,8 @@
       "Only if the copies share one pool"
     ],
     "answer": 1,
-    "explanation": "More API copies send more queries to the same database. Fix the queries and indexes, or scale the database, instead."
+    "explanation": "More API copies send more queries to the same database. Fix the queries and indexes, or scale the database, instead.",
+    "guideId": "infra-scaling"
   },
   {
     "id": "infra-202",
@@ -5516,7 +5884,8 @@
       "204 No Content"
     ],
     "answer": 1,
-    "explanation": "202 means 'request received, it will be processed later'. The client then checks the result (for example GET /export/123) or receives a notification."
+    "explanation": "202 means 'request received, it will be processed later'. The client then checks the result (for example GET /export/123) or receives a notification.",
+    "guideId": "infra-queues"
   },
   {
     "id": "infra-at-least-once",
@@ -5529,7 +5898,8 @@
       "Processing in strict FIFO order"
     ],
     "answer": 0,
-    "explanation": "A message can arrive more than once, so processing it again must not duplicate effects, like sending the same invoice twice."
+    "explanation": "A message can arrive more than once, so processing it again must not duplicate effects, like sending the same invoice twice.",
+    "guideId": "infra-queues"
   },
   {
     "id": "infra-queue-why",
@@ -5542,7 +5912,8 @@
       "The queue removes the need for retries"
     ],
     "answer": 2,
-    "explanation": "The API only enqueues and answers, so users are not blocked and spikes wait in the queue. The work takes as long as before, just elsewhere."
+    "explanation": "The API only enqueues and answers, so users are not blocked and spikes wait in the queue. The work takes as long as before, just elsewhere.",
+    "guideId": "infra-queues"
   },
   {
     "id": "infra-sd-first",
@@ -5555,7 +5926,8 @@
       "Draw the microservices and how they communicate"
     ],
     "answer": 0,
-    "explanation": "Requirements drive every later decision. Each answer turns a piece on or off: a cache, a queue, more copies."
+    "explanation": "Requirements drive every later decision. Each answer turns a piece on or off: a cache, a queue, more copies.",
+    "guideId": "infra-sd-requirements"
   },
   {
     "id": "infra-sd-low-volume",
@@ -5568,7 +5940,8 @@
       "Microservices with Kafka between them"
     ],
     "answer": 1,
-    "explanation": "Start with the simplest design that meets the requirements. Add pieces only when volume or latency asks for them."
+    "explanation": "Start with the simplest design that meets the requirements. Add pieces only when volume or latency asks for them.",
+    "guideId": "infra-sd-requirements"
   },
   {
     "id": "infra-sd-read-heavy",
@@ -5581,7 +5954,8 @@
       "A second database for writes"
     ],
     "answer": 0,
-    "explanation": "A cache serves frequent reads without hitting the database each time, at the cost of possibly stale data."
+    "explanation": "A cache serves frequent reads without hitting the database each time, at the cost of possibly stale data.",
+    "guideId": "infra-sd-requirements"
   },
   {
     "id": "infra-sd-slow-task",
@@ -5594,7 +5968,8 @@
       "A queue: respond 202 and process it later"
     ],
     "answer": 3,
-    "explanation": "Slow work leaves the request: the API enqueues it and responds 202, and a worker does it in the background."
+    "explanation": "Slow work leaves the request: the API enqueues it and responds 202, and a worker does it in the background.",
+    "guideId": "infra-sd-requirements"
   },
   {
     "id": "infra-offset-repeat",
@@ -5607,7 +5982,8 @@
       "The next page fails with a 409 Conflict"
     ],
     "answer": 2,
-    "explanation": "Offset skips a fixed number of rows. When rows are inserted before the current position, everything shifts and items from the previous page appear again."
+    "explanation": "Offset skips a fixed number of rows. When rows are inserted before the current position, everything shifts and items from the previous page appear again.",
+    "guideId": "infra-sd-base"
   },
   {
     "id": "infra-offset-slow",
@@ -5620,7 +5996,8 @@
       "The database still walks the skipped rows"
     ],
     "answer": 3,
-    "explanation": "OFFSET 100000 makes the database read and discard 100,000 rows before returning the page."
+    "explanation": "OFFSET 100000 makes the database read and discard 100,000 rows before returning the page.",
+    "guideId": "infra-sd-base"
   },
   {
     "id": "infra-cursor",
@@ -5633,7 +6010,8 @@
       "Jump straight to page 50"
     ],
     "answer": 3,
-    "explanation": "A cursor asks for 'the next 20 after this ID'. It is stable and fast, but there is no page number to jump to."
+    "explanation": "A cursor asks for 'the next 20 after this ID'. It is stable and fast, but there is no page number to jump to.",
+    "guideId": "infra-sd-base"
   },
   {
     "id": "infra-unique-membership",
@@ -5646,7 +6024,8 @@
       "UNIQUE (user_id)"
     ],
     "answer": 2,
-    "explanation": "The pair must be unique. UNIQUE (user_id) would allow only one project per user, a plain index does not reject duplicates, and a foreign key only checks the project exists."
+    "explanation": "The pair must be unique. UNIQUE (user_id) would allow only one project per user, a plain index does not reject duplicates, and a foreign key only checks the project exists.",
+    "guideId": "infra-sd-base"
   },
   {
     "id": "infra-foreign-key",
@@ -5659,7 +6038,8 @@
       "Tasks that point to a missing project"
     ],
     "answer": 3,
-    "explanation": "A foreign key makes the database reject a project_id that has no matching row in projects. Speeding up queries is an index's job."
+    "explanation": "A foreign key makes the database reject a project_id that has no matching row in projects. Speeding up queries is an index's job.",
+    "guideId": "infra-sd-base"
   },
   {
     "id": "infra-growth-first",
@@ -5672,7 +6052,8 @@
       "Adding more API copies"
     ],
     "answer": 2,
-    "explanation": "Attack the real bottleneck from cheapest to most expensive: queries and indexes, then cache, then queues, then more copies."
+    "explanation": "Attack the real bottleneck from cheapest to most expensive: queries and indexes, then cache, then queues, then more copies.",
+    "guideId": "infra-sd-evolve"
   },
   {
     "id": "infra-concurrent-edit",
@@ -5685,7 +6066,8 @@
       "An idempotency key on the request"
     ],
     "answer": 1,
-    "explanation": "The update requires the version that was read. If someone saved first, it affects 0 rows and the second user reloads instead of overwriting."
+    "explanation": "The update requires the version that was read. If someone saved first, it affects 0 rows and the second user reloads instead of overwriting.",
+    "guideId": "infra-sd-evolve"
   },
   {
     "id": "infra-email-down",
@@ -5698,7 +6080,8 @@
       "A circuit breaker that skips the email"
     ],
     "answer": 2,
-    "explanation": "Signup saves the user and enqueues the email; a worker retries until the provider is back. A transaction cannot cover an external service, and a breaker alone would lose the email."
+    "explanation": "Signup saves the user and enqueues the email; a worker retries until the provider is back. A transaction cannot cover an external service, and a breaker alone would lose the email.",
+    "guideId": "infra-sd-evolve"
   },
   {
     "id": "infra-tradeoff-cache",
@@ -5711,6 +6094,473 @@
       "Less memory, but more database queries"
     ],
     "answer": 2,
-    "explanation": "A cache speeds up reads at the cost of possibly serving outdated data until it expires or is invalidated. Saying the cost of each decision is part of a good system design answer."
+    "explanation": "A cache speeds up reads at the cost of possibly serving outdated data until it expires or is invalidated. Saying the cost of each decision is part of a good system design answer.",
+    "guideId": "infra-sd-evolve"
+  },
+  {
+    "id": "node-middleware-await",
+    "topic": "Node.js & HTTP",
+    "question": "A middleware awaits a database query that takes 2 seconds before calling next(). What happens to the next middleware?",
+    "options": [
+      "It starts right away, in parallel",
+      "Express skips it after a timeout",
+      "It runs first, then the query ends",
+      "It waits until next() is called"
+    ],
+    "answer": 3,
+    "explanation": "A middleware is just a function. Express only moves to the next one when next() is called or a response is sent, so an async middleware simply delays the chain.",
+    "guideId": "node-middleware"
+  },
+  {
+    "id": "node-middleware-hang",
+    "topic": "Node.js & HTTP",
+    "question": "A middleware neither calls next() nor sends a response. What happens to the request?",
+    "options": [
+      "Express responds 500 with an error",
+      "Express calls next() automatically",
+      "It hangs until the client times out",
+      "Express responds 404 Not Found"
+    ],
+    "answer": 2,
+    "explanation": "Express has no way to know the middleware is done. Without next() or a response, the client waits until its own timeout.",
+    "guideId": "node-middleware"
+  },
+  {
+    "id": "node-express4-async-error",
+    "topic": "Node.js & HTTP",
+    "question": "In Express 4, what happens when this async handler throws?",
+    "options": [
+      "Express responds 500 with the error message",
+      "Express catches it and calls the error handler",
+      "The error is passed to the next route handler",
+      "The error never reaches the error handler"
+    ],
+    "answer": 3,
+    "explanation": "Express 4 does not catch rejected promises, so the error is lost and the request may hang. Use try/catch with next(error). Express 5 calls next(error) automatically.",
+    "guideId": "node-middleware",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "app.get('/users/:id', async (req, res) => {",
+        "  const user = await userService.get(req.params.id); // throws",
+        "  res.json(user);",
+        "});"
+      ]
+    }
+  },
+  {
+    "id": "node-express5-async",
+    "topic": "Node.js & HTTP",
+    "question": "What changed in Express 5 for errors thrown inside async route handlers?",
+    "options": [
+      "It requires an asyncHandler() wrapper",
+      "It retries the handler once before failing",
+      "It converts them into 400 responses",
+      "It passes them to next(error) automatically"
+    ],
+    "answer": 3,
+    "explanation": "Express 5 catches rejected promises and forwards them to the error handler, so the try/catch + next(error) pattern from Express 4 is no longer needed.",
+    "guideId": "node-middleware"
+  },
+  {
+    "id": "arch-vertical-slice-def",
+    "topic": "Architecture",
+    "question": "How does Vertical Slice Architecture organize code?",
+    "options": [
+      "By technical layer: controllers, services",
+      "By domain entity: one class per table",
+      "By deploy: one service for each feature",
+      "By feature, one folder per operation"
+    ],
+    "answer": 3,
+    "explanation": "Each slice (like create-order) holds everything one operation needs: endpoint, validation, logic and data access. Layered code groups by technical type instead.",
+    "guideId": "arch-vertical-slice"
+  },
+  {
+    "id": "arch-vertical-slice-cost",
+    "topic": "Architecture",
+    "question": "What is the main cost of Vertical Slice Architecture?",
+    "options": [
+      "Logic can be duplicated between slices",
+      "Every slice must use the same layers",
+      "Each slice must be deployed separately",
+      "Slices cannot share a single database"
+    ],
+    "answer": 0,
+    "explanation": "Since each slice is independent, two slices can repeat the same logic. Shared rules, like an order's rules, go in a common module.",
+    "guideId": "arch-vertical-slice"
+  },
+  {
+    "id": "arch-vertical-slice-when",
+    "topic": "Architecture",
+    "question": "When does Vertical Slice Architecture fit best?",
+    "options": [
+      "A system split into microservices",
+      "A CRUD that swaps databases often",
+      "Few operations sharing many rules",
+      "Many operations with little in common"
+    ],
+    "answer": 3,
+    "explanation": "If operations are independent, each change stays in one folder. If they share a lot of logic, layers or a rich domain may avoid duplication better.",
+    "guideId": "arch-vertical-slice"
+  },
+  {
+    "id": "arch-vertical-slice-vs-clean",
+    "topic": "Architecture",
+    "question": "How does Vertical Slice differ from Clean or Hexagonal Architecture?",
+    "options": [
+      "It puts the domain in the outer layer",
+      "It forbids using an ORM inside a slice",
+      "It needs one microservice for each slice",
+      "It does not force layers inside each slice"
+    ],
+    "answer": 3,
+    "explanation": "Each slice can be as simple or complex as it needs: one may use the ORM directly, another may have domain rules. Clean and Hexagonal impose the same layers everywhere.",
+    "guideId": "arch-vertical-slice"
+  },
+  {
+    "id": "oop-builder",
+    "topic": "OOP & Patterns",
+    "question": "Which pattern does this MongoDB query use?",
+    "options": [
+      "Decorator",
+      "Builder",
+      "Facade",
+      "Chain of Responsibility"
+    ],
+    "answer": 1,
+    "explanation": "A builder creates a complex object step by step instead of one call with many parameters. Query builders add each option (filter, sort, limit) with its own method.",
+    "guideId": "oop-creational",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "orders.find({ userId: 42 })",
+        "  .sort({ total: -1 })",
+        "  .limit(20);"
+      ]
+    }
+  },
+  {
+    "id": "oop-decorator",
+    "topic": "OOP & Patterns",
+    "question": "CachedUserRepository implements the same interface as UserRepository, checks Redis first and only calls the real repository on a miss. Which pattern is it?",
+    "options": [
+      "Strategy",
+      "Facade",
+      "Adapter",
+      "Decorator"
+    ],
+    "answer": 3,
+    "explanation": "A decorator wraps an object with another one that has the same interface and adds behavior (here, caching) without changing the original. An adapter would change the interface.",
+    "guideId": "oop-structural"
+  },
+  {
+    "id": "oop-decorator-vs-ts",
+    "topic": "OOP & Patterns",
+    "question": "How is the Decorator pattern related to TypeScript decorators like @Controller()?",
+    "options": [
+      "@Controller() is how you write the pattern",
+      "They are different things with a shared name",
+      "The pattern only works with @ decorators",
+      "TS decorators replace the pattern entirely"
+    ],
+    "answer": 1,
+    "explanation": "The Decorator pattern wraps an object to add behavior. TypeScript decorators are a language feature that attaches metadata or logic to classes and methods, as NestJS does.",
+    "guideId": "oop-structural"
+  },
+  {
+    "id": "oop-chain-of-responsibility",
+    "topic": "OOP & Patterns",
+    "question": "Express middlewares pass a request along with next(), and each one can stop it. Which pattern is this?",
+    "options": [
+      "Chain of Responsibility",
+      "Publish/Subscribe",
+      "Template Method",
+      "Decorator"
+    ],
+    "answer": 0,
+    "explanation": "A request goes through a chain of handlers; each one processes it and stops, or passes it to the next. Authentication → validation → controller is a typical chain.",
+    "guideId": "oop-behavioral"
+  },
+  {
+    "id": "oop-adapter-facade-decorator",
+    "topic": "OOP & Patterns",
+    "question": "Which pattern keeps the same interface and adds something, like caching or logs?",
+    "options": [
+      "Facade",
+      "Adapter",
+      "Builder",
+      "Decorator"
+    ],
+    "answer": 3,
+    "explanation": "Adapter changes an interface into the one your code expects, Facade hides several steps behind a simple one, and Decorator keeps the interface and adds behavior.",
+    "guideId": "oop-structural"
+  },
+  {
+    "id": "db-mongo-set",
+    "topic": "Databases",
+    "question": "Why use $set in a MongoDB update?",
+    "options": [
+      "It locks the document while it updates",
+      "It updates every matching document",
+      "It changes only the given fields",
+      "It inserts the document if it is missing"
+    ],
+    "answer": 2,
+    "explanation": "With { $set: { status: 'shipped' } }, only status changes. Passing a plain object to a replace operation would replace the whole document. Inserting when missing needs the upsert option.",
+    "guideId": "db-mongodb",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "await orders.updateOne(",
+        "  { _id: id },",
+        "  { $set: { status: 'shipped' } }",
+        ");"
+      ]
+    }
+  },
+  {
+    "id": "db-mongo-find",
+    "topic": "Databases",
+    "question": "Which SQL condition matches this MongoDB filter?",
+    "options": [
+      "WHERE user_id = 42 AND total > 10000",
+      "WHERE user_id = 42 OR total > 10000",
+      "WHERE user_id > 42 AND total > 10000",
+      "WHERE user_id = 42 AND total >= 10000"
+    ],
+    "answer": 0,
+    "explanation": "Fields in the same filter object are combined with AND, and $gt means 'greater than' ($gte would be 'greater than or equal').",
+    "guideId": "db-mongodb",
+    "code": {
+      "language": "javascript",
+      "lines": [
+        "orders.find({ userId: 42, total: { $gt: 10000 } });"
+      ]
+    }
+  },
+  {
+    "id": "db-mongo-aggregation",
+    "topic": "Databases",
+    "question": "What is the MongoDB equivalent of SQL's GROUP BY?",
+    "options": [
+      "The aggregation pipeline with $group",
+      "A find() query with a projection",
+      "A compound index on the grouped field",
+      "An updateMany() call with $inc"
+    ],
+    "answer": 0,
+    "explanation": "The aggregation pipeline processes documents in stages: $match filters (like WHERE) and $group groups and sums (like GROUP BY).",
+    "guideId": "db-mongodb"
+  },
+  {
+    "id": "db-mongo-index",
+    "topic": "Databases",
+    "question": "What do 1 and -1 mean in orders.createIndex({ userId: 1, createdAt: -1 })?",
+    "options": [
+      "Ascending and descending order",
+      "Required and optional fields",
+      "Unique and non-unique fields",
+      "Primary and secondary keys"
+    ],
+    "answer": 0,
+    "explanation": "Each field in the index has a sort direction: 1 is ascending and -1 descending. Like in SQL, a compound index helps queries that use its fields from left to right.",
+    "guideId": "db-mongodb"
+  },
+  {
+    "id": "db-mongoose",
+    "topic": "Databases",
+    "question": "What does Mongoose add on top of MongoDB in Node?",
+    "options": [
+      "SQL support for queries",
+      "Multi-document joins",
+      "Automatic sharding",
+      "Schemas and validation"
+    ],
+    "answer": 3,
+    "explanation": "MongoDB documents have a flexible shape. Mongoose adds schemas that define and validate that shape in your Node code.",
+    "guideId": "db-mongodb"
+  },
+  {
+    "id": "ai-agent-vs-chatbot",
+    "topic": "AI & Claude Code",
+    "question": "What can a coding agent like Claude Code do that a chatbot cannot?",
+    "options": [
+      "Edit files and run commands in the repo",
+      "Suggest a fix for a given error message",
+      "Write code examples for a question",
+      "Explain code that you paste into it"
+    ],
+    "answer": 0,
+    "explanation": "A chatbot explains or suggests code. An agent explores the repository, edits files, runs tests or builds and checks the results, with the permissions you give it.",
+    "guideId": "ai-workflow"
+  },
+  {
+    "id": "ai-plan-mode",
+    "topic": "AI & Claude Code",
+    "question": "What is plan mode in Claude Code?",
+    "options": [
+      "A read-only mode to investigate and propose",
+      "A mode that runs the full test suite first",
+      "A mode that writes the spec files for you",
+      "A mode that edits files without asking"
+    ],
+    "answer": 0,
+    "explanation": "In plan mode the agent reads and proposes a plan without touching files. You review the plan before allowing any edit.",
+    "guideId": "ai-workflow"
+  },
+  {
+    "id": "ai-workflow-order",
+    "topic": "AI & Claude Code",
+    "question": "Which order fits a safe workflow with a coding agent?",
+    "options": [
+      "Plan → small change → read diff and tests → commit",
+      "Plan → commit → small change → read diff and tests",
+      "Small change → commit → plan → read diff and tests",
+      "Read diff and tests → plan → commit → small change"
+    ],
+    "answer": 0,
+    "explanation": "Review the plan before editing, keep changes small, read the diff and run the tests, and only then commit.",
+    "guideId": "ai-workflow"
+  },
+  {
+    "id": "ai-claude-md",
+    "topic": "AI & Claude Code",
+    "question": "What is CLAUDE.md?",
+    "options": [
+      "A config file that sets the agent's permissions",
+      "A spec that the agent writes before each feature",
+      "A log of every change the agent has made so far",
+      "Instructions the agent reads in each session"
+    ],
+    "answer": 3,
+    "explanation": "CLAUDE.md lives in the repository root and holds instructions like the architecture, the commands to run tests and the conventions. The agent reads it at the start of each session.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-skills",
+    "topic": "AI & Claude Code",
+    "question": "How are skills different from CLAUDE.md?",
+    "options": [
+      "They load only when the task needs them",
+      "They are read at the start of every session",
+      "They connect the agent to external tools",
+      "They can only be written by Anthropic"
+    ],
+    "answer": 0,
+    "explanation": "Skills are folders with instructions for one kind of task. Since they load only when needed, they do not take up context in every session. Connecting tools is MCP's job.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-mcp",
+    "topic": "AI & Claude Code",
+    "question": "What is MCP (Model Context Protocol) used for?",
+    "options": [
+      "Summarizing the context when it fills up",
+      "Splitting work between several agents",
+      "Connecting the agent to external tools",
+      "Running commands after each file edit"
+    ],
+    "answer": 2,
+    "explanation": "MCP is a standard protocol to connect the agent with tools like GitHub, a database or Context7 (up-to-date library docs). Splitting work is subagents; running commands at fixed moments is hooks.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-hooks",
+    "topic": "AI & Claude Code",
+    "question": "You need the linter to run after every edit, with no exceptions. What do you use?",
+    "options": [
+      "A line in CLAUDE.md",
+      "A skill",
+      "A subagent",
+      "A hook"
+    ],
+    "answer": 3,
+    "explanation": "The agent might not follow an instruction in CLAUDE.md, but a hook is a command that always runs at a fixed moment, like after each edit.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-subagents",
+    "topic": "AI & Claude Code",
+    "question": "What is a benefit of subagents?",
+    "options": [
+      "They share one context to save tokens",
+      "They run without any permission limits",
+      "They can skip the review of their changes",
+      "Each works with its own separate context"
+    ],
+    "answer": 3,
+    "explanation": "The main agent gives each subagent a focused task (for example, writing tests) and only receives the result, so the main context stays clean.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-context-limit",
+    "topic": "AI & Claude Code",
+    "question": "Why start a new session (/clear) for each task?",
+    "options": [
+      "Each session can edit only a limited set of files",
+      "Sessions expire after one hour of inactivity",
+      "A full context gets summarized and loses details",
+      "CLAUDE.md is read only once in each session"
+    ],
+    "answer": 2,
+    "explanation": "The context has a limit. When it fills up, the agent summarizes older content and details get lost, so a fresh session per task keeps it focused.",
+    "guideId": "ai-concepts"
+  },
+  {
+    "id": "ai-sdd",
+    "topic": "AI & Claude Code",
+    "question": "What problem does spec-driven development solve when working with an agent?",
+    "options": [
+      "Agents writing code that does not compile",
+      "Requirements living only in the chat",
+      "Code reviews taking too long to finish",
+      "Tests that are slow to run in CI"
+    ],
+    "answer": 1,
+    "explanation": "With SDD you write and agree on a specification before the agent writes code. Otherwise, requirements live in the chat, where they get lost or are understood differently.",
+    "guideId": "ai-spec-driven"
+  },
+  {
+    "id": "ai-openspec-flow",
+    "topic": "AI & Claude Code",
+    "question": "In OpenSpec, what happens right after the agent proposes a change?",
+    "options": [
+      "You review and adjust it before any code",
+      "The change is archived into the main spec",
+      "The agent starts implementing every task",
+      "The tests for the change are generated"
+    ],
+    "answer": 0,
+    "explanation": "The flow is propose → review → implement → archive. The review happens before any code is written.",
+    "guideId": "ai-spec-driven"
+  },
+  {
+    "id": "ai-sdd-when",
+    "topic": "AI & Claude Code",
+    "question": "When is spec-driven development usually worth the extra step?",
+    "options": [
+      "Only when no tests exist yet",
+      "Only for frontend features",
+      "For any change, even a typo fix",
+      "Features with several tasks"
+    ],
+    "answer": 3,
+    "explanation": "For a small change, the plan from the normal workflow is enough. A spec pays off when a feature has several tasks that need to stay aligned.",
+    "guideId": "ai-spec-driven"
+  },
+  {
+    "id": "ai-review-bola",
+    "topic": "AI & Claude Code",
+    "question": "An agent adds GET /users/:id. It works and all tests pass. What should you still check before approving?",
+    "options": [
+      "That the endpoint name follows REST style",
+      "That the tests ran in under one second",
+      "That users cannot read other users' data",
+      "That the agent used the latest library"
+    ],
+    "answer": 2,
+    "explanation": "Passing tests do not prove security. A classic miss is BOLA: any logged-in user reading another user's record by changing the ID. Review authorization, validation, negative tests and sensitive fields.",
+    "guideId": "ai-risks"
   }
 ]

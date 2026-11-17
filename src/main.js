@@ -1,5 +1,5 @@
 import "./style.css";
-import rawQuestions from "./questions.json?raw";
+import rawQuestions from "./data/questions.json?raw";
 import { parseBank } from "./parse.js";
 import { initUI, showErrors } from "./ui.js";
 import { validateBank } from "./validate.js";

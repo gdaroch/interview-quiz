@@ -53,7 +53,7 @@ describe('parseBank - invalid JSON', () => {
 
 describe('parseBank - bundled question bank', () => {
   it('parses the real questions.json and passes validateBank', () => {
-    const text = readFileSync(new URL('./questions.json', import.meta.url), 'utf-8');
+    const text = readFileSync(new URL('./data/questions.json', import.meta.url), 'utf-8');
     const result = parseBank(text);
     expect(result).not.toHaveProperty('errors');
     expect(validateBank(result.data)).toEqual([]);
