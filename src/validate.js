@@ -3,7 +3,7 @@
  * @param {unknown} v - The value to check.
  * @returns {boolean} True when the value is a plain object.
  */
-const isPlainObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+export const isPlainObject = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 
 /**
  * Builds one validation error record.
@@ -12,7 +12,7 @@ const isPlainObject = (v) => typeof v === "object" && v !== null && !Array.isArr
  * @param {string} message - What is wrong.
  * @returns {{questionRef: string, field: string, message: string}} The error record.
  */
-function error(questionRef, field, message) {
+export function error(questionRef, field, message) {
   return { questionRef, field, message };
 }
 
@@ -87,9 +87,10 @@ function checkCode(q, ref) {
 /**
  * Checks the whole question bank and lists every problem found.
  * @param {unknown} data - The parsed content of questions.json.
+ * @param {Set<string>} [guideIds] - The ids of the guide sections; when given, every guideId must be in it.
  * @returns {Array<object>} The errors found, empty when the bank is valid.
  */
-export function validateBank(data) {
+export function validateBank(data, guideIds) {
   if (!Array.isArray(data)) return [error("bank", "(root)", "The question bank must be a list of questions")];
   if (data.length === 0) return [error("bank", "(root)", "The question bank is empty")];
 
@@ -107,10 +108,14 @@ export function validateBank(data) {
       return;
     }
 
-    for (const field of ["id", "topic", "question", "explanation"]) errors.push(...checkString(q, field, ref));
+    for (const field of ["id", "topic", "question", "explanation", "guideId"]) errors.push(...checkString(q, field, ref));
     errors.push(...checkOptions(q, ref));
     errors.push(...checkAnswer(q, ref));
     errors.push(...checkCode(q, ref));
+
+    if (guideIds instanceof Set && typeof q.guideId === "string" && !guideIds.has(q.guideId)) {
+      errors.push(error(ref, "guideId", `unknown guideId "${q.guideId}"`));
+    }
 
     // Report each repeated id once, however many times it appears.
     if (hasId) {

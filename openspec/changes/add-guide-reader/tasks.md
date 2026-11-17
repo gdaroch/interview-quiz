@@ -9,11 +9,11 @@
 
 ## 2. Guide data: parsing and validation
 
-- [ ] 2.1 Generalize `parseBank` in `src/parse.js` into a function that takes the text and the file name, so invalid JSON is reported for both `questions.json` and `guide.json`; update `src/parse.test.js` and verify it still covers the existing cases plus the `guide.json` name
-- [ ] 2.2 Create `src/guide.js` with `validateGuide(data)` (structure, unique section ids, `#id` links outside fenced code that point to a missing section) returning the same error records as `validateBank`, and verify with unit tests in `src/guide.test.js` for every scenario of the "Guide format" and "Links between sections" requirements
-- [ ] 2.3 Add `buildGuideIndex(data)` to `src/guide.js` (section id to title, chapter title and lines) and verify with a unit test; add a test that the real `src/data/guide.json` passes `validateGuide`
-- [ ] 2.4 In `src/validate.js`, make `validateBank(data, guideIds)` check that `guideId` is a string and, when a guide id set is usable, that it exists in it; update every test question in `src/validate.test.js`, `src/parse.test.js` and `src/round.test.js` that needs a `guideId`, and verify the tests for missing, non-string, unknown and shared `guideId` pass
-- [ ] 2.5 Add a unit test that the real `src/data/questions.json` passes `validateBank` against the ids of the real `src/data/guide.json`, and verify `npm test` passes
+- [x] 2.1 Generalize `parseBank` in `src/parse.js` into a function that takes the text and the file name, so invalid JSON is reported for both `questions.json` and `guide.json`; update `src/parse.test.js` and verify it still covers the existing cases plus the `guide.json` name
+- [x] 2.2 Create `src/guide.js` with `validateGuide(data)` (structure, unique section ids, `#id` links outside fenced code that point to a missing section) returning the same error records as `validateBank`, and verify with unit tests in `src/guide.test.js` for every scenario of the "Guide format" and "Links between sections" requirements
+- [x] 2.3 Add `buildGuideIndex(data)` to `src/guide.js` (section id to title, chapter title and lines) and verify with a unit test; add a test that the real `src/data/guide.json` passes `validateGuide`
+- [x] 2.4 In `src/validate.js`, make `validateBank(data, guideIds)` check that `guideId` is a string and, when a guide id set is usable, that it exists in it; update every test question in `src/validate.test.js`, `src/parse.test.js` and `src/round.test.js` that needs a `guideId`, and verify the tests for missing, non-string, unknown and shared `guideId` pass
+- [x] 2.5 Add a unit test that the real `src/data/questions.json` passes `validateBank` against the ids of the real `src/data/guide.json`, and verify `npm test` passes
 
 ## 3. Markdown rendering
 
