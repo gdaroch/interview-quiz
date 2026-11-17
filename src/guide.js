@@ -1,4 +1,10 @@
+import MarkdownIt from "markdown-it";
+import { highlightToHtml } from "./highlight.js";
 import { error, isPlainObject } from "./validate.js";
+
+// Raw HTML is disabled (escaped as text): the app's only innerHTML receives this output,
+// so a guide line can never inject a tag or script.
+const md = new MarkdownIt({ html: false, highlight: highlightToHtml });
 
 /** Matches the target of a link to a section, such as `](#js-scope)`. */
 const SECTION_LINK = /\]\(#([^)\s]*)\)/g;
@@ -121,4 +127,13 @@ export function buildGuideIndex(data) {
     }
   }
   return index;
+}
+
+/**
+ * Renders the markdown lines of a section as an HTML string.
+ * @param {{lines: Array<string>}} section - The section to render.
+ * @returns {string} The HTML; raw HTML in the lines is escaped.
+ */
+export function renderSection(section) {
+  return md.render(section.lines.join("\n"));
 }

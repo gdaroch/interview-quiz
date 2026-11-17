@@ -17,8 +17,8 @@
 
 ## 3. Markdown rendering
 
-- [ ] 3.1 In `src/guide.js`, create the `markdown-it` instance with raw HTML disabled and the code-coloring function from 1.3 as its highlight option, and add `renderSection(section)` returning the HTML of a section; verify with unit tests that bold, a list, a table, a colored code block and the text `<token>` (escaped, not interpreted) render as expected
-- [ ] 3.2 Verify with a unit test that every section of the real `guide.json` renders without throwing and that no rendered output contains a raw `<script` tag
+- [x] 3.1 In `src/guide.js`, create the `markdown-it` instance with raw HTML disabled and the code-coloring function from 1.3 as its highlight option, and add `renderSection(section)` returning the HTML of a section; verify with unit tests that bold, a list, a table, a colored code block and the text `<token>` (escaped, not interpreted) render as expected
+- [x] 3.2 Verify with a unit test that every section of the real `guide.json` renders without throwing and that no rendered output contains a raw `<script` tag
 
 ## 4. Startup wiring
 

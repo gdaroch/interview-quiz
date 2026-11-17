@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { validateGuide, buildGuideIndex } from './guide.js';
+import { validateGuide, buildGuideIndex, renderSection } from './guide.js';
 import { parseJson } from './parse.js';
 
 const makeSection = (overrides = {}) => ({
@@ -267,5 +267,106 @@ describe('bundled study guide', () => {
     const result = parseJson(text, 'guide.json');
     expect(result).not.toHaveProperty('errors');
     expect(validateGuide(result.data)).toEqual([]);
+  });
+});
+
+describe('renderSection', () => {
+  const render = (...lines) => renderSection({ lines });
+
+  it('renders bold text as <strong>', () => {
+    expect(render('This is **important** text')).toContain('<strong>important</strong>');
+  });
+
+  it('renders a list as <ul> and <li>', () => {
+    const html = render('- one', '- two');
+    expect(html).toContain('<ul>');
+    expect(html).toContain('<li>one</li>');
+    expect(html).toContain('<li>two</li>');
+  });
+
+  it('renders a Markdown table', () => {
+    const html = render('| Name | Value |', '| --- | --- |', '| a | 1 |');
+    expect(html).toContain('<table>');
+    expect(html).toContain('<th>Name</th>');
+    expect(html).toContain('<td>1</td>');
+  });
+
+  it('highlights a fenced code block in a supported language', () => {
+    const html = render('```js', 'function f() {', '  return 1;', '}', '```');
+    expect(html).toContain('hljs');
+    expect(html).toContain('language-js');
+    expect(html).toContain('<span class="hljs-');
+  });
+
+  it('keeps line breaks and indentation inside a code block', () => {
+    const html = render('```js', 'function f() {', '  return 1;', '}', '```');
+    expect(html).toContain('{\n  ');
+    expect(html).toMatch(/\n  [^\n]*return[^\n]*\n/s);
+  });
+
+  it('renders a link to a section as an anchor', () => {
+    expect(render('See [the scope](#js-scope) now')).toContain('<a href="#js-scope">the scope</a>');
+  });
+
+  it('renders inline code', () => {
+    expect(render('Use `const` here')).toContain('<code>const</code>');
+  });
+
+  it('escapes angle brackets in inline code', () => {
+    const html = render('Send `Bearer <token>` in the header');
+    expect(html).toContain('<code>Bearer &lt;token&gt;</code>');
+    expect(html).not.toContain('<token>');
+  });
+
+  it('escapes a raw <script> line instead of emitting a tag', () => {
+    const html = render('<script>alert(1)</script>');
+    expect(html).not.toContain('<script');
+    expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('escapes a raw <img> line instead of emitting a tag', () => {
+    const html = render('<img src=x onerror=alert(1)>');
+    expect(html).not.toContain('<img');
+    expect(html).toContain('&lt;img');
+  });
+
+  it('escapes inline raw HTML inside a paragraph', () => {
+    const html = render('text <b>bold</b> and <script>x</script>');
+    expect(html).not.toContain('<b>');
+    expect(html).not.toContain('<script');
+  });
+
+  it.each(['text', 'notalanguage'])('escapes a "%s" code block without highlight spans', (lang) => {
+    const html = render('```' + lang, '<div class="a">&</div>', '```');
+    expect(html).toContain(`language-${lang}`);
+    expect(html).toContain('&lt;div class=&quot;a&quot;&gt;&amp;&lt;/div&gt;');
+    expect(html).not.toContain('hljs-');
+    expect(html).not.toContain('<div');
+  });
+
+  it('returns an empty string for a section without lines', () => {
+    expect(render()).toBe('');
+  });
+});
+
+describe('renderSection - bundled study guide', () => {
+  const text = readFileSync(new URL('./data/guide.json', import.meta.url), 'utf-8');
+  const { chapters } = JSON.parse(text);
+  const sections = chapters.flatMap((c) => c.sections);
+
+  it('has sections to render', () => {
+    expect(sections.length).toBeGreaterThan(0);
+  });
+
+  it('renders every section without throwing, non-empty and without <script', () => {
+    for (const section of sections) {
+      let html;
+      expect(() => {
+        html = renderSection(section);
+      }, section.id).not.toThrow();
+      expect(typeof html, section.id).toBe('string');
+      expect(html.length, section.id).toBeGreaterThan(0);
+      expect(html, section.id).not.toContain('<script');
+    }
   });
 });
